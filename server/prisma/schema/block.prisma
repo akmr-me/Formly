@@ -1,0 +1,40 @@
+model Block {
+    id               String     @id @default(cuid())
+    formId           String     @db.Uuid
+    type             BlockType
+    sortingKey       Int
+    buttonText       String?
+    coverImage       String?
+    align            AlignType?
+    data             Json?
+    descriptionDelta Json?
+    required         Boolean?
+    placeholder      String?
+    urlParameter     String?
+    createdAt        DateTime   @default(now())
+    updatedAt        DateTime   @updatedAt
+
+    Form Form @relation(fields: [formId], references: [id])
+
+    @@unique([formId, sortingKey])
+    @@index([formId, sortingKey])
+}
+
+enum BlockType {
+    STATEMENT     @map("statement")
+    SHORT_TEXT    @map("shortText")
+    LONG_TEXT     @map("longText")
+    NUMBER        @map("number")
+    WEBSITE_URL   @map("websiteUrl")
+    SINGLE_SELECT @map("single")
+    MULTI_SELECT  @map("multi")
+    DROPDOWN      @map("dropdown")
+    DATE          @map("date")
+    ADDRESS       @map("address")
+}
+
+enum AlignType {
+    LEFT   @map("left")
+    CENTER @map("center")
+    RIGHT  @map("right")
+}
