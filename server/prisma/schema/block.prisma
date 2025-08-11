@@ -1,23 +1,29 @@
 model Block {
-    id               String     @id @default(cuid())
-    formId           String     @db.Uuid
-    type             BlockType
-    sortingKey       Int
-    buttonText       String?
-    coverImage       String?
-    align            AlignType?
-    data             Json?
+    id               String         @id @default(uuid(7)) @db.Uuid
+    title            String
+    titleLabel       TitleLabelType
     descriptionDelta Json?
-    required         Boolean?
+    descriptionHtml  String?
+    textAlign        AlignType?
+    buttonText       String?
+    coverImageOrigin String?
+    coverImagePath   String?
+    required         Boolean?       @default(false)
+    optionalConfig   Json?
+    formId           String         @db.Uuid
+    type             BlockType
+    position         Float
     placeholder      String?
     urlParameter     String?
-    createdAt        DateTime   @default(now())
-    updatedAt        DateTime   @updatedAt
+    createdAt        DateTime       @default(now())
+    updatedAt        DateTime       @updatedAt
 
-    Form Form @relation(fields: [formId], references: [id])
+    form         Form            @relation(fields: [formId], references: [shortId], onDelete: Cascade)
+    blockOptions BlockOption[]
+    responses    ResponseValue[]
 
-    @@unique([formId, sortingKey])
-    @@index([formId, sortingKey])
+    @@unique([formId, position])
+    @@index([formId, position])
 }
 
 enum BlockType {
@@ -37,4 +43,9 @@ enum AlignType {
     LEFT   @map("left")
     CENTER @map("center")
     RIGHT  @map("right")
+}
+
+enum TitleLabelType {
+    TITLE    @map("title")
+    QUESTION @map("question")
 }

@@ -6,11 +6,12 @@
 
 generator client {
   provider = "prisma-client-js"
+  // previewFeatures = ["prismaSchemaFolder"]
 }
 
 generator kysely {
   provider = "prisma-kysely"
-  output   = "../src/generated/prisma"
+  output   = "../../src/generated/prisma"
   fileName = "kysely.ts"
 
   enumFileName = "enum.ts"
@@ -20,4 +21,112 @@ generator kysely {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Form {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  shortId   String   @db.VarChar(8)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  blocks    Block[]
+  responses Response[]
+
+  @@unique([shortId])
+  @@index([shortId])
+}
+
+model Block {
+  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title            String
+  titleLabel       TitleLabelType
+  descriptionDelta Json?
+  descriptionHtml  String?
+  textAlign        AlignType?
+  buttonText       String?
+  coverImageOrigin String?
+  coverImagePath   String?
+  required         Boolean?       @default(false)
+  optionalConfig   Json?
+  formId           String         @db.VarChar(8)
+  type             BlockType
+  position         Float
+  placeholder      String?
+  urlParameter     String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  form         Form            @relation(fields: [formId], references: [shortId], onDelete: Cascade)
+  blockOptions BlockOption[]
+  responses    ResponseValue[]
+
+  @@unique([formId, position])
+  @@index([formId, position])
+}
+
+enum BlockType {
+  STATEMENT     @map("statement")
+  SHORT_TEXT    @map("shortText")
+  LONG_TEXT     @map("longText")
+  NUMBER        @map("number")
+  WEBSITE_URL   @map("websiteUrl")
+  SINGLE_SELECT @map("single")
+  MULTI_SELECT  @map("multi")
+  DROPDOWN      @map("dropdown")
+  DATE          @map("date")
+  ADDRESS       @map("address")
+}
+
+enum AlignType {
+  LEFT   @map("left")
+  CENTER @map("center")
+  RIGHT  @map("right")
+}
+
+enum TitleLabelType {
+  TITLE    @map("Title")
+  QUESTION @map("Question")
+}
+
+model BlockOption {
+  id       String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  label    String
+  // value    String // label and value will be the same
+  selected Boolean @default(false)
+  order    Int?
+  blockId  String  @db.Uuid
+  block    Block   @relation(fields: [blockId], references: [id], onDelete: Cascade)
+
+  @@index([blockId])
+}
+
+model Response {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  formId      String   @db.VarChar(8)
+  form        Form     @relation(fields: [formId], references: [shortId], onDelete: Cascade)
+  submittedAt DateTime @default(now())
+
+  values ResponseValue[]
+}
+
+model ResponseValue {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  responseId String   @db.Uuid
+  response   Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
+
+  blockId String @db.Uuid
+  block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
+
+  value String // stringify the value
+  type  ValueType
+
+  @@index([responseId])
+  @@index([blockId])
+}
+
+enum ValueType {
+  STRING
+  NUMBER
+  DATE
+  JSON
 }

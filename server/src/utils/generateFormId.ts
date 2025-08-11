@@ -1,6 +1,12 @@
-import { customAlphabet } from "nanoid";
+import { AlphabetString, ShortFormIdLength } from "../constants";
 
-export const generateFormId = customAlphabet(
-  "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789",
-  8
-);
+export function generateFormId(): string {
+  let result = "";
+  const charactersLength = AlphabetString.length;
+  for (let i = 0; i < ShortFormIdLength; i++) {
+    result += AlphabetString.charAt(
+      Math.floor(Math.random() * charactersLength)
+    );
+  }
+  return result;
+}

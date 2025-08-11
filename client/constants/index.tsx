@@ -12,3 +12,5 @@ export const ImageLayoutOptions = [
     value: "wallpaper",
   },
 ];
+
+export const CreateFormLabel = "Create Form";

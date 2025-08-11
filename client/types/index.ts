@@ -3,6 +3,7 @@ export type BlockType = {
   type: string;
   parentType?: string;
   label: string;
+  title?: string;
   text: string;
   color: string;
   icon: string;
@@ -10,5 +11,6 @@ export type BlockType = {
   titleLabel?: string;
   titleDefaultValue?: string;
   defaultButtonText?: string;
+  buttonText?: string;
   defaultPlaceholder?: string;
 };
