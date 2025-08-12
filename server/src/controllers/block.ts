@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { createStatementBlockService } from "../services/block/statement";
-import { getBlockByIdService } from "../services/block";
+import {
+  getBlockByIdService,
+  updateBlockFieldService,
+} from "../services/block";
 
 export const createBlockController = async (
   req: Request,
@@ -38,8 +41,23 @@ export const getBlockByIdController = async (
   try {
     const { id } = req.params;
     const block = await getBlockByIdService(id);
-    console.log("block", block);
+
     return res.status(200).json({ ...block });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const updateBlockFieldController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const { type, ...data } = req.body;
+    const updatedBlock = await updateBlockFieldService(id, data);
+    return res.status(200).json({ ...updatedBlock });
   } catch (error) {
     return next(error);
   }

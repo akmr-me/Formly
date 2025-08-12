@@ -20,6 +20,7 @@ export default function BlockDisplay({
         title={selectedBlockData.title}
         description={selectedBlockData.description}
         buttonText={selectedBlockData.buttonText}
+        description={selectedBlockData.descriptionHtml}
       >
         {null}
       </BlockDisplayLayout>

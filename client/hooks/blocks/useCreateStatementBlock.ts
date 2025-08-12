@@ -33,6 +33,7 @@ export function useCreateStatementBlock() {
         buttonText: defaultButtonText,
         formId: additionalData.shortId,
         textAlign: "center",
+        position: 100,
       };
       return createStatementBlock(fullData);
     },

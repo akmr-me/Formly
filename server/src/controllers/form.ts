@@ -39,9 +39,8 @@ export const getFormWithBlocksController = async (
 ) => {
   try {
     const { shortFormId } = req.params;
-    console.log("shortFormId", shortFormId);
     const form = await getFormWithBlocksService(shortFormId);
-    // Implement service here
+
     return res.status(200).json({ ...form });
   } catch (error) {
     return next(error);

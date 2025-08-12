@@ -50,7 +50,6 @@ class Form {
 
     console.log(flatResults);
 
-    // Use the first result to create the main form object
     const form: FormWithBlocks = {
       // @ts-ignore
       id: flatResults[0].id as string,
@@ -62,7 +61,6 @@ class Form {
       blocks: [],
     };
 
-    // Loop through the flat results to populate the blocks array
     for (const row of flatResults) {
       if (row.block_id) {
         form.blocks.push({
@@ -93,7 +91,6 @@ class Form {
     return form;
   }
 
-  // A corrected version of your commented-out function
   async getFormByShortId(shortId: string) {
     const form = await db
       .selectFrom("Form") // Use PascalCase

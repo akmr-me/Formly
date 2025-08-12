@@ -24,10 +24,11 @@ datasource db {
 }
 
 model Form {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  shortId   String   @db.VarChar(8)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  status    PublishStatusType @default(DRAFT)
+  shortId   String            @db.VarChar(8)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
 
   blocks    Block[]
   responses Response[]
@@ -86,6 +87,11 @@ enum AlignType {
 enum TitleLabelType {
   TITLE    @map("Title")
   QUESTION @map("Question")
+}
+
+enum PublishStatusType {
+  PUBLISH @map("publish")
+  DRAFT   @map("draft")
 }
 
 model BlockOption {

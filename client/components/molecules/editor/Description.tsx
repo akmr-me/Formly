@@ -1,9 +1,22 @@
+import { DefaultDebounceTime } from "@/constants";
+import { UpdateBlockPayload } from "@/hooks/useUpdateCommonBlockFields";
+import { BlockType } from "@/types";
+import { UseMutateFunction } from "@tanstack/react-query";
 import React, { useState, useRef } from "react";
 import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+import { useDebouncedCallback } from "use-debounce";
 
-export default function Description() {
-  const [value, setValue] = useState("");
+type DescriptionPropsType = {
+  mutate: UseMutateFunction<any, Error, Partial<UpdateBlockPayload>, unknown>;
+  selectedBlockData: BlockType;
+};
+
+export default function Description({
+  mutate,
+  selectedBlockData,
+}: DescriptionPropsType) {
+  const [value, setValue] = useState(selectedBlockData.descriptionHtml || "");
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [linkRange, setLinkRange] = useState(null);
@@ -92,8 +105,9 @@ export default function Description() {
   const formats = ["bold", "italic", "link", "video"];
 
   const handleChange = (content, delta, source, editor) => {
-    // Update the state with the HTML content
+    console.log("handle changed is called");
     setValue(content);
+    debouncedDescriptionUpdate(content, delta);
 
     // Log all the values you might need
     console.log("HTML Content:", content);
@@ -101,6 +115,17 @@ export default function Description() {
     console.log("Delta (Rich Content):", editor.getContents());
     console.log("Current State Value:", content);
   };
+
+  const debouncedDescriptionUpdate = useDebouncedCallback(
+    (html: string, delta) => {
+      console.log("Save title:", html);
+      const updateData = {};
+      if (delta) updateData.descriptionHtml = html;
+      if (delta) updateData.descriptionDelta = delta;
+      if (Object.keys(updateData).length) mutate(updateData);
+    },
+    DefaultDebounceTime
+  );
 
   return (
     <div>

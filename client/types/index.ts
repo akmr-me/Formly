@@ -13,4 +13,9 @@ export type BlockType = {
   defaultButtonText?: string;
   buttonText?: string;
   defaultPlaceholder?: string;
+  textAlign: "left" | "center";
+  descriptionHtml?: string;
+  descriptionDelta?: any;
 };
+
+export type TextAlignType = "center" | "left";
