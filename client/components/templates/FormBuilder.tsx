@@ -32,7 +32,7 @@ const FormBuilder = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenChooseBlockModal = () => setIsModalOpen(true);
-
+  console.log({ selectedBlockData, blockId });
   return (
     <div className="relative h-screen flex flex-col bg-gray-50">
       {isLoading && (

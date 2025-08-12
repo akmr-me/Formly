@@ -3,6 +3,7 @@ import { createStatementBlockService } from "../services/block/statement";
 import {
   deleteBlockFileService,
   deleteBlockService,
+  duplicateBlockService,
   getBlockByIdService,
   updateBlockFieldService,
 } from "../services/block";
@@ -88,5 +89,22 @@ export const deleteBlockFileController = async (
     const { id } = req.params;
     await deleteBlockFileService(id);
     return res.sendStatus(204);
-  } catch (error) {}
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const duplicateBlockController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    console.log("request for dulication", id);
+    const duplicatedBlock = await duplicateBlockService(id);
+    return res.status(201).json({ ...duplicatedBlock });
+  } catch (error) {
+    return next(error);
+  }
 };

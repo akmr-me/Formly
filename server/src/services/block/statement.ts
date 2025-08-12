@@ -10,7 +10,6 @@ export async function createStatementBlockService(data: any) {
       .values(data)
       .returningAll()
       .executeTakeFirstOrThrow();
-    console.log("statementBlock", statementBlock);
     return statementBlock;
   } catch (error) {
     console.log("Error while createing statement block", error);

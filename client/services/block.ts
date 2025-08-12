@@ -15,3 +15,13 @@ export async function getBlockById(id: string) {
   const res = await apiClient.get(`/blocks/${id}`);
   return res.data;
 }
+
+export async function duplicateBlock(id: string) {
+  const res = await apiClient.post(`/blocks/${id}/duplicate`);
+  return res.data;
+}
+
+export async function deleteBlock(id: string) {
+  const res = await apiClient.delete(`/blocks/${id}`);
+  return res.data;
+}

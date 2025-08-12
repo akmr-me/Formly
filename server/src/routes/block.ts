@@ -5,6 +5,7 @@ import {
   deleteBlockController,
   getBlockByIdController,
   updateBlockFieldController,
+  duplicateBlockController,
 } from "../controllers/block";
 import { filterRequestByBlockType } from "../middlewares/filterRequestByBlockType";
 import {
@@ -47,5 +48,7 @@ router
     updateBlockFieldController
   )
   .delete(deleteBlockFileController);
+
+router.route("/:id/duplicate").post(duplicateBlockController);
 
 export default router;

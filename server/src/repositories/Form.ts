@@ -1,5 +1,6 @@
 import { db } from "../config/db";
 import { Form as TForm, Block as TBlock } from "../generated/prisma/kysely";
+import ApiError from "../utils/ApiError";
 
 type createFormInternal = { shortId: string };
 
@@ -47,8 +48,6 @@ class Form {
     if (flatResults.length === 0) {
       return null;
     }
-
-    console.log(flatResults);
 
     const form: FormWithBlocks = {
       // @ts-ignore
@@ -99,6 +98,58 @@ class Form {
       .executeTakeFirstOrThrow();
     return form;
   }
+
+  async getCurrentAndAdjacentBlocks(
+    currentBlockId: string,
+    prevOrNext = "next"
+  ) {
+    // TODO: Optimize query
+    try {
+      const isNext = prevOrNext === "next";
+      const positionOp = isNext ? ">" : "<";
+      const orderDirection = isNext ? "asc" : "desc";
+
+      const currentBlockDetails = await db
+        .selectFrom("Block")
+        .select(["id", "formId", "position"])
+        .where("id", "=", currentBlockId)
+        .executeTakeFirst();
+
+      if (!currentBlockDetails) {
+        console.error(`Block with ID ${currentBlockId} not found.`);
+        throw new Error("Block not found");
+      }
+
+      const { id, formId, position } = currentBlockDetails;
+
+      const result = await db
+        .selectFrom("Block")
+        .selectAll()
+        .where((eb) =>
+          eb.or([
+            eb("id", "=", id),
+            eb.and([
+              eb("formId", "=", formId),
+              eb("position", positionOp, position),
+            ]),
+          ])
+        )
+        .orderBy("position", orderDirection)
+        .limit(2)
+        .execute();
+
+      console.log("result", result);
+      return result;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      console.error("Error fetching blocks:", error);
+      throw error;
+    }
+  }
+
+  //
 }
 
 export default new Form();

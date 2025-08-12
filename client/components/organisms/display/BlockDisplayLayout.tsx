@@ -32,7 +32,7 @@ export default function BlockDisplayLayout({
       )}
     >
       <div className="w-auto max-h-64">
-        {imageLayout === "stack" && (
+        {imageLayout === "stack" && imageUrl && (
           <Image
             src={imageUrl || ""}
             alt="Cover preview"

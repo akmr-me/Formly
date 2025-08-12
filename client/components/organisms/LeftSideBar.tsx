@@ -8,6 +8,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getFormWithBlocks } from "@/services/form";
 import { BlockType } from "@/types";
+import BlockDropdownMenuContainer from "../containers/BlockDropDownMenuContainer";
 
 const BlockTypeMap = formBlocks.reduce<Record<string, BlockType>>(
   (acc, block) => {
@@ -36,16 +37,6 @@ export default function LeftSideBar({
     queryFn: () => getFormWithBlocks(formId),
     enabled: !!formId,
   });
-
-  const handleDuplicate = () => {
-    console.log("Block duplicated!");
-    alert("Block duplicated!");
-  };
-
-  const handleDelete = () => {
-    console.log("Block deleted!");
-    alert("Block deleted!");
-  };
 
   console.log("formId", formId, data);
 
@@ -79,9 +70,8 @@ export default function LeftSideBar({
               selectedBlock={selectedBlock}
               dropdownOpen={dropdownOpen}
               HoverComponent={
-                <BlockDropdownMenu
-                  onDuplicate={handleDuplicate}
-                  onDelete={handleDelete}
+                <BlockDropdownMenuContainer
+                  blockId={block.id}
                   setDropdownOpen={setDropdownOpen}
                 />
               }
