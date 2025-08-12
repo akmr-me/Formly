@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { AlignCenter, AlignLeft } from "lucide-react";
 
 type AlignProps = { textAlign: "center" | "left" };
+
 export default function TextAlign({ textAlign }: AlignProps) {
   return (
     <div>

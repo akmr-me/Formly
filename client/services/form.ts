@@ -1,8 +1,8 @@
 // src/services/formService.ts
 import apiClient from "@/lib/apiClient";
 
-export async function createForm() {
-  const res = await apiClient.post("/forms");
+export async function createForm(data: any) {
+  const res = await apiClient.post("/forms", {});
   return res.data;
 }
 

@@ -14,3 +14,5 @@ export const ImageLayoutOptions = [
 ];
 
 export const CreateFormLabel = "Create Form";
+
+export const DefaultDebounceTime = 1000;

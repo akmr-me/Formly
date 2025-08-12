@@ -1,11 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createForm } from "@/services/form";
+import { updateForm } from "@/services/form";
 
-export function useCreateForm() {
+type UpdateFormPayload = {
+  id: string;
+  title?: string;
+  buttonText?: string;
+};
+
+export function useUpdateForm() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: createForm,
+    mutationFn: (data: UpdateFormPayload) => updateForm(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["forms"] });
     },
