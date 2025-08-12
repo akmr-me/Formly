@@ -1,0 +1,11 @@
+model BlockOption {
+    id       String  @id @default(uuid(7)) @db.Uuid
+    label    String
+    // value    String // label and value will be the same
+    selected Boolean @default(false)
+    order    Int?
+    blockId  String
+    block    Block   @relation(fields: [blockId], references: [id], onDelete: Cascade)
+
+    @@index([blockId])
+}

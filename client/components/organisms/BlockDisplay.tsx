@@ -10,15 +10,16 @@ export default function BlockDisplay({
 
   backgroundColor = "#b59a94",
 }: BlockDisplayProps) {
+  console.log("slected bloc", selectedBlockData);
   return (
     <div
       className="flex-1 bg-gray-100 flex items-center justify-center p-8 mt-2 rounded-2xl flex-col"
       style={{ backgroundColor }}
     >
       <BlockDisplayLayout
-        title={selectedBlockData.titleDefaultValue}
+        title={selectedBlockData.title}
         description={selectedBlockData.description}
-        buttonText={selectedBlockData.defaultButtonText}
+        buttonText={selectedBlockData.buttonText}
       >
         {null}
       </BlockDisplayLayout>

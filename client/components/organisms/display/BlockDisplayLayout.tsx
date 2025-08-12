@@ -7,9 +7,9 @@ export type BlockDisplayLayoutProps = {
   children: React.ReactNode;
 };
 export default function BlockDisplayLayout({
-  title = "Hey there 😊",
+  title = "",
   description = "",
-  buttonText = "Let's start",
+  buttonText = "",
   onButtonClick = () => {},
   children,
 }: BlockDisplayLayoutProps) {

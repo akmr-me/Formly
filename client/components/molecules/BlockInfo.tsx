@@ -7,14 +7,14 @@ type BlockInfoProps = BlockType & {
   key: number;
   HoverComponent: React.ReactNode;
   dropdownOpen?: boolean;
+  position?: number;
 };
 
 export default function BlockInfo({
   key,
   id,
   label,
-  type,
-  parentType,
+  position,
   selectedBlock,
   setSelectedBlock,
   icon,
@@ -38,7 +38,7 @@ export default function BlockInfo({
       <div className="flex items-center space-x-2">
         <span className="text-sm">{icon}</span>
         <span className="text-sm font-medium">
-          {id}. {label || "Untitled"}
+          {position}. {label || "Untitled"}
         </span>
       </div>
       {
