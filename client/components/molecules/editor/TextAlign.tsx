@@ -22,6 +22,7 @@ export default function TextAlign({ textAlign, mutate }: AlignProps) {
   useEffect(() => {
     setAlign(textAlign);
   }, [textAlign]);
+
   return (
     <div>
       <Label className="text-sm font-semibold text-gray-700 mb-2 block">

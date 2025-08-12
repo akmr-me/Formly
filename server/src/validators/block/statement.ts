@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { baseBlockSchema } from ".";
-import { BlockType } from "../../generated/prisma/enum";
+import { BlockType, CoverImageLayout } from "../../generated/prisma/enum";
 
 const statementBlockSchema = baseBlockSchema.extend({
   required: z.boolean().default(false),
@@ -9,6 +9,7 @@ const statementBlockSchema = baseBlockSchema.extend({
   descriptionHtml: z.string().optional(),
   coverImageOrigin: z.string().optional(),
   coverImagePath: z.string().optional(),
+  coverImageLayout: z.enum(CoverImageLayout).optional(),
   type: z.literal(BlockType.STATEMENT),
 });
 

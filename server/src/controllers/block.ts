@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { createStatementBlockService } from "../services/block/statement";
 import {
+  deleteBlockFileService,
+  deleteBlockService,
   getBlockByIdService,
   updateBlockFieldService,
 } from "../services/block";
@@ -61,4 +63,30 @@ export const updateBlockFieldController = async (
   } catch (error) {
     return next(error);
   }
+};
+
+export const deleteBlockController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    await deleteBlockService(id);
+    return res.sendStatus(204);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const deleteBlockFileController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    await deleteBlockFileService(id);
+    return res.sendStatus(204);
+  } catch (error) {}
 };

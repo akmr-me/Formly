@@ -5,22 +5,39 @@ type BlockDisplayProps = {
   selectedBlockData: BlockType;
   backgroundColor?: string;
 };
+
 export default function BlockDisplay({
   selectedBlockData,
-
   backgroundColor = "#b59a94",
 }: BlockDisplayProps) {
   console.log("slected bloc", selectedBlockData);
+  const coverImageUrl =
+    (selectedBlockData?.coverImageOrigin || "") +
+    (selectedBlockData?.coverImagePath || "");
+  const coverImageLayout = selectedBlockData?.coverImageLayout || "stack";
+
+  const backgroundStyle =
+    coverImageLayout === "wallpaper" && coverImageUrl
+      ? {
+          backgroundImage: `url("${encodeURI(coverImageUrl)}")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }
+      : { backgroundColor };
+  console.log({ backgroundStyle });
   return (
     <div
       className="flex-1 bg-gray-100 flex items-center justify-center p-8 mt-2 rounded-2xl flex-col"
-      style={{ backgroundColor }}
+      style={backgroundStyle}
     >
       <BlockDisplayLayout
         title={selectedBlockData.title}
-        description={selectedBlockData.description}
         buttonText={selectedBlockData.buttonText}
         description={selectedBlockData.descriptionHtml}
+        textAlign={selectedBlockData.textAlign}
+        imageUrl={coverImageUrl}
+        imageLayout={coverImageLayout}
       >
         {null}
       </BlockDisplayLayout>

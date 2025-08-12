@@ -1,6 +1,8 @@
 import { Router } from "express";
 import {
   createBlockController,
+  deleteBlockFileController,
+  deleteBlockController,
   getBlockByIdController,
   updateBlockFieldController,
 } from "../controllers/block";
@@ -10,6 +12,7 @@ import {
   updateStatementBlockSchema,
 } from "../validators/block/statement";
 import { createShortTextBlockSchema } from "../validators/block/shortText";
+import { upload } from "../middlewares/multer";
 
 const router = Router();
 
@@ -30,12 +33,19 @@ router.post(
   createBlockController
 );
 
-router.get("/:id", getBlockByIdController);
+router
+  .route("/:id")
+  .get(getBlockByIdController)
+  .patch(filterRequestByBlockType(updateSchema), updateBlockFieldController)
+  .delete(deleteBlockController);
 
-router.patch(
-  "/:id",
-  filterRequestByBlockType(updateSchema),
-  updateBlockFieldController
-);
+router
+  .route("/:id/upload")
+  .patch(
+    upload.single("file"),
+    filterRequestByBlockType(updateSchema),
+    updateBlockFieldController
+  )
+  .delete(deleteBlockFileController);
 
 export default router;

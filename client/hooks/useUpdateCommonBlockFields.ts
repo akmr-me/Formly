@@ -1,12 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateBlockField } from "@/services/block";
-import { TextAlignType } from "@/types";
+import { CoverImageLayout, TextAlignType } from "@/types";
 
 export type UpdateBlockPayload = {
   title?: string;
   buttonText?: string;
   type: string;
   textAlign?: TextAlignType;
+  coverImageLayout?: CoverImageLayout;
 };
 
 export function useUpdateCommonBlockFields(blockId: string, type: string) {

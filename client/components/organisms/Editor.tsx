@@ -10,12 +10,14 @@ import { useDebouncedCallback } from "use-debounce";
 import { DefaultDebounceTime } from "@/constants";
 import { useUpdateCommonBlockFields } from "@/hooks/useUpdateCommonBlockFields";
 import { useSearchParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 type EditorProp = {
   selectedBlockData: BlockType;
 };
 
 export default function Editor({ selectedBlockData }: EditorProp) {
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const blockId = searchParams.get("block_id") as string;
 
@@ -47,6 +49,15 @@ export default function Editor({ selectedBlockData }: EditorProp) {
   useEffect(() => {
     setButtonText(defaultButtonText || "");
   }, [defaultButtonText]);
+
+  const handleUploadComplete = () => {
+    // invalidte cache
+    queryClient.invalidateQueries({ queryKey: ["block", blockId] });
+  };
+  const coverImageUrl =
+    (selectedBlockData?.coverImageOrigin || "") +
+    (selectedBlockData?.coverImagePath || "");
+
   return (
     <div className="w-95 bg-white border-l border-gray-200 overflow-y-auto">
       <div className="p-4 space-y-6">
@@ -74,8 +85,19 @@ export default function Editor({ selectedBlockData }: EditorProp) {
           }}
         />
 
-        <CoverImage />
-        <ImageLayout />
+        <CoverImage
+          onUploadComplete={handleUploadComplete}
+          uploadEndpoint={`blocks/${blockId}/upload`}
+          type={type}
+          imageUrl={coverImageUrl}
+          coverImageLayout={selectedBlockData?.coverImageLayout}
+        />
+        {coverImageUrl && (
+          <ImageLayout
+            mutate={mutate}
+            coverImageLayout={selectedBlockData?.coverImageLayout}
+          />
+        )}
       </div>
     </div>
   );

@@ -11,7 +11,6 @@ type BlockInfoProps = BlockType & {
 };
 
 export default function BlockInfo({
-  key,
   id,
   label,
   position,
@@ -27,7 +26,6 @@ export default function BlockInfo({
 
   return (
     <div
-      key={key}
       className={`p-3 rounded-lg flex justify-between cursor-pointer transition-all ${colorClass} ${
         selectedBlock === id ? "ring-2 ring-blue-500" : ""
       }`}
