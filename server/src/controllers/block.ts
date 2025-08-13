@@ -1,6 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { createStatementBlockService } from "../services/block/statement";
-import { getBlockByIdService } from "../services/block";
+import {
+  deleteBlockFileService,
+  deleteBlockService,
+  duplicateBlockService,
+  getBlockByIdService,
+  updateBlockFieldService,
+} from "../services/block";
 
 export const createBlockController = async (
   req: Request,
@@ -38,8 +44,66 @@ export const getBlockByIdController = async (
   try {
     const { id } = req.params;
     const block = await getBlockByIdService(id);
-    console.log("block", block);
+
     return res.status(200).json({ ...block });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const updateBlockFieldController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const { type, ...data } = req.body;
+    const updatedBlock = await updateBlockFieldService(id, data);
+    return res.status(200).json({ ...updatedBlock });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const deleteBlockController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    await deleteBlockService(id);
+    return res.sendStatus(204);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const deleteBlockFileController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    await deleteBlockFileService(id);
+    return res.sendStatus(204);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const duplicateBlockController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    console.log("request for dulication", id);
+    const duplicatedBlock = await duplicateBlockService(id);
+    return res.status(201).json({ ...duplicatedBlock });
   } catch (error) {
     return next(error);
   }

@@ -24,10 +24,11 @@ datasource db {
 }
 
 model Form {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  shortId   String   @db.VarChar(8)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  status    PublishStatusType @default(DRAFT)
+  shortId   String            @db.VarChar(8)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
 
   blocks    Block[]
   responses Response[]
@@ -37,7 +38,7 @@ model Form {
 }
 
 model Block {
-  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title            String
   titleLabel       TitleLabelType
   descriptionDelta Json?
@@ -46,15 +47,16 @@ model Block {
   buttonText       String?
   coverImageOrigin String?
   coverImagePath   String?
-  required         Boolean?       @default(false)
+  coverImageLayout CoverImageLayout?
+  required         Boolean?          @default(false)
   optionalConfig   Json?
-  formId           String         @db.VarChar(8)
+  formId           String            @db.VarChar(8)
   type             BlockType
   position         Float
   placeholder      String?
   urlParameter     String?
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 
   form         Form            @relation(fields: [formId], references: [shortId], onDelete: Cascade)
   blockOptions BlockOption[]
@@ -86,6 +88,17 @@ enum AlignType {
 enum TitleLabelType {
   TITLE    @map("Title")
   QUESTION @map("Question")
+}
+
+enum PublishStatusType {
+  PUBLISH @map("publish")
+  DRAFT   @map("draft")
+}
+
+enum CoverImageLayout {
+  STACK     @map("stack")
+  SPLIT     @map("split")
+  WALLPAPER @map("wallpaper")
 }
 
 model BlockOption {

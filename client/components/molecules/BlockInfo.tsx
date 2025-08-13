@@ -1,4 +1,5 @@
 import { BlockType } from "@/types";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 type BlockInfoProps = BlockType & {
@@ -11,7 +12,6 @@ type BlockInfoProps = BlockType & {
 };
 
 export default function BlockInfo({
-  key,
   id,
   label,
   position,
@@ -25,13 +25,24 @@ export default function BlockInfo({
   const [show, setShow] = useState(false);
   const colorClass = color.includes("#") ? `bg-[${color}]` : color;
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentBlockId = searchParams.get("block_id") || "No Block ID";
+
+  const handleChangeBlockId = (newBlockId: string) => {
+    const pathname = window.location.pathname;
+    const currentParams = new URLSearchParams(searchParams.toString());
+
+    currentParams.set("block_id", newBlockId);
+    router.push(`${pathname}?${currentParams.toString()}`);
+  };
+
   return (
     <div
-      key={key}
       className={`p-3 rounded-lg flex justify-between cursor-pointer transition-all ${colorClass} ${
-        selectedBlock === id ? "ring-2 ring-blue-500" : ""
+        currentBlockId === id ? "ring-2 ring-blue-500" : ""
       }`}
-      onClick={() => setSelectedBlock(id)}
+      onClick={() => handleChangeBlockId(id)}
       onMouseEnter={() => setShow(true)}
       onMouseLeave={() => setShow(false)}
     >

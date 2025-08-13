@@ -24,7 +24,7 @@ export async function getFormByShortIdService(shortId: string) {
 export async function getFormWithBlocksService(formId: string) {
   try {
     const form = await formRespository.getFormWithBlocks(formId);
-    console.log("from from respo", form);
+
     return form;
   } catch (error) {
     console.log("getFormWithBlocks error", error);

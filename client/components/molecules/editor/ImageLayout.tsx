@@ -8,16 +8,36 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ImageLayoutOptions } from "@/constants";
+import { UseMutateFunction } from "@tanstack/react-query";
+import { UpdateBlockPayload } from "@/hooks/useUpdateCommonBlockFields";
 
-export function ImageLayout() {
+type ImageLayoutProps = {
+  mutate: UseMutateFunction<any, Error, Partial<UpdateBlockPayload>, unknown>;
+  coverImageLayout?: string;
+};
+
+export function ImageLayout({ mutate, coverImageLayout }: ImageLayoutProps) {
+  const currentValue = coverImageLayout || ImageLayoutOptions[0]?.value || "";
+
+  const handleValueChange = (value: string) => {
+    if (value && value !== currentValue) {
+      mutate({ coverImageLayout: value });
+    }
+  };
+
   return (
-    <Select defaultValue={ImageLayoutOptions[0].value}>
+    <Select value={currentValue} onValueChange={handleValueChange}>
       <SelectTrigger className="w-full">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {ImageLayoutOptions.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
+        {ImageLayoutOptions.map((option, index) => (
+          <SelectItem
+            key={option.value}
+            value={option.value}
+            // TODO: What split does
+            disabled={index == 1}
+          >
             {option.label}
           </SelectItem>
         ))}

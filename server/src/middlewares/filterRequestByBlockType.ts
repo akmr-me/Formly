@@ -11,6 +11,7 @@ export const filterRequestByBlockType =
     try {
       const type = req.body.type;
       const schema = schemas[type];
+      console.log(" from filter schema", req.body);
 
       if (!schema) {
         return next(new ApiError(400, `No schema found for type '${type}'`));
@@ -18,12 +19,12 @@ export const filterRequestByBlockType =
 
       const result = schema.parse({
         body: req.body,
-        query: req.query,
-        params: req.params,
+        // query: req.query,
+        // params: req.params,
       });
 
       req.body = result.body;
-      // Optionally handle params, query similarly
+      // TODO: schme strip for params and query
 
       next();
     } catch (err: any) {

@@ -1,86 +1,132 @@
-import React, { useState, useRef } from "react";
+import { DefaultDebounceTime } from "@/constants";
+import { UpdateBlockPayload } from "@/hooks/useUpdateCommonBlockFields";
+import { BlockType } from "@/types";
+import { UseMutateFunction } from "@tanstack/react-query";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+import { useDebouncedCallback } from "use-debounce";
 
-export default function Description() {
-  const [value, setValue] = useState("");
-  const [showLinkInput, setShowLinkInput] = useState(false);
-  const [linkUrl, setLinkUrl] = useState("");
-  const [linkRange, setLinkRange] = useState(null);
-  const quillRef = useRef();
+interface DescriptionPropsType {
+  mutate: UseMutateFunction<any, Error, Partial<UpdateBlockPayload>, unknown>;
+  selectedBlockData: BlockType;
+}
 
-  // Custom video handler for YouTube embeds
-  const videoHandler = () => {
-    const url = prompt("Enter YouTube URL:");
-    if (url) {
-      const quill = quillRef.current.getEditor();
-      const range = quill.getSelection();
+interface QuillRange {
+  index: number;
+  length: number;
+}
 
-      // Extract video ID from YouTube URL
-      let videoId = "";
-      const regExp =
-        /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-      const match = url.match(regExp);
+type InputMode = "link" | "video" | null;
 
-      if (match && match[2].length === 11) {
-        videoId = match[2];
-        const embedUrl = `https://www.youtube.com/embed/${videoId}`;
-        quill.insertEmbed(range.index, "video", embedUrl);
-      } else {
-        setShowLinkInput(true);
-      }
-    }
+const Description: React.FC<DescriptionPropsType> = ({
+  mutate,
+  selectedBlockData,
+}) => {
+  const [value, setValue] = useState<string>(
+    selectedBlockData.descriptionHtml || ""
+  );
+  const [showInput, setShowInput] = useState<boolean>(false);
+  const [inputMode, setInputMode] = useState<InputMode>(null);
+  const [inputUrl, setInputUrl] = useState<string>("");
+  const [inputRange, setInputRange] = useState<QuillRange | null>(null);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
+
+  const quillRef = useRef<ReactQuill | null>(null);
+
+  useEffect(() => {
+    setIsInitialized(true);
+  }, []);
+
+  const extractYouTubeId = (url: string): string | null => {
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : null;
   };
 
-  // Custom link handler
-  const linkHandler = () => {
+  // Custom video handler
+  const videoHandler = useCallback(() => {
+    if (!quillRef.current) return;
+
     const quill = quillRef.current.getEditor();
     const range = quill.getSelection();
 
     if (range) {
-      setLinkRange(range);
-      setShowLinkInput(true);
+      setInputRange(range);
+      setInputMode("video");
+      setShowInput(true);
+      setInputUrl("");
+    }
+  }, []);
 
-      // Get existing link if text is already linked
+  // Custom link handler
+  const linkHandler = useCallback(() => {
+    if (!quillRef.current) return;
+
+    const quill = quillRef.current.getEditor();
+    const range = quill.getSelection();
+
+    if (range) {
+      setInputRange(range);
+      setInputMode("link");
+      setShowInput(true);
+
       const format = quill.getFormat(range);
-      if (format.link) {
-        setLinkUrl(format.link);
-      } else {
-        setLinkUrl("");
-      }
+      setInputUrl(format.link || "");
     }
-  };
+  }, []);
 
-  // Apply link
-  const applyLink = () => {
-    if (linkRange && quillRef.current) {
-      const quill = quillRef.current.getEditor();
-      quill.setSelection(linkRange);
-
-      if (linkUrl.trim()) {
-        quill.format("link", linkUrl);
-      } else {
-        quill.format("link", false); // Remove link
-      }
+  const applyInput = useCallback(() => {
+    if (!inputRange || !quillRef.current || !inputUrl.trim()) {
+      cancelInput();
+      return;
     }
 
-    setShowLinkInput(false);
-    setLinkUrl("");
-    setLinkRange(null);
-  };
+    const quill = quillRef.current.getEditor();
+    quill.setSelection(inputRange);
 
-  // Cancel link input
-  const cancelLink = () => {
-    setShowLinkInput(false);
-    setLinkUrl("");
-    setLinkRange(null);
-  };
+    if (inputMode === "link") {
+      quill.format("link", inputUrl);
+    } else if (inputMode === "video") {
+      const videoId = extractYouTubeId(inputUrl);
+      if (videoId) {
+        const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        quill.insertEmbed(inputRange.index, "video", embedUrl);
+      } else {
+        alert("Please enter a valid YouTube URL");
+        return;
+      }
+    }
+
+    cancelInput();
+  }, [inputRange, inputUrl, inputMode]);
+
+  const cancelInput = useCallback(() => {
+    setShowInput(false);
+    setInputUrl("");
+    setInputRange(null);
+    setInputMode(null);
+  }, []);
+
+  const handleInputKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        applyInput();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        cancelInput();
+      }
+    },
+    [applyInput, cancelInput]
+  );
 
   const modules = {
     toolbar: {
       container: [
-        ["bold", "italic"], // Bold + Italic
-        ["link", "video"], // Link + YouTube/video embed
+        ["bold", "italic"],
+        ["link", "video"],
       ],
       handlers: {
         video: videoHandler,
@@ -91,16 +137,47 @@ export default function Description() {
 
   const formats = ["bold", "italic", "link", "video"];
 
-  const handleChange = (content, delta, source, editor) => {
-    // Update the state with the HTML content
-    setValue(content);
+  const handleChange = useCallback(
+    (content: string, delta: any, source: string, editor: any) => {
+      if (!isInitialized || source !== "user") {
+        return;
+      }
 
-    // Log all the values you might need
-    console.log("HTML Content:", content);
-    console.log("Plain Text:", editor.getText());
-    console.log("Delta (Rich Content):", editor.getContents());
-    console.log("Current State Value:", content);
+      console.log("handleChange called - source:", source);
+      setValue(content);
+      debouncedDescriptionUpdate(content, delta);
+
+      console.log("HTML Content:", content);
+      console.log("Plain Text:", editor.getText());
+      console.log("Delta (Rich Content):", editor.getContents());
+    },
+    [isInitialized]
+  );
+
+  const debouncedDescriptionUpdate = useDebouncedCallback(
+    (html: string, delta: any) => {
+      console.log("Saving content:", html);
+      const updateData: Partial<UpdateBlockPayload> = {};
+
+      if (delta) {
+        updateData.descriptionHtml = html;
+        updateData.descriptionDelta = delta;
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        mutate(updateData);
+      }
+    },
+    DefaultDebounceTime
+  );
+
+  const getInputPlaceholder = (): string => {
+    return inputMode === "video" ? "Enter YouTube URL..." : "Enter link URL...";
   };
+
+  useEffect(() => {
+    setValue(selectedBlockData.descriptionHtml || value);
+  }, [selectedBlockData.descriptionHtml]);
 
   return (
     <div>
@@ -108,33 +185,28 @@ export default function Description() {
         Description
       </label>
       <div className="quill-container relative">
-        {/* Custom Link Input Toolbar */}
-        {showLinkInput && (
-          <div className="absolute custom-link-toolbar bg-gray-100 border border-gray-300 p-1 flex items-center gap-2 w-full">
+        {showInput && (
+          <div className="absolute custom-input-toolbar bg-gray-100 border border-gray-300 p-1 flex items-center gap-2 w-full z-10">
             <input
               type="text"
-              value={linkUrl}
-              onChange={(e) => setLinkUrl(e.target.value)}
-              placeholder="Enter link URL..."
+              value={inputUrl}
+              onChange={(e) => setInputUrl(e.target.value)}
+              placeholder={getInputPlaceholder()}
               className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               autoFocus
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  applyLink();
-                } else if (e.key === "Escape") {
-                  cancelLink();
-                }
-              }}
+              onKeyDown={handleInputKeyDown}
             />
             <button
-              onClick={applyLink}
+              onClick={applyInput}
               className="bg-gray-600 text-white px-3 py-2 rounded-md text-sm hover:bg-gray-700 flex items-center justify-center"
+              title="Apply"
             >
               ✓
             </button>
             <button
-              onClick={cancelLink}
+              onClick={cancelInput}
               className="bg-gray-400 text-white px-3 py-2 rounded-md text-sm hover:bg-gray-500 flex items-center justify-center"
+              title="Cancel"
             >
               ✕
             </button>
@@ -149,7 +221,7 @@ export default function Description() {
           modules={modules}
           formats={formats}
           placeholder="Enter your description here..."
-          className={showLinkInput ? "no-top-border" : ""}
+          className={showInput ? "no-top-border" : ""}
         />
       </div>
 
@@ -158,7 +230,7 @@ export default function Description() {
           background-color: #f3f4f6 !important;
           border-radius: 8px 8px 0 0;
           border-bottom: 1px solid #d1d5db;
-          ${showLinkInput ? "display: none;" : ""}
+          ${showInput ? "display: none;" : ""}
         }
 
         .quill-container .ql-container {
@@ -171,9 +243,14 @@ export default function Description() {
           border-radius: 0 0 8px 8px;
         }
 
-        .custom-link-toolbar + .ql-container {
+        .custom-input-toolbar + .ql-container {
           border-top: none;
           border-radius: 0 0 8px 8px;
+        }
+
+        .custom-input-toolbar {
+          border-bottom: 1px solid #d1d5db;
+          border-radius: 8px 8px 0 0;
         }
 
         .quill-container .ql-editor {
@@ -205,12 +282,9 @@ export default function Description() {
           font-size: 14px;
           line-height: 1;
         }
-
-        /* Custom link input toolbar styling */
-        .custom-link-toolbar {
-          border-bottom: 1px solid #d1d5db;
-        }
       `}</style>
     </div>
   );
-}
+};
+
+export default Description;

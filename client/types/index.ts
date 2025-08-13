@@ -13,4 +13,11 @@ export type BlockType = {
   defaultButtonText?: string;
   buttonText?: string;
   defaultPlaceholder?: string;
+  textAlign: "left" | "center";
+  descriptionHtml?: string;
+  descriptionDelta?: any;
+  coverImageLayout?: CoverImageLayout;
 };
+
+export type TextAlignType = "center" | "left";
+export type CoverImageLayout = "stack" | "split" | "wallpaper";
