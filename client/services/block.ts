@@ -1,12 +1,13 @@
 import { UpdateBlockPayload } from "@/hooks/useUpdateCommonBlockFields";
 import apiClient from "@/lib/apiClient";
+import { DefaultBlockDataType } from "@/types";
 
 export async function updateBlockField(id: string, data: UpdateBlockPayload) {
   const res = await apiClient.patch(`/blocks/${id}`, data);
   return res.data;
 }
 
-export async function createStatementBlock(data: any) {
+export async function createStatementBlock(data: DefaultBlockDataType) {
   const res = await apiClient.post("/blocks", data);
   return res.data;
 }

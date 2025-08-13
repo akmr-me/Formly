@@ -3,10 +3,10 @@ import { AlignType, BlockType } from "../../generated/prisma/enum";
 
 export const baseBlockSchema = z.object({
   type: z.enum(BlockType),
-  title: z.string().min(1).max(255).trim(),
-  titleLabel: z.string().min(1).max(255).trim(),
+  title: z.string().min(0).max(255).trim(),
+  titleLabel: z.string().min(0).max(255).trim(),
   textAlign: z.enum(AlignType),
-  buttonText: z.string().min(1).max(255).trim(),
+  buttonText: z.string().min(0).max(255).trim(),
   formId: z.string().length(8),
   position: z.float32(),
 });

@@ -1,4 +1,4 @@
-import { DefaultDebounceTime } from "@/constants";
+import { DefaultDebounceTime, SupportedQuillEditorFormats } from "@/constants";
 import { UpdateBlockPayload } from "@/hooks/useUpdateCommonBlockFields";
 import { BlockType } from "@/types";
 import { UseMutateFunction } from "@tanstack/react-query";
@@ -45,14 +45,14 @@ const Description: React.FC<DescriptionPropsType> = ({
     return match && match[2].length === 11 ? match[2] : null;
   };
 
-  // Custom video handler
+  // video handler
   const videoHandler = useCallback(() => {
     if (!quillRef.current) return;
 
     const quill = quillRef.current.getEditor();
     const range = quill.getSelection();
 
-    if (range) {
+    if (range !== null) {
       setInputRange(range);
       setInputMode("video");
       setShowInput(true);
@@ -60,7 +60,7 @@ const Description: React.FC<DescriptionPropsType> = ({
     }
   }, []);
 
-  // Custom link handler
+  // link handler
   const linkHandler = useCallback(() => {
     if (!quillRef.current) return;
 
@@ -73,7 +73,7 @@ const Description: React.FC<DescriptionPropsType> = ({
       setShowInput(true);
 
       const format = quill.getFormat(range);
-      setInputUrl(format.link || "");
+      setInputUrl((format.link as string) || "");
     }
   }, []);
 
@@ -134,8 +134,6 @@ const Description: React.FC<DescriptionPropsType> = ({
       },
     },
   };
-
-  const formats = ["bold", "italic", "link", "video"];
 
   const handleChange = useCallback(
     (content: string, delta: any, source: string, editor: any) => {
@@ -219,7 +217,7 @@ const Description: React.FC<DescriptionPropsType> = ({
           value={value}
           onChange={handleChange}
           modules={modules}
-          formats={formats}
+          formats={SupportedQuillEditorFormats}
           placeholder="Enter your description here..."
           className={showInput ? "no-top-border" : ""}
         />

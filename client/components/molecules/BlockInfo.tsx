@@ -1,6 +1,5 @@
 import useUpdateBlockIdInUrl from "@/hooks/useUpdateBlockIdInUrl";
 import { BlockType } from "@/types";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 type BlockInfoProps = BlockType & {
@@ -37,7 +36,7 @@ export default function BlockInfo({
       <div className="flex items-center space-x-2">
         <span className="text-sm">{icon}</span>
         <span className="text-sm font-medium">
-          {position}. {label || "Untitled"}
+          {position}. {label}
         </span>
       </div>
       {

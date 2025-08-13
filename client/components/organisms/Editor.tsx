@@ -4,7 +4,7 @@ import Embed from "../molecules/editor/Embed";
 import TextAlign from "../molecules/editor/TextAlign";
 import CoverImage from "../molecules/editor/CoverImage";
 import { ImageLayout } from "../molecules/editor/ImageLayout";
-import { BlockType } from "@/types";
+import { BlockType, TextAlignType } from "@/types";
 import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { DefaultDebounceTime } from "@/constants";
@@ -17,19 +17,22 @@ type EditorProp = {
 };
 
 export default function Editor({ selectedBlockData }: EditorProp) {
+  const {
+    title: defaultTitle,
+    buttonText: defaultButtonText,
+    type,
+  } = selectedBlockData || {};
+
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const blockId = searchParams.get("block_id") as string;
 
-  const {
-    title: defaultTitle,
-    buttonText: defaultButtonText,
-    textAlign,
-    type,
-  } = selectedBlockData || {};
+  const [textAlign, setTextAlign] = useState<TextAlignType>(
+    selectedBlockData?.textAlign
+  );
 
-  const [title, setTitle] = useState<string>(defaultTitle || "");
-  const [buttonText, setButtonText] = useState<string>(defaultButtonText || "");
+  const [title, setTitle] = useState<string>(defaultTitle);
+  const [buttonText, setButtonText] = useState<string>(defaultButtonText);
   const { mutate, isPending } = useUpdateCommonBlockFields(blockId, type);
 
   const debouncedTitleUpdate = useDebouncedCallback((value: string) => {
@@ -43,11 +46,13 @@ export default function Editor({ selectedBlockData }: EditorProp) {
   }, DefaultDebounceTime);
 
   useEffect(() => {
-    setTitle(defaultTitle || "");
+    if (typeof defaultTitle !== "string") setTitle("");
+    else setTitle(defaultTitle);
   }, [defaultTitle]);
 
   useEffect(() => {
-    setButtonText(defaultButtonText || "");
+    if (typeof defaultButtonText !== "string") setButtonText("");
+    else setButtonText(defaultButtonText);
   }, [defaultButtonText]);
 
   const handleUploadComplete = () => {
@@ -57,6 +62,15 @@ export default function Editor({ selectedBlockData }: EditorProp) {
   const coverImageUrl =
     (selectedBlockData?.coverImageOrigin || "") +
     (selectedBlockData?.coverImagePath || "");
+
+  const handleUpdateAlign = (newTextAlign: TextAlignType) => {
+    setTextAlign(newTextAlign);
+    mutate({ textAlign: newTextAlign });
+  };
+
+  useEffect(() => {
+    setTextAlign(selectedBlockData.textAlign);
+  }, [selectedBlockData.textAlign]);
 
   return (
     <div className="w-95 bg-white border-l border-gray-200 overflow-y-auto">
@@ -74,7 +88,10 @@ export default function Editor({ selectedBlockData }: EditorProp) {
 
         <Embed />
 
-        <TextAlign textAlign={textAlign} mutate={mutate} />
+        <TextAlign
+          textAlign={textAlign}
+          handleUpdateAlign={handleUpdateAlign}
+        />
 
         <InputWithLabel
           title="Button Text"

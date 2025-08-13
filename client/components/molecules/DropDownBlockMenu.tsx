@@ -19,6 +19,16 @@ const BlockDropdownMenu = ({
   onDelete,
   setDropdownOpen,
 }: BlockDropdownMenuProps) => {
+  const handleDuplicate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDuplicate();
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete();
+  };
+
   return (
     <DropdownMenu onOpenChange={setDropdownOpen}>
       <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
@@ -35,10 +45,7 @@ const BlockDropdownMenu = ({
         className="w-40 bg-white border border-gray-200 shadow-lg rounded-md"
       >
         <DropdownMenuItem
-          onClick={(e) => {
-            e.stopPropagation();
-            onDuplicate();
-          }}
+          onClick={handleDuplicate}
           className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
         >
           {/* <Copy className="h-4 w-4" /> */}
@@ -46,10 +53,7 @@ const BlockDropdownMenu = ({
           {/* <span className="text-gray-400 text-xs ml-auto">Ctrl Shift D</span> */}
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
+          onClick={handleDelete}
           className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
         >
           {/* <Trash2 className="h-4 w-4" /> */}

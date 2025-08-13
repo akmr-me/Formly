@@ -21,14 +21,11 @@ export default function LeftSideBarContainer({
     enabled: !!formId,
   });
 
-  console.log("formId", formId, data);
-
   const formBlocks = (data?.blocks || []).map((block: BlockType) => ({
     ...block,
     color: BlockTypeMap[block.type].color,
   }));
 
-  console.log("why it is not changed", formBlocks, data);
   return (
     <LeftSideBar
       handleOpenChooseBlockModal={handleOpenChooseBlockModal}

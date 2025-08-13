@@ -36,3 +36,17 @@ export const DeleteConfirmation = {
   confirmVariant: "destructive",
   cancelText: "Cancel",
 };
+
+export const allowedTypes = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+];
+
+export const ValidImageTypeError =
+  "Please select a valid image file (JPEG, PNG, GIF, WebP)";
+export const MaxSizeImageError = "File size must be less than 5MB";
+
+export const SupportedQuillEditorFormats = ["bold", "italic", "link", "video"];

@@ -13,16 +13,15 @@ export type BlockDisplayLayoutProps = {
   imageLayout?: string;
 };
 export default function BlockDisplayLayout({
-  title = "",
-  description = "",
-  buttonText = "",
+  title,
+  description,
+  buttonText,
   onButtonClick = () => {},
   children,
   textAlign,
   imageUrl,
   imageLayout,
 }: BlockDisplayLayoutProps) {
-  console.log("text alignt", { textAlign });
   return (
     <div
       className={cn(

@@ -1,28 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { UpdateBlockPayload } from "@/hooks/useUpdateCommonBlockFields";
 import { TextAlignType } from "@/types";
-import { UseMutateFunction } from "@tanstack/react-query";
 import { AlignCenter, AlignLeft } from "lucide-react";
-import { useEffect, useState } from "react";
 
 type AlignProps = {
   textAlign: TextAlignType;
-  mutate: UseMutateFunction<any, Error, Partial<UpdateBlockPayload>, unknown>;
+  handleUpdateAlign: (textAlign: TextAlignType) => void;
 };
 
-export default function TextAlign({ textAlign, mutate }: AlignProps) {
-  const [align, setAlign] = useState(textAlign || "left");
-
-  const handleUpdateAlign = (newAlign: TextAlignType) => {
-    setAlign(newAlign);
-    mutate({ textAlign: newAlign });
-  };
-
-  useEffect(() => {
-    setAlign(textAlign);
-  }, [textAlign]);
-
+export default function TextAlign({
+  textAlign,
+  handleUpdateAlign,
+}: AlignProps) {
   return (
     <div>
       <Label className="text-sm font-semibold text-gray-700 mb-2 block">
@@ -33,7 +22,7 @@ export default function TextAlign({ textAlign, mutate }: AlignProps) {
           variant="outline"
           size="sm"
           className={`p-2 cursor-pointer ${
-            align === "left" ? "bg-gray-200 border-gray-400" : ""
+            textAlign === "left" ? "bg-gray-200 border-gray-400" : ""
           }`}
           onClick={() => handleUpdateAlign("left")}
         >
@@ -43,7 +32,7 @@ export default function TextAlign({ textAlign, mutate }: AlignProps) {
           variant="outline"
           size="sm"
           className={`p-2 cursor-pointer ${
-            align === "center" ? "bg-gray-200 border-gray-400" : ""
+            textAlign === "center" ? "bg-gray-200 border-gray-400" : ""
           }`}
           onClick={() => handleUpdateAlign("center")}
         >

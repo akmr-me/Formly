@@ -35,7 +35,7 @@ export default function LeftSideBar({
             <BlockInfo
               key={block.id}
               {...block}
-              label={block.title || ""}
+              label={block.title}
               position={index + 1}
               dropdownOpen={dropdownOpen}
               HoverComponent={

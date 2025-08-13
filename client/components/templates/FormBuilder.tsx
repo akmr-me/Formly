@@ -3,9 +3,8 @@ import React, { useState } from "react";
 import BlockDisplayHeader from "@/components/organisms/BlockDisplayHeder";
 import BlockDisplay from "@/components/organisms/BlockDisplay";
 import Editor from "@/components/organisms/Editor";
-import MobileWarning from "@/components/organisms/MobileWarning";
+import MobileWarning from "@/components/molecules/MobileWarning";
 import FormBuilderHeader from "@/components/organisms/FormBuilderHeader";
-import LeftSideBar from "@/components/organisms/LeftSideBar";
 import ChooseBlockModal from "../organisms/ChooseBlockModal";
 import { formBlocks } from "@/constants/blockTypes";
 import { useSearchParams } from "next/navigation";
@@ -32,7 +31,7 @@ const FormBuilder = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenChooseBlockModal = () => setIsModalOpen(true);
-  console.log({ selectedBlockData, blockId });
+
   return (
     <div className="relative h-screen flex flex-col bg-gray-50">
       {isLoading && (
