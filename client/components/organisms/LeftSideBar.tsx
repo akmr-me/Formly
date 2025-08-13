@@ -4,6 +4,8 @@ import BlockInfo from "../molecules/BlockInfo";
 import { useState } from "react";
 import { BlockType } from "@/types";
 import BlockDropdownMenuContainer from "../containers/BlockDropDownMenuContainer";
+import CustomTooltip from "../molecules/CustomTooltip";
+import { AddNewBlockHoverText } from "@/constants";
 
 type LeftSideBarProps = {
   formBlocks: BlockType[];
@@ -21,13 +23,15 @@ export default function LeftSideBar({
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold text-gray-800">Blocks</h3>
-          <Button
-            size="sm"
-            className="w-6 h-6 rounded-full p-0"
-            onClick={handleOpenChooseBlockModal}
-          >
-            <Plus className="w-3 h-3" />
-          </Button>
+          <CustomTooltip hoverContent={<span>{AddNewBlockHoverText}</span>}>
+            <Button
+              size="sm"
+              className="w-6 h-6 rounded-full p-0"
+              onClick={handleOpenChooseBlockModal}
+            >
+              <Plus className="w-3 h-3" />
+            </Button>
+          </CustomTooltip>
         </div>
 
         <div className="space-y-2">

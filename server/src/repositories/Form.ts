@@ -1,3 +1,4 @@
+import { sql } from "kysely";
 import { db } from "../config/db";
 import { Form as TForm, Block as TBlock } from "../generated/prisma/kysely";
 import ApiError from "../utils/ApiError";
@@ -57,6 +58,8 @@ class Form {
       createdAt: flatResults[0].createdAt,
       // @ts-ignore
       updatedAt: flatResults[0].updatedAt,
+      // @ts-ignore
+      status: flatResults[0].status,
       blocks: [],
     };
 
@@ -149,7 +152,129 @@ class Form {
     }
   }
 
-  //
+  // publish form
+
+  async publishForm(shortId: string) {
+    await db.transaction().execute(async (trx) => {
+      // 1. Publish the form
+      const form = await trx
+        .updateTable("Form")
+        .set({ status: "publish" })
+        .where("shortId", "=", shortId)
+        .returningAll()
+        .executeTakeFirstOrThrow();
+
+      // 2. Fetch all blocks + options for this form
+      const blocks = await trx
+        .selectFrom("Block")
+        .selectAll()
+        .where("formId", "=", shortId)
+        .execute();
+
+      if (blocks.length === 0) return form;
+
+      // all blockIds
+      const blockIds = blocks.map((b) => b.id);
+
+      // all blockOptions for these blocks
+      const blockOptions = await trx
+        .selectFrom("BlockOption")
+        .selectAll()
+        .where("blockId", "in", blockIds)
+        .execute();
+
+      // 3. update if exists, insert if not
+      for (const block of blocks) {
+        const { createdAt, updatedAt, ...copyBlockData } = block;
+        const updatedBlockData = {
+          ...copyBlockData,
+          updatedAt: new Date(),
+        };
+        const updated = await trx
+          .updateTable("PublishedBlock")
+          .set(updatedBlockData)
+          .where("id", "=", block.id)
+          .executeTakeFirst();
+
+        if (!updated?.numUpdatedRows || Number(updated.numUpdatedRows) === 0) {
+          await trx
+            .insertInto("PublishedBlock")
+            .values(updatedBlockData)
+            .execute();
+        }
+      }
+
+      // 4. CopyBlockOption (insert/update/delete)
+      for (const blockId of blockIds) {
+        const sourceOptions = blockOptions.filter(
+          (opt) => opt.blockId === blockId
+        );
+
+        // Get existing copyBlockOptions for this block
+        const existingOptions = await trx
+          .selectFrom("PublishedBlockOption")
+          .selectAll()
+          .where("publishedBlockId", "=", blockId)
+          .execute();
+
+        const existingIds = new Set(existingOptions.map((opt) => opt.id));
+        const sourceIds = new Set(sourceOptions.map((opt) => opt.id));
+
+        // 4.1 Insert or update options
+        for (const opt of sourceOptions) {
+          const { blockId: publishedBlockId, ...restCommonOption } = opt;
+          if (existingIds.has(opt.id)) {
+            // update
+            await trx
+              .updateTable("PublishedBlockOption")
+              .set(opt)
+              .where("id", "=", opt.id)
+              .execute();
+          } else {
+            // insert
+            await trx
+              .insertInto("PublishedBlockOption")
+              .values({ ...restCommonOption, publishedBlockId })
+              .execute();
+          }
+        }
+
+        // 4.2 remove options no longer present in source
+        const toDelete = [...existingIds].filter((id) => !sourceIds.has(id));
+        if (toDelete.length > 0) {
+          await trx
+            .deleteFrom("PublishedBlockOption")
+            .where("id", "in", toDelete)
+            .execute();
+        }
+      }
+
+      return form;
+    });
+  }
+
+  // get paginated published blocks
+  async getPaginatedPublishedBlocks(
+    shortId: string,
+    page: number,
+    limit: number
+  ) {
+    const form = await db
+      .selectFrom("PublishedBlock")
+      .selectAll()
+      .where("formId", "=", shortId)
+      .limit(limit)
+      .offset((page - 1) * limit)
+      .executeTakeFirstOrThrow();
+    const countResult = await db
+      .selectFrom("PublishedBlock")
+      .select(sql<number>`count(*)`.$as("totalCount"))
+      .where("formId", "=", shortId)
+      .executeTakeFirst();
+
+    const totalCount = countResult?.totalCount ?? 0;
+    return form;
+  }
 }
 
 export default new Form();

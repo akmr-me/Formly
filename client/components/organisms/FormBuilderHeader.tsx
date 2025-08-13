@@ -9,8 +9,19 @@ import {
   Crown,
 } from "lucide-react";
 import { Button } from "../ui/button";
+import { PublishStatusType } from "@/types";
 
-export default function FormBuilderHeader() {
+type FormBuilderHeaderProps = {
+  onPublish: () => void;
+  formStatus: PublishStatusType;
+  isPublishing: boolean;
+};
+
+export default function FormBuilderHeader({
+  onPublish,
+  formStatus,
+  isPublishing,
+}: FormBuilderHeaderProps) {
   return (
     <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
       <div className="flex items-center space-x-4">
@@ -53,9 +64,13 @@ export default function FormBuilderHeader() {
         <Button variant="ghost" size="sm">
           <Share className="w-4 h-4" />
         </Button>
-        <Button className="bg-black text-white hover:bg-gray-800">
+        <Button
+          className="bg-black text-white hover:bg-gray-800"
+          onClick={onPublish}
+          disabled={isPublishing || formStatus === "publish"}
+        >
           <Crown className="w-4 h-4 mr-1" />
-          Publish
+          {isPublishing ? "Publishing..." : "Publish"}
         </Button>{" "}
       </div>
     </header>

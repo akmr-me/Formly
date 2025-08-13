@@ -20,6 +20,7 @@ export type BlockType = {
   coverImageOrigin?: string;
   coverImagePath?: string;
   position: number;
+  optionalConfig?: Record<string, unknown>;
 };
 
 export type TextAlignType = "center" | "left";

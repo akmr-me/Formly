@@ -9,6 +9,7 @@ export type UpdateBlockPayload = {
   type: string;
   textAlign?: TextAlignType;
   coverImageLayout?: CoverImageLayout;
+  optionalConfig?: Record<string, unknown>;
 };
 
 export function useUpdateCommonBlockFields(blockId: string, type: string) {

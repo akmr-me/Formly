@@ -50,3 +50,7 @@ export const ValidImageTypeError =
 export const MaxSizeImageError = "File size must be less than 5MB";
 
 export const SupportedQuillEditorFormats = ["bold", "italic", "link", "video"];
+
+export const EmbedAddButtonHoverText = "Embed Loom, Vimeo, Pdf anything.";
+export const EmbedInputPlaceholder = "E.g. https://www.loom.com/share/...";
+export const AddNewBlockHoverText = "Add a new block";

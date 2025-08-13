@@ -30,3 +30,25 @@ export async function getFormWithBlocksService(formId: string) {
     console.log("getFormWithBlocks error", error);
   }
 }
+
+export async function publishFormService(shortFormId: string) {
+  try {
+    const form = await formRespository.publishForm(shortFormId);
+    return form;
+  } catch (error) {
+    console.log("publishForm error", error);
+  }
+}
+
+export async function getPaginatedPublishedBlocksService(
+  shortFormId: string,
+  page: number,
+  limit: number = 1
+) {
+  try {
+    const form = await formRespository.getPaginatedPublishedBlocks(shortFormId);
+    return form;
+  } catch (error) {
+    console.log("getPaginatedPublishedBlocks error", error);
+  }
+}

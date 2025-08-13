@@ -12,6 +12,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getBlockById } from "@/services/block";
 import { LoaderCircle } from "lucide-react";
 import LeftSideBarContainer from "../containers/LeftSideBarContainer";
+import FormBuilderHeaderContainer from "../containers/FormBuilderHeaderContainer";
 
 const FormBuilder = () => {
   const searchParams = useSearchParams();
@@ -29,8 +30,21 @@ const FormBuilder = () => {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [shouldShakeTitleInput, setShouldShakeTitleInput] = useState(false);
+  const [shouldShakeButtonTextInput, setShouldShakeButtonTextInput] =
+    useState(false);
 
   const handleOpenChooseBlockModal = () => setIsModalOpen(true);
+
+  const triggerShakeTitleInput = () => {
+    setShouldShakeTitleInput(true);
+    setTimeout(() => setShouldShakeTitleInput(false), 500);
+  };
+
+  const triggerShakeButtonTextInput = () => {
+    setShouldShakeButtonTextInput(true);
+    setTimeout(() => setShouldShakeButtonTextInput(false), 500);
+  };
 
   return (
     <div className="relative h-screen flex flex-col bg-gray-50">
@@ -43,7 +57,7 @@ const FormBuilder = () => {
       <MobileWarning />
 
       <div className="hidden md:flex flex-col h-screen">
-        <FormBuilderHeader />
+        <FormBuilderHeaderContainer />
 
         <div className="flex flex-1 overflow-hidden">
           <LeftSideBarContainer
@@ -59,12 +73,21 @@ const FormBuilder = () => {
             <BlockDisplayHeader
               handleOpenChooseBlockModal={handleOpenChooseBlockModal}
             />
-
-            <BlockDisplay selectedBlockData={selectedBlockData} />
+            <div className="h-full relative overflow-hidden">
+              <BlockDisplay
+                selectedBlockData={selectedBlockData}
+                triggerShakeButtonTextInput={triggerShakeButtonTextInput}
+                triggerShakeTitleInput={triggerShakeTitleInput}
+              />
+            </div>
           </div>
 
           {/* Right Sidebar */}
-          <Editor selectedBlockData={selectedBlockData} />
+          <Editor
+            selectedBlockData={selectedBlockData}
+            shouldShakeButtonTextInput={shouldShakeButtonTextInput}
+            shouldShakeTitleInput={shouldShakeTitleInput}
+          />
         </div>
       </div>
     </div>

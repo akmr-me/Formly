@@ -30,8 +30,9 @@ model Form {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
-  blocks    Block[]
-  responses Response[]
+  blocks          Block[]
+  responses       Response[]
+  publishedBlocks PublishedBlock[]
 
   @@unique([shortId])
   @@index([shortId])
@@ -130,11 +131,15 @@ model ResponseValue {
   blockId String @db.Uuid
   block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
 
+  publishedBlockId String         @db.Uuid
+  publishedBlock   PublishedBlock @relation(fields: [publishedBlockId], references: [id], onDelete: Cascade)
+
   value String // stringify the value
   type  ValueType
 
   @@index([responseId])
   @@index([blockId])
+  @@index([publishedBlockId])
 }
 
 enum ValueType {
@@ -142,4 +147,46 @@ enum ValueType {
   NUMBER
   DATE
   JSON
+}
+
+// 
+model PublishedBlock {
+  id               String            @id @db.Uuid
+  title            String
+  titleLabel       TitleLabelType
+  descriptionDelta Json?
+  descriptionHtml  String?
+  textAlign        AlignType?
+  buttonText       String?
+  coverImageOrigin String?
+  coverImagePath   String?
+  coverImageLayout CoverImageLayout?
+  required         Boolean?          @default(false)
+  optionalConfig   Json?
+  formId           String            @db.VarChar(8)
+  type             BlockType
+  position         Float
+  placeholder      String?
+  urlParameter     String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  form         Form                   @relation(fields: [formId], references: [shortId], onDelete: Cascade)
+  blockOptions PublishedBlockOption[]
+  responses    ResponseValue[]
+
+  @@unique([formId, position])
+  @@index([formId, position])
+}
+
+model PublishedBlockOption {
+  id               String         @id @db.Uuid
+  label            String
+  // value    String // label and value will be the same
+  selected         Boolean        @default(false)
+  order            Int?
+  publishedBlockId String         @db.Uuid
+  publishedBlock   PublishedBlock @relation(fields: [publishedBlockId], references: [id], onDelete: Cascade)
+
+  @@index([publishedBlockId])
 }
