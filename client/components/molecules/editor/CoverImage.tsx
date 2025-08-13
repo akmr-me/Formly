@@ -64,7 +64,8 @@ const CoverImage: React.FC<CoverImageProps> = ({
     const formData = new FormData();
     formData.append("file", file);
     formData.append("type", type);
-    formData.append("coverImageLayout", coverImageLayout);
+    // coverImageLayout default value is set to null at db level so we need to set it to stack
+    formData.append("coverImageLayout", coverImageLayout ?? "stack");
 
     try {
       setUploadState({ isUploading: true, progress: 0, error: "" });
@@ -83,7 +84,6 @@ const CoverImage: React.FC<CoverImageProps> = ({
         },
       });
 
-      // Assuming the API returns { url: "uploaded-image-url" }
       const uploadedUrl = response.data.url;
       setUploadState({ isUploading: false, progress: 100, error: "" });
 

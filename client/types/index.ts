@@ -1,5 +1,5 @@
 export type BlockType = {
-  id: number;
+  id: string;
   type: string;
   parentType?: string;
   label: string;
@@ -15,7 +15,7 @@ export type BlockType = {
   defaultPlaceholder?: string;
   textAlign: "left" | "center";
   descriptionHtml?: string;
-  descriptionDelta?: any;
+  descriptionDelta?: Record<string, unknown>;
   coverImageLayout?: CoverImageLayout;
 };
 

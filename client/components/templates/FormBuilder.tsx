@@ -12,6 +12,7 @@ import { useSearchParams } from "next/navigation";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getBlockById } from "@/services/block";
 import { LoaderCircle } from "lucide-react";
+import LeftSideBarContainer from "../containers/LeftSideBarContainer";
 
 const FormBuilder = () => {
   const searchParams = useSearchParams();
@@ -27,8 +28,7 @@ const FormBuilder = () => {
     queryFn: () => getBlockById(blockId as string),
     placeholderData: keepPreviousData,
   });
-  console.log(selectedBlockData);
-  const [selectedBlock, setSelectedBlock] = useState(1);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenChooseBlockModal = () => setIsModalOpen(true);
@@ -47,9 +47,7 @@ const FormBuilder = () => {
         <FormBuilderHeader />
 
         <div className="flex flex-1 overflow-hidden">
-          <LeftSideBar
-            selectedBlock={selectedBlock}
-            setSelectedBlock={setSelectedBlock}
+          <LeftSideBarContainer
             handleOpenChooseBlockModal={handleOpenChooseBlockModal}
           />
 

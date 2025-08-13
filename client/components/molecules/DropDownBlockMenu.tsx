@@ -32,7 +32,7 @@ const BlockDropdownMenu = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-48 bg-white border border-gray-200 shadow-lg rounded-md"
+        className="w-40 bg-white border border-gray-200 shadow-lg rounded-md"
       >
         <DropdownMenuItem
           onClick={(e) => {
@@ -41,9 +41,9 @@ const BlockDropdownMenu = ({
           }}
           className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
         >
-          <Copy className="h-4 w-4" />
+          {/* <Copy className="h-4 w-4" /> */}
           Duplicate
-          <span className="text-gray-400 text-xs ml-auto">Ctrl Shift D</span>
+          {/* <span className="text-gray-400 text-xs ml-auto">Ctrl Shift D</span> */}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={(e) => {
@@ -52,7 +52,7 @@ const BlockDropdownMenu = ({
           }}
           className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
         >
-          <Trash2 className="h-4 w-4" />
+          {/* <Trash2 className="h-4 w-4" /> */}
           Delete
         </DropdownMenuItem>
       </DropdownMenuContent>

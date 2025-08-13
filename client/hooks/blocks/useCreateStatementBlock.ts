@@ -23,7 +23,7 @@ export function useCreateStatementBlock() {
   // shortId: z.string().length(8),
 
   return useMutation({
-    mutationFn: (additionalData) => {
+    mutationFn: (additionalData: { shortId: string }) => {
       const { type, titleLabel, titleDefaultValue, defaultButtonText } =
         formBlocks.find((block) => block.type === "statement") || {};
       const fullData = {
