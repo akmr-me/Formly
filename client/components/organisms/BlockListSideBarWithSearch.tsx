@@ -1,45 +1,47 @@
-import { BlockType } from "@/types";
-import BlockInfo from "../molecules/BlockInfo";
 import { Input } from "../ui/input";
 import { useState } from "react";
+import { formBlocks } from "@/constants/blockTypes";
+import { ArrowRight, ArrowUp, ArrowUpRightFromSquare } from "lucide-react";
+import BlockInfoCreateNewBlockContainer from "../containers/blocks/BlockInfoCreateNewBlockContainer";
 
 type BlockListSideBarWithSearchProps = {
-  selectedBlock: number;
-  setSelectedBlock: React.Dispatch<React.SetStateAction<number>>;
-  blockTypes: BlockType[];
+  selectedBlock: string;
+  setSelectedBlock: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export default function BlockListSideBarWithSearch({
   selectedBlock,
   setSelectedBlock,
-  blockTypes,
 }: BlockListSideBarWithSearchProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredBlocks = blockTypes.filter((block) =>
+  const filteredBlocks = formBlocks.filter((block) =>
     block.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
-    <div className="w-70 overflow-y-auto">
-      <div className="p-4">
-        {/* Search Input */}
-        <div className="mb-4">
+    <div className="relative w-70 flex flex-col h-[90%]">
+      {/* Fixed Search Input */}
+
+      {/* Scrollable Block Types List */}
+      <div className="flex-1 overflow-y-auto p-4 scrollbar-hide">
+        <div className="border-b fixed w-64">
           <Input
             placeholder="Search blocks.."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full"
+            className="w-full bg-white"
           />
         </div>
-
-        {/* Block Types List */}
+        <div className="h-14" />
         <div className="space-y-2">
           {filteredBlocks.map((block) => (
-            <BlockInfo
+            <BlockInfoCreateNewBlockContainer
               key={block.id}
               {...block}
-              selectedBlock={selectedBlock}
-              setSelectedBlock={setSelectedBlock}
+              position={Number(block.id)}
+              selectedBlockid={selectedBlock}
+              onClickHandler={setSelectedBlock}
+              HoverComponent={<ArrowRight />}
             />
           ))}
         </div>

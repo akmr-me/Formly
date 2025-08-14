@@ -16,18 +16,18 @@ export const createBlockController = async (
   try {
     const { type } = req.body;
 
-    const blockServices: Record<string, (data: any) => Promise<any>> = {
-      statement: createStatementBlockService,
-      // shortText: createShortTextBlockService,
-      // other types mapped to services
-    };
+    // const blockServices: Record<string, (data: any) => Promise<any>> = {
+    //   statement: createStatementBlockService,
+    //   shortText: createStatementBlockService,
+    //   // other types mapped to services
+    // };
 
-    const service = blockServices[type];
-    if (!service) {
-      return res.status(400).json({ error: `Unsupported block type: ${type}` });
-    }
+    // const service = blockServices[type];
+    // if (!service) {
+    //   return res.status(400).json({ error: `Unsupported block type: ${type}` });
+    // }
 
-    const result = await service(req.body);
+    const result = await createStatementBlockService(req.body);
 
     return res.status(201).json(result);
   } catch (error) {

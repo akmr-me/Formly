@@ -11,6 +11,7 @@ export default function StatementDisplayContainer({
   const { optionalConfig } = selectedBlockData || {};
   console.log({ optionalConfig, selectedBlockData });
   if (!optionalConfig?.embed) return null;
+  console.log({ optionalConfig });
   return (
     <div className="flex items-center justify-center pb-4">
       {optionalConfig?.embed !== undefined && (

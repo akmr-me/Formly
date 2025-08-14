@@ -11,9 +11,12 @@ import { useUpdateCommonBlockFields } from "@/hooks/useUpdateCommonBlockFields";
 import { useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import EmbedContainer from "../containers/blocks/EmbedContainer";
+import OptionalCommonFields from "../containers/OptionalCommonFields";
+import LongTextCustomFieldsContainer from "../containers/blocks/custom/longText";
 
 const OptionalEditorFieldMap: Record<string, React.FC<T>> = {
   statement: EmbedContainer,
+  longText: LongTextCustomFieldsContainer,
 };
 
 type EditorProp = {
@@ -89,7 +92,7 @@ export default function Editor({
     <div className="w-95 bg-white border-l border-gray-200 overflow-y-auto">
       <div className="p-4 space-y-6">
         <InputWithLabel
-          title="Title"
+          title={selectedBlockData?.titleLabel || "Title"}
           value={title}
           onChange={(e) => {
             setTitle(e.target.value);
@@ -97,20 +100,15 @@ export default function Editor({
           }}
           shouldShakeInput={shouldShakeTitleInput}
         />
-
         <Description mutate={mutate} selectedBlockData={selectedBlockData} />
-
         {/* Optional editor block fields */}
-
-        {Boolean(OptionalConfigFields) && (
+        {Boolean(OptionalConfigFields && type === "statement") && (
           <OptionalConfigFields selectedBlockData={selectedBlockData} />
         )}
-
         <TextAlign
           textAlign={textAlign}
           handleUpdateAlign={handleUpdateAlign}
         />
-
         <InputWithLabel
           title="Button Text"
           value={buttonText}
@@ -120,7 +118,13 @@ export default function Editor({
           }}
           shouldShakeInput={shouldShakeButtonTextInput}
         />
+        {/* Most common Options fields */}
+        <OptionalCommonFields selectedBlockData={selectedBlockData} />
 
+        {/*  */}
+        {Boolean(OptionalConfigFields && type !== "statement") && (
+          <OptionalConfigFields selectedBlockData={selectedBlockData} />
+        )}
         <CoverImage
           onUploadComplete={handleUploadComplete}
           uploadEndpoint={`blocks/${blockId}/upload`}

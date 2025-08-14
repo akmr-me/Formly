@@ -13,6 +13,7 @@ import { getBlockById } from "@/services/block";
 import { LoaderCircle } from "lucide-react";
 import LeftSideBarContainer from "../containers/LeftSideBarContainer";
 import FormBuilderHeaderContainer from "../containers/FormBuilderHeaderContainer";
+import ChooseBlockModalContainer from "../containers/blocks/ChooseBlockModalContainer";
 
 const FormBuilder = () => {
   const searchParams = useSearchParams();
@@ -65,10 +66,10 @@ const FormBuilder = () => {
           />
 
           <div className="flex-1 flex flex-col p-2 bg-white justify-between relative">
-            <ChooseBlockModal
+            <ChooseBlockModalContainer
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
-              blockTypes={formBlocks}
+              setIsOpen={setIsModalOpen}
             />
             <BlockDisplayHeader
               handleOpenChooseBlockModal={handleOpenChooseBlockModal}
@@ -83,11 +84,15 @@ const FormBuilder = () => {
           </div>
 
           {/* Right Sidebar */}
-          <Editor
-            selectedBlockData={selectedBlockData}
-            shouldShakeButtonTextInput={shouldShakeButtonTextInput}
-            shouldShakeTitleInput={shouldShakeTitleInput}
-          />
+          {isModalOpen ? (
+            <div className="w-95 bg-white border-l border-gray-200 overflow-y-auto" />
+          ) : (
+            <Editor
+              selectedBlockData={selectedBlockData}
+              shouldShakeButtonTextInput={shouldShakeButtonTextInput}
+              shouldShakeTitleInput={shouldShakeTitleInput}
+            />
+          )}
         </div>
       </div>
     </div>

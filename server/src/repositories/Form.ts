@@ -42,8 +42,10 @@ class Form {
         "Block.position as block_position",
         "Block.formId as block_formId",
         "Block.textAlign as block_textAlign",
+        "Block.required as block_required",
       ])
       .where("Form.shortId", "=", formId)
+      .orderBy("Block.position", "asc")
       .execute();
 
     if (flatResults.length === 0) {
@@ -76,7 +78,8 @@ class Form {
           // buttonText: row.block_buttonText,
           // coverImageOrigin: row.block_coverImageOrigin,
           // coverImagePath: row.block_coverImagePath,
-          // required: row.block_required,
+          // @ts-ignore
+          required: row.block_required as boolean,
           // optionalConfig: row.block_optionalConfig,
           formId: row.shortId,
           type: row.block_type,
@@ -104,11 +107,11 @@ class Form {
 
   async getCurrentAndAdjacentBlocks(
     currentBlockId: string,
-    prevOrNext = "next"
+    prevOrNext = "after"
   ) {
     // TODO: Optimize query
     try {
-      const isNext = prevOrNext === "next";
+      const isNext = prevOrNext === "after";
       const positionOp = isNext ? ">" : "<";
       const orderDirection = isNext ? "asc" : "desc";
 

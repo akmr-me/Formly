@@ -21,6 +21,9 @@ export type BlockType = {
   coverImagePath?: string;
   position: number;
   optionalConfig?: Record<string, unknown>;
+  required?: boolean;
+  placeholder?: string;
+  urlParameter?: string;
 };
 
 export type TextAlignType = "center" | "left";
