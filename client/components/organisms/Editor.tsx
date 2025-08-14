@@ -1,54 +1,58 @@
 import InputWithLabel from "../molecules/editor/InputWithLabel";
 import Description from "../molecules/editor/Description";
-import Embed from "../molecules/editor/Embed";
 import TextAlign from "../molecules/editor/TextAlign";
 import CoverImage from "../molecules/editor/CoverImage";
 import { ImageLayout } from "../molecules/editor/ImageLayout";
-import { BlockType } from "@/types";
-import { useEffect, useState } from "react";
+import { BlockType, TextAlignType } from "@/types";
+import React, { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { DefaultDebounceTime } from "@/constants";
 import { useUpdateCommonBlockFields } from "@/hooks/useUpdateCommonBlockFields";
 import { useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import EmbedContainer from "../containers/blocks/EmbedContainer";
+
+const OptionalEditorFieldMap: Record<string, React.FC<T>> = {
+  statement: EmbedContainer,
+};
 
 type EditorProp = {
   selectedBlockData: BlockType;
+  shouldShakeTitleInput: boolean;
+  shouldShakeButtonTextInput: boolean;
 };
 
-export default function Editor({ selectedBlockData }: EditorProp) {
+export default function Editor({
+  selectedBlockData,
+  shouldShakeTitleInput,
+  shouldShakeButtonTextInput,
+}: EditorProp) {
+  const {
+    title: defaultTitle,
+    buttonText: defaultButtonText,
+    type,
+  } = selectedBlockData || {};
+
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const blockId = searchParams.get("block_id") as string;
 
-  const {
-    title: defaultTitle,
-    buttonText: defaultButtonText,
-    textAlign,
-    type,
-  } = selectedBlockData || {};
+  const [textAlign, setTextAlign] = useState<TextAlignType>(
+    selectedBlockData?.textAlign
+  );
 
-  const [title, setTitle] = useState<string>(defaultTitle || "");
-  const [buttonText, setButtonText] = useState<string>(defaultButtonText || "");
+  const [title, setTitle] = useState<string>(defaultTitle);
+  const [buttonText, setButtonText] = useState<string>(defaultButtonText);
+
   const { mutate, isPending } = useUpdateCommonBlockFields(blockId, type);
 
   const debouncedTitleUpdate = useDebouncedCallback((value: string) => {
-    console.log("Save title:", value);
     mutate({ title: value });
   }, DefaultDebounceTime);
 
   const debouncedButtonTextUpdate = useDebouncedCallback((value: string) => {
-    console.log("Save title:", value);
     mutate({ buttonText: value });
   }, DefaultDebounceTime);
-
-  useEffect(() => {
-    setTitle(defaultTitle || "");
-  }, [defaultTitle]);
-
-  useEffect(() => {
-    setButtonText(defaultButtonText || "");
-  }, [defaultButtonText]);
 
   const handleUploadComplete = () => {
     // invalidte cache
@@ -57,6 +61,29 @@ export default function Editor({ selectedBlockData }: EditorProp) {
   const coverImageUrl =
     (selectedBlockData?.coverImageOrigin || "") +
     (selectedBlockData?.coverImagePath || "");
+
+  const handleUpdateAlign = (newTextAlign: TextAlignType) => {
+    setTextAlign(newTextAlign);
+    mutate({ textAlign: newTextAlign });
+  };
+
+  //
+
+  useEffect(() => {
+    setTextAlign(selectedBlockData.textAlign);
+  }, [selectedBlockData.textAlign]);
+
+  useEffect(() => {
+    if (typeof defaultTitle !== "string") setTitle("");
+    else setTitle(defaultTitle);
+  }, [defaultTitle]);
+
+  useEffect(() => {
+    if (typeof defaultButtonText !== "string") setButtonText("");
+    else setButtonText(defaultButtonText);
+  }, [defaultButtonText]);
+
+  const OptionalConfigFields = OptionalEditorFieldMap[type];
 
   return (
     <div className="w-95 bg-white border-l border-gray-200 overflow-y-auto">
@@ -68,13 +95,21 @@ export default function Editor({ selectedBlockData }: EditorProp) {
             setTitle(e.target.value);
             debouncedTitleUpdate(e.target.value);
           }}
+          shouldShakeInput={shouldShakeTitleInput}
         />
 
         <Description mutate={mutate} selectedBlockData={selectedBlockData} />
 
-        <Embed />
+        {/* Optional editor block fields */}
 
-        <TextAlign textAlign={textAlign} mutate={mutate} />
+        {Boolean(OptionalConfigFields) && (
+          <OptionalConfigFields selectedBlockData={selectedBlockData} />
+        )}
+
+        <TextAlign
+          textAlign={textAlign}
+          handleUpdateAlign={handleUpdateAlign}
+        />
 
         <InputWithLabel
           title="Button Text"
@@ -83,6 +118,7 @@ export default function Editor({ selectedBlockData }: EditorProp) {
             setButtonText(e.target.value);
             debouncedButtonTextUpdate(e.target.value);
           }}
+          shouldShakeInput={shouldShakeButtonTextInput}
         />
 
         <CoverImage

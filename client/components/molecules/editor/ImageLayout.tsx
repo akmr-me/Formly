@@ -10,17 +10,18 @@ import {
 import { ImageLayoutOptions } from "@/constants";
 import { UseMutateFunction } from "@tanstack/react-query";
 import { UpdateBlockPayload } from "@/hooks/useUpdateCommonBlockFields";
+import { CoverImageLayout } from "@/types";
 
 type ImageLayoutProps = {
   mutate: UseMutateFunction<any, Error, Partial<UpdateBlockPayload>, unknown>;
-  coverImageLayout?: string;
+  coverImageLayout?: CoverImageLayout;
 };
 
 export function ImageLayout({ mutate, coverImageLayout }: ImageLayoutProps) {
-  const currentValue = coverImageLayout || ImageLayoutOptions[0]?.value || "";
+  const currentValue = coverImageLayout || ImageLayoutOptions[0]?.value;
 
-  const handleValueChange = (value: string) => {
-    if (value && value !== currentValue) {
+  const handleValueChange = (value: CoverImageLayout) => {
+    if (value !== currentValue) {
       mutate({ coverImageLayout: value });
     }
   };

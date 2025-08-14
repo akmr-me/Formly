@@ -9,6 +9,8 @@ import ChooseBlockPreview from "./ChooseBlockPreview";
 import NoBlockSelected from "./previews/NoBlock";
 import PreviewLayout from "./previews/PreviewLayout";
 
+// TODO: Needs Refactoring
+
 type ChooseBlockModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -31,7 +33,6 @@ const ChooseBlockModal = ({
   return (
     <div className="absolute inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 px-4 pt-10">
       <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl my-4">
-        {/* Modal Header */}
         <div className="flex items-center justify-between p-6 border-gray-200">
           <h2 className="text-2xl font-semibold text-gray-900">
             Choose your block

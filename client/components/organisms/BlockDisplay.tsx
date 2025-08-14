@@ -1,16 +1,24 @@
 import { BlockType } from "@/types";
 import BlockDisplayLayout from "./display/BlockDisplayLayout";
+import StatementDisplayContainer from "../containers/display/StatementDisplayContainer";
+
+const BlockDisplayMap: Record<string, React.FC<T>> = {
+  statement: StatementDisplayContainer,
+};
 
 type BlockDisplayProps = {
   selectedBlockData: BlockType;
   backgroundColor?: string;
+  triggerShakeTitleInput: () => void;
+  triggerShakeButtonTextInput: () => void;
 };
 
 export default function BlockDisplay({
   selectedBlockData,
   backgroundColor = "#b59a94",
+  triggerShakeTitleInput,
+  triggerShakeButtonTextInput,
 }: BlockDisplayProps) {
-  console.log("slected bloc", selectedBlockData);
   const coverImageUrl =
     (selectedBlockData?.coverImageOrigin || "") +
     (selectedBlockData?.coverImagePath || "");
@@ -25,10 +33,12 @@ export default function BlockDisplay({
           backgroundRepeat: "no-repeat",
         }
       : { backgroundColor };
-  console.log({ backgroundStyle });
+
+  const BlockDisplayComponent = BlockDisplayMap[selectedBlockData.type] || null;
+
   return (
     <div
-      className="flex-1 bg-gray-100 flex items-center justify-center p-8 mt-2 rounded-2xl flex-col"
+      className="flex-1 bg-gray-100 flex items-center justify-center mt-2 rounded-2xl p-4 flex-col overflow-y-auto scrollbar-hide"
       style={backgroundStyle}
     >
       <BlockDisplayLayout
@@ -38,8 +48,12 @@ export default function BlockDisplay({
         textAlign={selectedBlockData.textAlign}
         imageUrl={coverImageUrl}
         imageLayout={coverImageLayout}
+        onButtonClick={triggerShakeButtonTextInput}
+        onHeaderClick={triggerShakeTitleInput}
       >
-        {null}
+        {Boolean(BlockDisplayComponent) && (
+          <BlockDisplayComponent selectedBlockData={selectedBlockData} />
+        )}
       </BlockDisplayLayout>
     </div>
   );

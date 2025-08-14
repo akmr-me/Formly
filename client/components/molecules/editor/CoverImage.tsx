@@ -2,16 +2,21 @@ import React, { useState, useRef, useEffect } from "react";
 import { Label } from "@radix-ui/react-label";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { allowedTypes } from "@/constants/blockTypes";
+import {
+  allowedTypes,
+  MaxSizeImageError,
+  ValidImageTypeError,
+} from "@/constants";
 import apiClient from "@/lib/apiClient";
 import Image from "next/image";
+import { CoverImageLayout } from "@/types";
 
 interface CoverImageProps {
   onUploadComplete?: (imageUrl: string) => void;
-  uploadEndpoint?: string;
+  uploadEndpoint: string;
   type: string;
   imageUrl?: string;
-  coverImageLayout?: string;
+  coverImageLayout?: CoverImageLayout;
 }
 
 interface UploadState {
@@ -22,13 +27,13 @@ interface UploadState {
 
 const CoverImage: React.FC<CoverImageProps> = ({
   onUploadComplete,
-  uploadEndpoint = "/api/upload",
+  uploadEndpoint,
   type,
   imageUrl,
   coverImageLayout = "stack",
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(imageUrl || null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState<boolean>(false);
   const [uploadState, setUploadState] = useState<UploadState>({
     isUploading: false,
@@ -43,7 +48,7 @@ const CoverImage: React.FC<CoverImageProps> = ({
     if (!allowedTypes.includes(file.type)) {
       setUploadState((prev) => ({
         ...prev,
-        error: "Please select a valid image file (JPEG, PNG, GIF, WebP)",
+        error: ValidImageTypeError,
       }));
       return false;
     }
@@ -51,7 +56,7 @@ const CoverImage: React.FC<CoverImageProps> = ({
     if (file.size > maxSize) {
       setUploadState((prev) => ({
         ...prev,
-        error: "File size must be less than 5MB",
+        error: MaxSizeImageError,
       }));
       return false;
     }
@@ -64,7 +69,8 @@ const CoverImage: React.FC<CoverImageProps> = ({
     const formData = new FormData();
     formData.append("file", file);
     formData.append("type", type);
-    formData.append("coverImageLayout", coverImageLayout);
+    // coverImageLayout default value is set to null at db level so we need to set it to stack
+    formData.append("coverImageLayout", coverImageLayout ?? "stack");
 
     try {
       setUploadState({ isUploading: true, progress: 0, error: "" });
@@ -83,7 +89,6 @@ const CoverImage: React.FC<CoverImageProps> = ({
         },
       });
 
-      // Assuming the API returns { url: "uploaded-image-url" }
       const uploadedUrl = response.data.url;
       setUploadState({ isUploading: false, progress: 100, error: "" });
 
@@ -105,7 +110,6 @@ const CoverImage: React.FC<CoverImageProps> = ({
     if (validateFile(file)) {
       setSelectedFile(file);
 
-      // Create preview URL
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target?.result) {
@@ -113,8 +117,6 @@ const CoverImage: React.FC<CoverImageProps> = ({
         }
       };
       reader.readAsDataURL(file);
-
-      // Start upload
       await uploadFile(file);
     }
   };
@@ -186,10 +188,12 @@ const CoverImage: React.FC<CoverImageProps> = ({
     return "text-gray-400";
   };
 
+  // Note: this use effect is needed to update the previewUrl when the imageUrl prop changes
   useEffect(() => {
-    setPreviewUrl(imageUrl);
+    if (imageUrl == undefined) setPreviewUrl(null);
+    else setPreviewUrl(imageUrl);
   }, [imageUrl]);
-  console.log({ imageUrl });
+
   return (
     <div>
       <Label className="text-sm font-semibold text-gray-700 mb-2 block">

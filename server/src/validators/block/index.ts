@@ -1,14 +1,26 @@
 import { z } from "zod";
-import { AlignType, BlockType } from "../../generated/prisma/enum";
+import {
+  AlignType,
+  BlockType,
+  CoverImageLayout,
+} from "../../generated/prisma/enum";
 
 export const baseBlockSchema = z.object({
   type: z.enum(BlockType),
-  title: z.string().min(1).max(255).trim(),
-  titleLabel: z.string().min(1).max(255).trim(),
+  title: z.string().min(0).max(255).trim(),
+  titleLabel: z.string().min(0).max(255).trim(),
   textAlign: z.enum(AlignType),
-  buttonText: z.string().min(1).max(255).trim(),
+  buttonText: z.string().min(0).max(255).trim(),
   formId: z.string().length(8),
   position: z.float32(),
+  // Optionals
+  required: z.boolean().default(false),
+  optionalConfig: z.object({}).optional(),
+  descriptionDelta: z.object({}).optional(),
+  descriptionHtml: z.string().optional(),
+  coverImageOrigin: z.string().optional(),
+  coverImagePath: z.string().optional(),
+  coverImageLayout: z.enum(CoverImageLayout).optional(),
 });
 
 // // Example: Signup schema adds a password field

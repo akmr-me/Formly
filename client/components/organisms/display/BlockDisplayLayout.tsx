@@ -7,22 +7,23 @@ export type BlockDisplayLayoutProps = {
   description?: string;
   buttonText?: string;
   onButtonClick?: () => void;
+  onHeaderClick?: () => void;
   children: React.ReactNode;
   textAlign: TextAlignType;
   imageUrl?: string;
   imageLayout?: string;
 };
 export default function BlockDisplayLayout({
-  title = "",
-  description = "",
-  buttonText = "",
+  title,
+  description,
+  buttonText,
   onButtonClick = () => {},
+  onHeaderClick = () => {},
   children,
   textAlign,
   imageUrl,
   imageLayout,
 }: BlockDisplayLayoutProps) {
-  console.log("text alignt", { textAlign });
   return (
     <div
       className={cn(
@@ -46,7 +47,12 @@ export default function BlockDisplayLayout({
           />
         )}
       </div>
-      <h1 className="text-4xl font-bold text-black mb-8">{title}</h1>
+      <h1
+        className="text-4xl font-bold text-black mb-8"
+        onClick={onHeaderClick}
+      >
+        {title}
+      </h1>
 
       {description && (
         <div className="mb-8 max-w-2xl">

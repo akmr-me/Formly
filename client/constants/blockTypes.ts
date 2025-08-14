@@ -1,8 +1,8 @@
 import { BlockType } from "@/types";
 
-export const formBlocks: BlockType[] = [
+export const formBlocks: Partial<BlockType>[] = [
   {
-    id: 1,
+    id: "1",
     type: "statement",
     label: "Statement",
     text: "Hey there 😊",
@@ -14,7 +14,7 @@ export const formBlocks: BlockType[] = [
     description: `Primarily used as "Intro" or "Welcome" block (like in the screenshot below), but can be used anywhere in your form to display a message.`,
   },
   {
-    id: 2,
+    id: "2",
     type: "shortText",
     label: "Short Text",
     text: "this is short",
@@ -27,7 +27,7 @@ export const formBlocks: BlockType[] = [
     description: `Use this for short answers, such as Name, Email Address, or any other short text answer.`,
   },
   {
-    id: 3,
+    id: "3",
     type: "longText",
     label: "Long Text",
     text: "",
@@ -40,7 +40,7 @@ export const formBlocks: BlockType[] = [
     description: `Use this if you want people to write longer answers. For e.g User Feedback, Full address etc.`,
   },
   {
-    id: 4,
+    id: "4",
     type: "number",
     label: "Number",
     text: "Please enter a number",
@@ -53,7 +53,7 @@ export const formBlocks: BlockType[] = [
     description: `Ask users to enter a numeric value.`,
   },
   {
-    id: 5,
+    id: "5",
     type: "websiteUrl",
     label: "Website URL",
     text: "Please enter a URL",
@@ -66,7 +66,7 @@ export const formBlocks: BlockType[] = [
     description: `Ask users to enter a website URL for e.g their LinkedIn profile or their portfolio website.`,
   },
   {
-    id: 6,
+    id: "6",
     type: "single",
     label: "Single Select Option",
     text: "Single Select Option",
@@ -79,7 +79,7 @@ export const formBlocks: BlockType[] = [
     description: `Single Select Option blocks are used in questions where multiple options are presented to users but they can choose only one out of many. For e.g the following situation:`,
   },
   {
-    id: 7,
+    id: "7",
     type: "multi",
     label: "Multi Select Option",
     parentType: "select",
@@ -92,7 +92,7 @@ export const formBlocks: BlockType[] = [
     description: `Unlike Single Select Option blocks, these blocks are used in questions where multiple options are presented to users and they can choose more than one among them. For e.g the following situation:`,
   },
   {
-    id: 8,
+    id: "8",
     type: "dropdown",
     label: "Dropdown List",
     parentType: "select",
@@ -106,7 +106,7 @@ export const formBlocks: BlockType[] = [
       "Use this block when you have large list of options to choose from. For example: What state do you live in?",
   },
   {
-    id: 9,
+    id: "9",
     type: "date",
     label: "Date",
     text: "Please select a date",
@@ -118,7 +118,7 @@ export const formBlocks: BlockType[] = [
     description: "Allows users to select a date.",
   },
   {
-    id: 10,
+    id: "10",
     type: "address",
     label: "Address",
     text: "Please enter your complete address",
@@ -129,12 +129,4 @@ export const formBlocks: BlockType[] = [
     defaultButtonText: "Next",
     description: "",
   },
-];
-
-export const allowedTypes = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/gif",
-  "image/webp",
 ];

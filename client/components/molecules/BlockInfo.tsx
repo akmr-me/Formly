@@ -1,41 +1,28 @@
+import useUpdateBlockIdInUrl from "@/hooks/useUpdateBlockIdInUrl";
 import { BlockType } from "@/types";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 type BlockInfoProps = BlockType & {
-  selectedBlock: number;
-  setSelectedBlock: React.Dispatch<React.SetStateAction<number>>;
-  key: number;
   HoverComponent: React.ReactNode;
   dropdownOpen?: boolean;
   position?: number;
+  id: string;
+  label: string;
+  icon: string;
 };
 
 export default function BlockInfo({
   id,
   label,
   position,
-  selectedBlock,
-  setSelectedBlock,
   icon,
   color,
   HoverComponent = null,
   dropdownOpen,
 }: BlockInfoProps) {
   const [show, setShow] = useState(false);
+  const { handleChangeBlockId, currentBlockId } = useUpdateBlockIdInUrl();
   const colorClass = color.includes("#") ? `bg-[${color}]` : color;
-
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentBlockId = searchParams.get("block_id") || "No Block ID";
-
-  const handleChangeBlockId = (newBlockId: string) => {
-    const pathname = window.location.pathname;
-    const currentParams = new URLSearchParams(searchParams.toString());
-
-    currentParams.set("block_id", newBlockId);
-    router.push(`${pathname}?${currentParams.toString()}`);
-  };
 
   return (
     <div
@@ -49,7 +36,7 @@ export default function BlockInfo({
       <div className="flex items-center space-x-2">
         <span className="text-sm">{icon}</span>
         <span className="text-sm font-medium">
-          {position}. {label || "Untitled"}
+          {position}. {label}
         </span>
       </div>
       {

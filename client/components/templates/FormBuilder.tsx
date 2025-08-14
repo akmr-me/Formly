@@ -3,15 +3,16 @@ import React, { useState } from "react";
 import BlockDisplayHeader from "@/components/organisms/BlockDisplayHeder";
 import BlockDisplay from "@/components/organisms/BlockDisplay";
 import Editor from "@/components/organisms/Editor";
-import MobileWarning from "@/components/organisms/MobileWarning";
+import MobileWarning from "@/components/molecules/MobileWarning";
 import FormBuilderHeader from "@/components/organisms/FormBuilderHeader";
-import LeftSideBar from "@/components/organisms/LeftSideBar";
 import ChooseBlockModal from "../organisms/ChooseBlockModal";
 import { formBlocks } from "@/constants/blockTypes";
 import { useSearchParams } from "next/navigation";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getBlockById } from "@/services/block";
 import { LoaderCircle } from "lucide-react";
+import LeftSideBarContainer from "../containers/LeftSideBarContainer";
+import FormBuilderHeaderContainer from "../containers/FormBuilderHeaderContainer";
 
 const FormBuilder = () => {
   const searchParams = useSearchParams();
@@ -27,12 +28,24 @@ const FormBuilder = () => {
     queryFn: () => getBlockById(blockId as string),
     placeholderData: keepPreviousData,
   });
-  console.log(selectedBlockData);
-  const [selectedBlock, setSelectedBlock] = useState(1);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [shouldShakeTitleInput, setShouldShakeTitleInput] = useState(false);
+  const [shouldShakeButtonTextInput, setShouldShakeButtonTextInput] =
+    useState(false);
 
   const handleOpenChooseBlockModal = () => setIsModalOpen(true);
-  console.log({ selectedBlockData, blockId });
+
+  const triggerShakeTitleInput = () => {
+    setShouldShakeTitleInput(true);
+    setTimeout(() => setShouldShakeTitleInput(false), 500);
+  };
+
+  const triggerShakeButtonTextInput = () => {
+    setShouldShakeButtonTextInput(true);
+    setTimeout(() => setShouldShakeButtonTextInput(false), 500);
+  };
+
   return (
     <div className="relative h-screen flex flex-col bg-gray-50">
       {isLoading && (
@@ -44,12 +57,10 @@ const FormBuilder = () => {
       <MobileWarning />
 
       <div className="hidden md:flex flex-col h-screen">
-        <FormBuilderHeader />
+        <FormBuilderHeaderContainer />
 
         <div className="flex flex-1 overflow-hidden">
-          <LeftSideBar
-            selectedBlock={selectedBlock}
-            setSelectedBlock={setSelectedBlock}
+          <LeftSideBarContainer
             handleOpenChooseBlockModal={handleOpenChooseBlockModal}
           />
 
@@ -62,12 +73,21 @@ const FormBuilder = () => {
             <BlockDisplayHeader
               handleOpenChooseBlockModal={handleOpenChooseBlockModal}
             />
-
-            <BlockDisplay selectedBlockData={selectedBlockData} />
+            <div className="h-full relative overflow-hidden">
+              <BlockDisplay
+                selectedBlockData={selectedBlockData}
+                triggerShakeButtonTextInput={triggerShakeButtonTextInput}
+                triggerShakeTitleInput={triggerShakeTitleInput}
+              />
+            </div>
           </div>
 
           {/* Right Sidebar */}
-          <Editor selectedBlockData={selectedBlockData} />
+          <Editor
+            selectedBlockData={selectedBlockData}
+            shouldShakeButtonTextInput={shouldShakeButtonTextInput}
+            shouldShakeTitleInput={shouldShakeTitleInput}
+          />
         </div>
       </div>
     </div>
