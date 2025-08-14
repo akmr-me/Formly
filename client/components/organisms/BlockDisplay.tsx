@@ -38,7 +38,7 @@ export default function BlockDisplay({
 
   return (
     <div
-      className="flex-1 bg-gray-100 flex items-center justify-center mt-2 rounded-2xl p-4 flex-col overflow-y-auto scrollbar-hide"
+      className="flex-1 bg-gray-100 flex items-center justify-center mt-2 rounded-2xl p-8 flex-col overflow-hidden h-full"
       style={backgroundStyle}
     >
       <BlockDisplayLayout

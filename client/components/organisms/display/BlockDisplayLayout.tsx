@@ -27,7 +27,7 @@ export default function BlockDisplayLayout({
   return (
     <div
       className={cn(
-        "rounded-2xl p-16 max-w-4xl w-full shadow-lg h-full flex flex-col justify-center",
+        "rounded-2xl p-16 max-w-4xl w-full shadow-lg h-full flex flex-col justify-center overflow-y-auto scrollbar-hide",
         textAlign === "center" && "text-center",
         textAlign === "left" && "text-left"
       )}
