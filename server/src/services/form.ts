@@ -46,7 +46,11 @@ export async function getPaginatedPublishedBlocksService(
   limit: number = 1
 ) {
   try {
-    const form = await formRespository.getPaginatedPublishedBlocks(shortFormId);
+    const form = await formRespository.getPaginatedPublishedBlocks(
+      shortFormId,
+      page,
+      limit
+    );
     return form;
   } catch (error) {
     console.log("getPaginatedPublishedBlocks error", error);

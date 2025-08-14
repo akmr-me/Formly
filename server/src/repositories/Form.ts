@@ -259,21 +259,30 @@ class Form {
     page: number,
     limit: number
   ) {
-    const form = await db
+    const blocks = await db
       .selectFrom("PublishedBlock")
       .selectAll()
       .where("formId", "=", shortId)
+      .orderBy("position", "asc")
       .limit(limit)
       .offset((page - 1) * limit)
       .executeTakeFirstOrThrow();
     const countResult = await db
       .selectFrom("PublishedBlock")
-      .select(sql<number>`count(*)`.$as("totalCount"))
+      .select(sql<number>`count(*)`.as("totalCount"))
       .where("formId", "=", shortId)
       .executeTakeFirst();
 
+    // Todo if response is there send that back as well
+
     const totalCount = countResult?.totalCount ?? 0;
-    return form;
+    return {
+      blocks,
+      totalPages: Math.ceil(totalCount / limit),
+      totalBlockCount: totalCount,
+      page,
+      limit,
+    };
   }
 }
 
