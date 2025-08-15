@@ -57,16 +57,15 @@ export default function OptionalCommonFields({
     mutate({ urlParameter: value });
   }, DefaultDebounceTime);
 
-  // In case of fetched from db/network
   useEffect(() => {
-    setPlaceholderValue(selectedBlockData.placeholder || "Your answer here...");
-    setIsRequired(selectedBlockData.required || false);
+    setPlaceholderValue(selectedBlockData.placeholder || "");
+  }, [selectedBlockData.placeholder]);
+  useEffect(() => {
+    setIsRequired(selectedBlockData.required || "");
+  }, [selectedBlockData.required]);
+  useEffect(() => {
     setUrlParameter(selectedBlockData.urlParameter || "");
-  }, [
-    selectedBlockData.placeholder,
-    selectedBlockData.required,
-    selectedBlockData.urlParameter,
-  ]);
+  }, [selectedBlockData.urlParameter]);
 
   const UrlParameterPlaceholder =
     DefaultBlockData[type]?.urlParameterPlaceholder;
@@ -76,7 +75,7 @@ export default function OptionalCommonFields({
     <div className="space-y-6">
       {hasPlaceholder && (
         <PlaceholderInput
-          placeholder="Your answer here..."
+          placeholder=""
           value={placeholderValue}
           onChange={(e) => {
             setPlaceholderValue(e.target.value);

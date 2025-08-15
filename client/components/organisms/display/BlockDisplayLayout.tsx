@@ -90,6 +90,7 @@ export default function BlockDisplayLayout({
             displayLayoutSize === "small" && "font-semibold"
           )}
           onClick={onButtonClick}
+          type="submit"
         >
           {buttonText}
         </Button>

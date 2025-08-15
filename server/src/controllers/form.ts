@@ -5,6 +5,8 @@ import {
   getPaginatedPublishedBlocksService,
   publishFormService,
   getFormWithBlocksService,
+  createResponseService,
+  createResponseValuesService,
 } from "../services/form";
 
 export const createFormController = async (
@@ -28,7 +30,9 @@ export const getFormByIdController = async (
   next: NextFunction
 ) => {
   try {
-    return res.status(200).json({});
+    const { shortFormId } = req.params;
+    const form = await getFormByShortIdService(shortFormId);
+    return res.status(200).json({ ...form });
   } catch (error) {
     return next(error);
   }
@@ -77,6 +81,35 @@ export const getPaginatedPublishedBlocksController = async (
       Number(limit)
     );
     return res.status(200).json({ ...blocks });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const createResponseController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { shortFormId } = req.params;
+    const response = await createResponseService(shortFormId);
+    return res.status(200).json({ ...response });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const createResponseValuesController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { shortFormId, responseId } = req.params;
+    // Will put validation here
+    const response = await createResponseValuesService(responseId, req.body);
+    return res.status(201).json({ message: "Form Saved!" });
   } catch (error) {
     return next(error);
   }

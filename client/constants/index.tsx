@@ -309,3 +309,8 @@ export const CreateNewBlockDataMap = {
     textAlign: "center",
   },
 };
+
+export const UnpublishedFormMessage =
+  "Your form has unpublished changes. You can publish it from dashboard.";
+
+export const FermionFormLocalStorageKey = "fermion-form";

@@ -28,12 +28,13 @@ export async function updateBlockFieldService(id: string, data: any) {
     //   .where("id", "=", id)
     //   .returningAll()
     //   .executeTakeFirstOrThrow();
+    console.log("from updateBlockFieldService", data);
     const block = await db
       .updateTable("Block")
       .set({
         ...data,
         ...(data.optionalConfig && {
-          optionalConfig: sql`"optionalConfig" || ${JSON.stringify(
+          optionalConfig: sql`coalesce("optionalConfig", '{}'::jsonb) || ${JSON.stringify(
             data.optionalConfig
           )}::jsonb`,
         }),
@@ -41,6 +42,7 @@ export async function updateBlockFieldService(id: string, data: any) {
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow();
+
     return block;
   } catch (error) {
     console.log("Error while updating block by id => ", error);
