@@ -13,10 +13,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import EmbedContainer from "../containers/blocks/EmbedContainer";
 import OptionalCommonFields from "../containers/OptionalCommonFields";
 import LongTextCustomFieldsContainer from "../containers/blocks/custom/longText";
+import NumberCustomFieldsContainer from "../containers/blocks/custom/number";
 
 const OptionalEditorFieldMap: Record<string, React.FC<T>> = {
   statement: EmbedContainer,
   longText: LongTextCustomFieldsContainer,
+  number: NumberCustomFieldsContainer,
 };
 
 type EditorProp = {

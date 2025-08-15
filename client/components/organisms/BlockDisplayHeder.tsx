@@ -23,35 +23,35 @@ export default function BlockDisplayHeader({
 
         <Separator orientation="vertical" className="mx-0.5 h-full" />
 
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" disabled>
           <Palette className="w-4 h-4 mr-1" />
           Design
         </Button>
 
         <Separator orientation="vertical" className="mx-0.5 h-full" />
 
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" disabled>
           <Code className="w-4 h-4 mr-1" />
           Logic
         </Button>
         <Separator orientation="vertical" className="mx-0.5 h-full" />
 
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" disabled>
           <Play className="w-4 h-4" />
         </Button>
         <Separator orientation="vertical" className="mx-0.5 h-full" />
 
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" disabled>
           <Settings className="w-4 h-4" />
         </Button>
 
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" disabled>
           <Eye className="w-4 h-4" />
         </Button>
       </div>
 
       <div className="ml-auto">
-        <Button className="bg-red-500 hover:bg-red-600 text-white">
+        <Button className="bg-red-500 hover:bg-red-600 text-white" disabled>
           <Crown className="w-4 h-4 mr-1" />
           Buy PRO
         </Button>

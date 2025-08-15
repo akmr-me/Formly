@@ -13,6 +13,7 @@ const BlockTypeHasRequiredField = [
   "longText",
   "number",
   "websiteUrl",
+  "date",
 ];
 const BlockTypeHasPlaceholder = [
   "shortText",
@@ -20,7 +21,7 @@ const BlockTypeHasPlaceholder = [
   "number",
   "websiteUrl",
 ];
-const BlockTypeHasUrlParameter = ["shortText", "number", "websiteUrl"];
+const BlockTypeHasUrlParameter = ["shortText", "number", "websiteUrl", "date"];
 
 export default function OptionalCommonFields({
   selectedBlockData,
@@ -67,8 +68,7 @@ export default function OptionalCommonFields({
     setUrlParameter(selectedBlockData.urlParameter || "");
   }, [selectedBlockData.urlParameter]);
 
-  const UrlParameterPlaceholder =
-    DefaultBlockData[type]?.urlParameterPlaceholder;
+  const UrlParameterPlaceholder = DefaultBlockData[type]?.urlParamsPlaceholder;
   const UrlParameterTooltipText = DefaultBlockData[type]?.urlParamsTooltip;
 
   return (
@@ -97,7 +97,7 @@ export default function OptionalCommonFields({
 
       {hasUrlParameter && (
         <AutoFillURLParameter
-          placeholder="e.g email"
+          placeholder={UrlParameterPlaceholder}
           value={urlParameter}
           tooltipContent={UrlParameterTooltipText}
           onChange={(e) => {

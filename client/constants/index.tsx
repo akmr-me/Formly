@@ -308,6 +308,33 @@ export const CreateNewBlockDataMap = {
     required: false,
     textAlign: "center",
   },
+  number: {
+    type: "number",
+    titleLabel: "Question",
+    title: "Please enter a number",
+    buttonText: "Next",
+    placeholder: "",
+    required: false,
+    textAlign: "center",
+  },
+  websiteUrl: {
+    type: "websiteUrl",
+    titleLabel: "Question",
+    title: "Please enter a URL",
+    buttonText: "Next",
+    placeholder: "https://",
+    required: false,
+    textAlign: "center",
+  },
+  date: {
+    type: "date",
+    titleLabel: "Question",
+    title: "Please select a date",
+    buttonText: "Next",
+    placeholder: "",
+    required: false,
+    textAlign: "center",
+  },
 };
 
 export const UnpublishedFormMessage =

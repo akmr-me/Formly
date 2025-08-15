@@ -1,4 +1,5 @@
-import { BlockType } from "@/types";
+import { formBlocks } from "@/constants/blockTypes";
+import { BlockType, BlockTypeEnum } from "@/types";
 import { useState } from "react";
 
 export type BlockInfoProps = BlockType & {
@@ -12,6 +13,7 @@ export type BlockInfoProps = BlockType & {
   onClickHandler?: (id: string) => void;
   onDoubleClickHandler?: () => void;
   selectedBlockid?: string;
+  type: BlockTypeEnum;
 };
 
 export default function BlockInfo({
@@ -26,9 +28,11 @@ export default function BlockInfo({
   onClickHandler,
   onDoubleClickHandler,
   selectedBlockid,
+  type,
 }: BlockInfoProps) {
   const [show, setShow] = useState(false);
   const colorClass = color.includes("#") ? `bg-[${color}]` : color;
+  const Icon = icon || formBlocks.find((b) => b.type === type)?.icon;
 
   return (
     <div
@@ -46,7 +50,7 @@ export default function BlockInfo({
       )}
 
       <div className="flex items-center space-x-2">
-        <span className="text-sm">{icon}</span>
+        <span className="text-sm">{Icon}</span>
         <span className="text-sm font-medium">
           {position}. {label}
         </span>

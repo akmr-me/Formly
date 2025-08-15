@@ -3,6 +3,7 @@ import BlockDisplayLayout from "./display/BlockDisplayLayout";
 import StatementDisplayContainer from "../containers/display/StatementDisplayContainer";
 import { DefaultBlockData } from "@/constants";
 import {
+  DateInput,
   LongText,
   NumberInput,
   TextInput,
@@ -15,6 +16,7 @@ const BlockDisplayMap: Record<string, React.FC<T>> = {
   longText: LongText,
   number: NumberInput,
   websiteUrl: URLInput,
+  date: DateInput,
 };
 
 type BlockDisplayProps = {

@@ -3,8 +3,8 @@ import { baseBlockSchema } from ".";
 import { BlockType } from "../../generated/prisma/enum";
 
 const numberOptionalConfigSchema = z.object({
-  minimumNumber: z.number().optional(),
-  maximumNumber: z.number().optional(),
+  minimumNumber: z.number().optional().nullable(),
+  maximumNumber: z.number().optional().nullable(),
 });
 
 const numberBlockSchema = baseBlockSchema.extend({

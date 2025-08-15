@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useUpdateCommonBlockFields } from "@/hooks/useUpdateCommonBlockFields";
 import { useDebouncedCallback } from "use-debounce";
 import { DefaultDebounceTime } from "@/constants";
+import { toast } from "sonner";
 
 interface LongTextCustomFieldsContainerProps {
   selectedBlockData: {
@@ -28,9 +29,9 @@ export default function LongTextCustomFieldsContainer({
   // Initialize state from selectedBlockData
   useEffect(() => {
     const minLength =
-      selectedBlockData?.optionalConfig?.minCharacterLength ?? 0;
+      selectedBlockData?.optionalConfig?.minCharacterLength ?? null;
     const maxLength =
-      selectedBlockData?.optionalConfig?.maxCharacterLength ?? 0;
+      selectedBlockData?.optionalConfig?.maxCharacterLength ?? null;
 
     setMinCharacterLength(minLength);
     setMaxCharacterLength(maxLength);
@@ -41,6 +42,17 @@ export default function LongTextCustomFieldsContainer({
       const currentValue =
         selectedBlockData?.optionalConfig?.minCharacterLength ?? null;
       if (value === currentValue) return;
+
+      if (
+        value !== null &&
+        maxCharacterLength !== null &&
+        value > maxCharacterLength
+      ) {
+        toast.error(
+          "Minimum characters cannot be greater than maximum characters"
+        );
+        return;
+      }
 
       mutate({
         optionalConfig: {
@@ -54,8 +66,19 @@ export default function LongTextCustomFieldsContainer({
   const handleUpdateMaxCharacterLength = useDebouncedCallback(
     (value: number) => {
       const currentValue =
-        selectedBlockData?.optionalConfig?.maxCharacterLength ?? 0;
+        selectedBlockData?.optionalConfig?.maxCharacterLength ?? null;
       if (value === currentValue) return;
+
+      if (
+        value !== null &&
+        minCharacterLength !== null &&
+        value < minCharacterLength
+      ) {
+        toast.error(
+          "Maximum characters cannot be less than minimum characters"
+        );
+        return;
+      }
 
       mutate({
         optionalConfig: {
