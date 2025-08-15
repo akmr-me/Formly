@@ -12,7 +12,7 @@ export const baseBlockSchema = z.object({
   textAlign: z.enum(AlignType),
   buttonText: z.string().min(0).max(255).trim(),
   formId: z.string().length(8),
-  position: z.float32(),
+  position: z.float32().optional(),
   // Optionals
   required: z.boolean().default(false),
   optionalConfig: z.object({}).optional(),
@@ -21,6 +21,11 @@ export const baseBlockSchema = z.object({
   coverImageOrigin: z.string().optional(),
   coverImagePath: z.string().optional(),
   coverImageLayout: z.enum(CoverImageLayout).optional(),
+  placeholder: z.string().optional(),
+  urlParameter: z.string().optional(),
+  // Positional keys
+  referenceBlockId: z.string().optional(),
+  newBlockPosition: z.enum(["before", "after"]).optional(),
 });
 
 // // Example: Signup schema adds a password field

@@ -4,6 +4,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -11,6 +12,7 @@ import { ImageLayoutOptions } from "@/constants";
 import { UseMutateFunction } from "@tanstack/react-query";
 import { UpdateBlockPayload } from "@/hooks/useUpdateCommonBlockFields";
 import { CoverImageLayout } from "@/types";
+import { Label } from "@/components/ui/label";
 
 type ImageLayoutProps = {
   mutate: UseMutateFunction<any, Error, Partial<UpdateBlockPayload>, unknown>;
@@ -27,22 +29,25 @@ export function ImageLayout({ mutate, coverImageLayout }: ImageLayoutProps) {
   };
 
   return (
-    <Select value={currentValue} onValueChange={handleValueChange}>
-      <SelectTrigger className="w-full">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        {ImageLayoutOptions.map((option, index) => (
-          <SelectItem
-            key={option.value}
-            value={option.value}
-            // TODO: What split does
-            disabled={index == 1}
-          >
-            {option.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <>
+      <Label className="mb-1">Layout</Label>
+      <Select value={currentValue} onValueChange={handleValueChange}>
+        <SelectTrigger className="w-full">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {ImageLayoutOptions.map((option, index) => (
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              // TODO: What split does
+              disabled={index == 1}
+            >
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </>
   );
 }

@@ -76,7 +76,7 @@ export const getPaginatedPublishedBlocksController = async (
       Number(page),
       Number(limit)
     );
-    return res.status(200).json({ blocks });
+    return res.status(200).json({ ...blocks });
   } catch (error) {
     return next(error);
   }

@@ -1,38 +1,38 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { X, ArrowRight } from "lucide-react";
 import { BlockType } from "@/types";
-import BlockInfo from "../molecules/BlockInfo";
 import BlockListSideBarWithSearch from "./BlockListSideBarWithSearch";
-import ChooseBlockPreview from "./ChooseBlockPreview";
+import SelectedBlockPreview from "./SelectedBlockPreview";
 import NoBlockSelected from "./previews/NoBlock";
 import PreviewLayout from "./previews/PreviewLayout";
 
 // TODO: Needs Refactoring
 
-type ChooseBlockModalProps = {
+export type ChooseBlockModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  blockTypes: BlockType[];
+  selectedBlock: string;
+  setSelectedBlock: React.Dispatch<React.SetStateAction<string>>;
+  selectedBlockData: BlockType;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onCreateNewBlock?: () => void;
 };
 
 const ChooseBlockModal = ({
   isOpen,
   onClose,
-  blockTypes,
+  selectedBlock,
+  setSelectedBlock,
+  selectedBlockData,
+  onCreateNewBlock,
 }: ChooseBlockModalProps) => {
-  const [selectedBlock, setSelectedBlock] = useState<number>(0);
-
-  const selectedBlockData = blockTypes.find(
-    (block) => block.id === selectedBlock
-  );
-
   if (!isOpen) return null;
+  console.log({ selectedBlockData });
 
   return (
-    <div className="absolute inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 px-4 pt-10">
-      <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl my-4">
+    <div className="absolute inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 px-4 py-2">
+      <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl my-2 h-full">
         <div className="flex items-center justify-between p-6 border-gray-200">
           <h2 className="text-2xl font-semibold text-gray-900">
             Choose your block
@@ -52,7 +52,6 @@ const ChooseBlockModal = ({
           <BlockListSideBarWithSearch
             selectedBlock={selectedBlock}
             setSelectedBlock={setSelectedBlock}
-            blockTypes={blockTypes}
           />
 
           {/* Right Content Area - Block Preview */}
@@ -64,13 +63,14 @@ const ChooseBlockModal = ({
                   label={selectedBlockData.label}
                   description={selectedBlockData.description}
                 >
-                  <ChooseBlockPreview />
+                  <SelectedBlockPreview type={selectedBlockData.type} />
                 </PreviewLayout>
+
                 {/* Use Block Button */}
                 <div className="flex items-center justify-center">
                   <Button
                     className="bg-gray-800 hover:bg-gray-900 text-white py-3 text-lg font-medium"
-                    onClick={onClose}
+                    onClick={onCreateNewBlock}
                   >
                     Use this block
                     <ArrowRight className="w-5 h-5 ml-2" />

@@ -6,6 +6,7 @@ import { BlockType } from "@/types";
 import BlockDropdownMenuContainer from "../containers/BlockDropDownMenuContainer";
 import CustomTooltip from "../molecules/CustomTooltip";
 import { AddNewBlockHoverText } from "@/constants";
+import BlockInfoLeftSidebarContainer from "../containers/blocks/BlockInfoLeftSidebarContainer";
 
 type LeftSideBarProps = {
   formBlocks: BlockType[];
@@ -36,11 +37,12 @@ export default function LeftSideBar({
 
         <div className="space-y-2">
           {formBlocks.map((block: BlockType, index: number) => (
-            <BlockInfo
+            <BlockInfoLeftSidebarContainer
               key={block.id}
               {...block}
               label={block.title}
               position={index + 1}
+              required={block.required}
               dropdownOpen={dropdownOpen}
               HoverComponent={
                 <BlockDropdownMenuContainer

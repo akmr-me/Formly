@@ -42,8 +42,10 @@ class Form {
         "Block.position as block_position",
         "Block.formId as block_formId",
         "Block.textAlign as block_textAlign",
+        "Block.required as block_required",
       ])
       .where("Form.shortId", "=", formId)
+      .orderBy("Block.position", "asc")
       .execute();
 
     if (flatResults.length === 0) {
@@ -76,7 +78,8 @@ class Form {
           // buttonText: row.block_buttonText,
           // coverImageOrigin: row.block_coverImageOrigin,
           // coverImagePath: row.block_coverImagePath,
-          // required: row.block_required,
+          // @ts-ignore
+          required: row.block_required as boolean,
           // optionalConfig: row.block_optionalConfig,
           formId: row.shortId,
           type: row.block_type,
@@ -104,11 +107,11 @@ class Form {
 
   async getCurrentAndAdjacentBlocks(
     currentBlockId: string,
-    prevOrNext = "next"
+    prevOrNext = "after"
   ) {
     // TODO: Optimize query
     try {
-      const isNext = prevOrNext === "next";
+      const isNext = prevOrNext === "after";
       const positionOp = isNext ? ">" : "<";
       const orderDirection = isNext ? "asc" : "desc";
 
@@ -259,21 +262,30 @@ class Form {
     page: number,
     limit: number
   ) {
-    const form = await db
+    const blocks = await db
       .selectFrom("PublishedBlock")
       .selectAll()
       .where("formId", "=", shortId)
+      .orderBy("position", "asc")
       .limit(limit)
       .offset((page - 1) * limit)
       .executeTakeFirstOrThrow();
     const countResult = await db
       .selectFrom("PublishedBlock")
-      .select(sql<number>`count(*)`.$as("totalCount"))
+      .select(sql<number>`count(*)`.as("totalCount"))
       .where("formId", "=", shortId)
       .executeTakeFirst();
 
+    // Todo if response is there send that back as well
+
     const totalCount = countResult?.totalCount ?? 0;
-    return form;
+    return {
+      blocks,
+      totalPages: Math.ceil(totalCount / limit),
+      totalBlockCount: totalCount,
+      page,
+      limit,
+    };
   }
 }
 

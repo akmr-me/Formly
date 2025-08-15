@@ -4,6 +4,7 @@ import path from "node:path";
 import ApiError from "../../utils/ApiError";
 import { MinimumBlockInForm } from "../../constants";
 import formRespository from "../../repositories/Form";
+import { sql } from "kysely";
 
 export async function getBlockByIdService(id: string) {
   try {
@@ -21,9 +22,22 @@ export async function getBlockByIdService(id: string) {
 
 export async function updateBlockFieldService(id: string, data: any) {
   try {
+    // const block = await db
+    //   .updateTable("Block")
+    //   .set(data)
+    //   .where("id", "=", id)
+    //   .returningAll()
+    //   .executeTakeFirstOrThrow();
     const block = await db
       .updateTable("Block")
-      .set(data)
+      .set({
+        ...data,
+        ...(data.optionalConfig && {
+          optionalConfig: sql`"optionalConfig" || ${JSON.stringify(
+            data.optionalConfig
+          )}::jsonb`,
+        }),
+      })
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow();

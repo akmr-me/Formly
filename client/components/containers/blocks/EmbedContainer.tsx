@@ -32,12 +32,8 @@ export default function EmbedContainer({
   };
 
   const handleUpdateEmbedUrl = () => {
-    console.log("clicked updated", isValidUrl(embedUrl));
-    console.log(selectedBlockData.optionalConfig?.embed, embedUrl);
-    if (embedUrl == selectedBlockData.optionalConfig?.embed || !embedUrl)
-      return;
-    if (isValidUrl(embedUrl)) mutate({ optionalConfig: { embed: embedUrl } });
-    else toast.error("Not a valid url");
+    if (embedUrl == selectedBlockData.optionalConfig?.embed) return;
+    mutate({ optionalConfig: { embed: embedUrl } });
   };
 
   //   In case of fetched from db/network

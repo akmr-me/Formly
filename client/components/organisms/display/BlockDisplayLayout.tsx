@@ -12,6 +12,8 @@ export type BlockDisplayLayoutProps = {
   textAlign: TextAlignType;
   imageUrl?: string;
   imageLayout?: string;
+  displayLayoutSize?: string;
+  required?: boolean;
 };
 export default function BlockDisplayLayout({
   title,
@@ -23,13 +25,17 @@ export default function BlockDisplayLayout({
   textAlign,
   imageUrl,
   imageLayout,
+  displayLayoutSize,
+  required,
 }: BlockDisplayLayoutProps) {
+  console.log({ title, description, buttonText });
   return (
     <div
       className={cn(
-        "rounded-2xl p-16 max-w-4xl w-full shadow-lg h-full flex flex-col justify-center",
+        "rounded-2xl p-16 max-w-4xl w-full h-full flex flex-col justify-center overflow-y-auto scrollbar-hide",
         textAlign === "center" && "text-center",
-        textAlign === "left" && "text-left"
+        textAlign === "left" && "text-left",
+        displayLayoutSize === "small" && "p-4"
       )}
     >
       <div className="w-auto max-h-64">
@@ -48,16 +54,28 @@ export default function BlockDisplayLayout({
         )}
       </div>
       <h1
-        className="text-4xl font-bold text-black mb-8"
+        className={cn(
+          "text-4xl font-bold text-black mb-8 relative w-fit",
+          displayLayoutSize === "small" && "text-xl"
+        )}
         onClick={onHeaderClick}
       >
         {title}
+
+        {required && (
+          <span className="absolute -top-1 -right-1 text-red-500 text-lg font-bold">
+            *
+          </span>
+        )}
       </h1>
 
       {description && (
         <div className="mb-8 max-w-2xl">
           <div
-            className="text-lg text-gray-700 leading-relaxed"
+            className={cn(
+              "text-lg text-gray-700 leading-relaxed",
+              displayLayoutSize === "small" && "text-sm"
+            )}
             dangerouslySetInnerHTML={{ __html: description }}
           />
         </div>
@@ -65,7 +83,12 @@ export default function BlockDisplayLayout({
       <div>{children}</div>
       <div>
         <Button
-          className="bg-black text-white px-8 py-4 rounded-lg hover:bg-gray-800 text-lg font-medium"
+          className={cn(
+            "bg-black text-white px-8 py-4 rounded-md hover:bg-gray-800 text-lg font-medium",
+            displayLayoutSize === "small" && "text-sm",
+            displayLayoutSize === "small" && "px-4 py-2",
+            displayLayoutSize === "small" && "font-semibold"
+          )}
           onClick={onButtonClick}
         >
           {buttonText}

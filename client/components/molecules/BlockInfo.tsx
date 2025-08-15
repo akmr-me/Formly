@@ -1,14 +1,17 @@
-import useUpdateBlockIdInUrl from "@/hooks/useUpdateBlockIdInUrl";
 import { BlockType } from "@/types";
 import { useState } from "react";
 
-type BlockInfoProps = BlockType & {
+export type BlockInfoProps = BlockType & {
   HoverComponent: React.ReactNode;
   dropdownOpen?: boolean;
   position?: number;
   id: string;
   label: string;
   icon: string;
+  required?: boolean; // Added required prop
+  onClickHandler?: (id: string) => void;
+  onDoubleClickHandler?: () => void;
+  selectedBlockid?: string;
 };
 
 export default function BlockInfo({
@@ -17,22 +20,31 @@ export default function BlockInfo({
   position,
   icon,
   color,
+  required = false,
   HoverComponent = null,
   dropdownOpen,
+  onClickHandler,
+  onDoubleClickHandler,
+  selectedBlockid,
 }: BlockInfoProps) {
   const [show, setShow] = useState(false);
-  const { handleChangeBlockId, currentBlockId } = useUpdateBlockIdInUrl();
   const colorClass = color.includes("#") ? `bg-[${color}]` : color;
 
   return (
     <div
-      className={`p-3 rounded-lg flex justify-between cursor-pointer transition-all ${colorClass} ${
-        currentBlockId === id ? "ring-2 ring-blue-500" : ""
+      className={`p-3 rounded-md flex justify-between cursor-pointer transition-all relative ${colorClass} ${
+        selectedBlockid === id ? "ring-2 ring-blue-500" : ""
       }`}
-      onClick={() => handleChangeBlockId(id)}
+      onClick={() => onClickHandler && onClickHandler(id)}
       onMouseEnter={() => setShow(true)}
       onMouseLeave={() => setShow(false)}
     >
+      {required && (
+        <span className="absolute -top-3 -right-0.5 text-red-500 text-xl font-bold">
+          *
+        </span>
+      )}
+
       <div className="flex items-center space-x-2">
         <span className="text-sm">{icon}</span>
         <span className="text-sm font-medium">
