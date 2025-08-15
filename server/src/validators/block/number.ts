@@ -3,9 +3,8 @@ import { baseBlockSchema } from ".";
 import { BlockType } from "../../generated/prisma/enum";
 
 const numberOptionalConfigSchema = z.object({
-  placeholder: z.string().default(""),
-  minNumber: z.number().optional(),
-  autoFillParam: z.string().optional(),
+  minimumNumber: z.number().optional(),
+  maximumNumber: z.number().optional(),
 });
 
 const numberBlockSchema = baseBlockSchema.extend({
@@ -22,7 +21,9 @@ export const createNumberBlockSchema = z.object({
 export const updateNumberBlockSchema = z.object({
   body: numberBlockSchema.partial().extend({
     type: z.literal(BlockType.NUMBER),
+    // This one is for safty for rewrite base schema
     newBlockPosition: z.enum(["before", "after"]).optional(),
+    required: z.boolean().optional(),
   }),
 });
 

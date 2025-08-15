@@ -20,7 +20,9 @@ export const createDateBlockSchema = z.object({
 export const updateDateBlockSchema = z.object({
   body: dateBlockSchema.partial().extend({
     type: z.literal(BlockType.DATE),
+    // This one is for safty for rewrite base schema
     newBlockPosition: z.enum(["before", "after"]).optional(),
+    required: z.boolean().optional(),
   }),
 });
 

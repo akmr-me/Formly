@@ -25,7 +25,9 @@ export const createAddressBlockSchema = z.object({
 export const updateAddressBlockSchema = z.object({
   body: addressBlockSchema.partial().extend({
     type: z.literal(BlockType.ADDRESS),
+    // This one is for safty for rewrite base schema
     newBlockPosition: z.enum(["before", "after"]).optional(),
+    required: z.boolean().optional(),
   }),
 });
 

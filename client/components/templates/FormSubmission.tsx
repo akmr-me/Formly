@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import BlockDisplayLayout from "../organisms/display/BlockDisplayLayout";
 import FormSubmissionLayout from "../organisms/FormSubmissionLayout";
@@ -19,6 +19,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { FermionFormLocalStorageKey } from "@/constants";
 import apiClient from "@/lib/apiClient";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 type SubmissionStatus = "saved" | "submitted";
 
@@ -77,12 +78,14 @@ const BlockDisplayMap: Record<
 export default function FormSubmission() {
   const params = useParams();
   const formId = params.formId as string;
+  const [isSumbitting, setIsSubmitting] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [storageValue, setStorageValue] = useLocalStorage(
     FermionFormLocalStorageKey,
     { [formId]: {} }
   );
-  const [page, setPage] = useState(2);
+  const [page, setPage] = useState(1);
 
   const { data: form, isLoading: formLoading } = useQuery({
     queryKey: ["forms", formId],
@@ -120,7 +123,7 @@ export default function FormSubmission() {
         }
       : { backgroundColor: "#b59a94" };
 
-  async function submitResponse(e) {
+  async function submitResponse() {
     const submissionId = storageValue[formId].submission_id;
     if (!submissionId) {
       toast.error("No submission id found.");
@@ -138,8 +141,11 @@ export default function FormSubmission() {
         delete clone[formId];
         return clone;
       });
-      e?.target?.reset();
+      // e?.target?.reset();
+      console.log({ inputRef });
+      if (inputRef.current) inputRef.current.value = "";
     }
+    setIsSubmitting(false);
     console.log("response", response);
   }
 
@@ -171,7 +177,7 @@ export default function FormSubmission() {
         values[key] = value;
       }
     });
-
+    console.log("values", values);
     if (
       Object.keys(values).length &&
       values[InputName] &&
@@ -225,11 +231,15 @@ export default function FormSubmission() {
 
     if (!isLastPage) handleClickDown();
     // may need time waiting
-    else submitResponse(e);
+    else setIsSubmitting(true);
   }
 
   const handleClickUp = () => setPage((prevPage) => prevPage - 1);
   const handleClickDown = () => setPage((prevPage) => prevPage + 1);
+
+  useEffect(() => {
+    if (isSumbitting) submitResponse();
+  }, [isSumbitting]);
 
   const BlockDisplayComponent = BlockDisplayMap[selectedBlockData.type] || null;
   const InputName = selectedBlockData.id;
@@ -237,7 +247,7 @@ export default function FormSubmission() {
   const isLastPage = page === data.totalPages;
 
   const values = storageValue[formId]?.submissions?.[InputName]?.value || "";
-  console.log("values", values);
+  console.log("values", storageValue, storageValue[formId], values);
   return (
     <FormSubmissionLayout
       currentStep={page}
@@ -248,7 +258,10 @@ export default function FormSubmission() {
       formStatus={form?.status}
     >
       <div
-        className="flex-1 bg-gray-100 flex items-center justify-center mt-2 rounded-2xl p-4 flex-col overflow-y-auto scrollbar-hide"
+        className={cn(
+          "flex-1 bg-gray-100 flex items-center justify-center mt-2 rounded-2xl p-4 flex-col overflow-y-auto scrollbar-hide",
+          isSumbitting && "pointer-events-none opacity-45"
+        )}
         style={backgroundStyle}
       >
         <form onSubmit={handleNextOrSubmitButtonClicked}>
@@ -271,6 +284,7 @@ export default function FormSubmission() {
                 key={selectedBlockData.id}
                 required={selectedBlockData.required}
                 defaultValue={values}
+                ref={inputRef}
               />
             )}
           </BlockDisplayLayout>

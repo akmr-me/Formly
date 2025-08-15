@@ -25,7 +25,9 @@ export const createShortTextBlockSchema = z.object({
 export const updateShortTextBlockSchema = z.object({
   body: shortTextBlockSchema.partial().extend({
     type: z.literal(BlockType.SHORT_TEXT),
+    // This one is for safty for rewrite base schema
     newBlockPosition: z.enum(["before", "after"]).optional(),
+    required: z.boolean().optional(),
   }),
 });
 
