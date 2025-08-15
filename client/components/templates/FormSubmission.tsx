@@ -10,6 +10,7 @@ import { getFormById, getPaginatedPublishedBlocks } from "@/services/form";
 import { BlockType } from "@/types";
 import FormNotPublishedMessage from "./FormNotPublishedMessage";
 import {
+  DateInput,
   LongText,
   NumberInput,
   TextInput,
@@ -20,6 +21,7 @@ import { FermionFormLocalStorageKey } from "@/constants";
 import apiClient from "@/lib/apiClient";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import AddressBlockContainer from "../containers/blocks/custom/AddressBlockContainer";
 
 type SubmissionStatus = "saved" | "submitted";
 
@@ -73,6 +75,8 @@ const BlockDisplayMap: Record<
   longText: LongText,
   number: NumberInput,
   websiteUrl: URLInput,
+  address: AddressBlockContainer,
+  date: DateInput,
 };
 
 export default function FormSubmission() {
@@ -92,36 +96,16 @@ export default function FormSubmission() {
     queryFn: () => getFormById(formId),
   });
 
-  const { data, isLoading, isError, error } = useQuery<PaginatedBlocksResponse>(
-    {
-      queryKey: ["forms", formId, "published-blocks", page],
-      queryFn: () => getPaginatedPublishedBlocks(formId, page, 1),
-      placeholderData: keepPreviousData,
-    }
-  );
-
-  if (isLoading || isError) {
-    return error ? JSON.stringify(error) : null;
-  }
-
-  if (!data?.blocks) return <FormNotPublishedMessage />;
-
-  const selectedBlockData = data.blocks;
-
-  const coverImageUrl =
-    (selectedBlockData.coverImageOrigin || "") +
-    (selectedBlockData.coverImagePath || "");
-  const coverImageLayout = selectedBlockData.coverImageLayout || "stack";
-
-  const backgroundStyle =
-    coverImageLayout === "wallpaper" && coverImageUrl
-      ? {
-          backgroundImage: `url("${encodeURI(coverImageUrl)}")`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }
-      : { backgroundColor: "#b59a94" };
+  const {
+    data = {},
+    isLoading,
+    isError,
+    error,
+  } = useQuery<PaginatedBlocksResponse>({
+    queryKey: ["forms", formId, "published-blocks", page],
+    queryFn: () => getPaginatedPublishedBlocks(formId, page, 1),
+    placeholderData: keepPreviousData,
+  });
 
   async function submitResponse() {
     const submissionId = storageValue[formId].submission_id;
@@ -240,6 +224,29 @@ export default function FormSubmission() {
   useEffect(() => {
     if (isSumbitting) submitResponse();
   }, [isSumbitting]);
+
+  if (isLoading || isError) {
+    return error ? JSON.stringify(error) : null;
+  }
+
+  if (!data?.blocks) return <FormNotPublishedMessage />;
+
+  const selectedBlockData = data.blocks;
+
+  const coverImageUrl =
+    (selectedBlockData.coverImageOrigin || "") +
+    (selectedBlockData.coverImagePath || "");
+  const coverImageLayout = selectedBlockData.coverImageLayout || "stack";
+
+  const backgroundStyle =
+    coverImageLayout === "wallpaper" && coverImageUrl
+      ? {
+          backgroundImage: `url("${encodeURI(coverImageUrl)}")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }
+      : { backgroundColor: "#b59a94" };
 
   const BlockDisplayComponent = BlockDisplayMap[selectedBlockData.type] || null;
   const InputName = selectedBlockData.id;

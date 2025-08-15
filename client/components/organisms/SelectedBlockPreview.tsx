@@ -8,6 +8,7 @@ import {
   TextInput,
   URLInput,
 } from "../molecules/block/InputBlock";
+import AddressBlockContainer from "../containers/blocks/custom/AddressBlockContainer";
 
 function Ip() {
   return (
@@ -34,6 +35,7 @@ const PreviewBlockMap: Record<
   websiteUrl: URLInput,
   // Selected Text input for visuals only
   date: TextInput,
+  address: AddressBlockContainer,
 };
 
 export default function SelectedBlockPreview({
@@ -43,7 +45,7 @@ export default function SelectedBlockPreview({
 }) {
   const PreviewBlock = PreviewBlockMap[type || ""] || null;
   const selectedBlockData = DefaultBlockData[type];
-
+  console.log({ selectedBlockData });
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 w-full pointer-events-none opacity-50">
       <BlockDisplayLayout

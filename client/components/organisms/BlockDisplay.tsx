@@ -9,6 +9,7 @@ import {
   TextInput,
   URLInput,
 } from "../molecules/block/InputBlock";
+import AddressBlockContainer from "../containers/blocks/custom/AddressBlockContainer";
 
 const BlockDisplayMap: Record<string, React.FC<T>> = {
   statement: StatementDisplayContainer,
@@ -17,6 +18,7 @@ const BlockDisplayMap: Record<string, React.FC<T>> = {
   number: NumberInput,
   websiteUrl: URLInput,
   date: DateInput,
+  address: AddressBlockContainer,
 };
 
 type BlockDisplayProps = {

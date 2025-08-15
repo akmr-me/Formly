@@ -47,7 +47,7 @@ const ChooseBlockModal = ({
           </Button>
         </div>
 
-        <div className="flex h-[600px]">
+        <div className="flex h-[520px]">
           {/* Left Sidebar - Block Types */}
           <BlockListSideBarWithSearch
             selectedBlock={selectedBlock}
@@ -55,7 +55,7 @@ const ChooseBlockModal = ({
           />
 
           {/* Right Content Area - Block Preview */}
-          <div className="flex-1 flex flex-col border border-gray-400 rounded-xl mx-4">
+          <div className="flex-1 flex flex-col border border-gray-400 rounded-xl mx-4 overflow-y-auto">
             {selectedBlockData ? (
               <>
                 {/* Block Preview */}

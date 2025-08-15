@@ -1,0 +1,38 @@
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+
+const Address = ({
+  config,
+  value,
+  onChange,
+  showControl,
+  onToggleVisibility,
+  onOpenSettings,
+}) => {
+  if (!config.visible) return null;
+
+  return (
+    <div
+      className={`space-y-2 ${config.width === "half" ? "w-full" : "w-full"} ${
+        !config.visible ? "opacity-50" : ""
+      }`}
+    >
+      <Label htmlFor={config.id} className="text-sm font-medium text-gray-700">
+        {config.label}
+        {config.required && <span className="text-red-500 ml-1">*</span>}
+      </Label>
+      <Input
+        // ref={ref}
+        id={config.id}
+        type="text"
+        placeholder={config.placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        required={config.required}
+        disabled={!config.visible}
+        className="w-full px-4 py-3 border-0 border-b-2 border-gray-300 bg-transparent focus:border-gray-600 focus:ring-0 rounded-none"
+      />
+    </div>
+  );
+};
+export default Address;

@@ -19,7 +19,7 @@ export default function BlockListSideBarWithSearch({
     block.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
-    <div className="relative w-70 flex flex-col h-[90%]">
+    <div className="relative w-70 flex flex-col h-full">
       {/* Fixed Search Input */}
 
       {/* Scrollable Block Types List */}
