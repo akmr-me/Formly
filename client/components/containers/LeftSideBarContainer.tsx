@@ -1,5 +1,5 @@
 import { useParams } from "next/navigation";
-import LeftSideBar from "../organisms/LeftSideBar";
+import LeftSideBar from "./LeftSideBar";
 import { useQuery } from "@tanstack/react-query";
 import { getFormWithBlocks } from "@/services/form";
 import { BlockType } from "@/types";

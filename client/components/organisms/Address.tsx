@@ -1,14 +1,14 @@
+import { AddressFieldConfig } from "@/types";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-const Address = ({
-  config,
-  value,
-  onChange,
-  showControl,
-  onToggleVisibility,
-  onOpenSettings,
-}) => {
+type AddressProps = {
+  config: AddressFieldConfig;
+  value: string;
+  onChange: (value: string) => void;
+};
+
+const Address = ({ config, value, onChange }: AddressProps) => {
   if (!config.visible) return null;
 
   return (

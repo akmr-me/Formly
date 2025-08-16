@@ -13,7 +13,6 @@ const PreviewBlockMap: Record<
   BlockTypeEnum,
   React.FC<{
     selectedBlockData: BlockType;
-    disabled?: boolean;
     placeholder?: string;
   }>
 > = {
@@ -25,6 +24,9 @@ const PreviewBlockMap: Record<
   // Selected Text input for visuals only
   date: TextInput,
   address: AddressBlockContainer,
+  single: () => null,
+  multi: () => null,
+  dropdown: () => null,
 };
 
 export default function SelectedBlockPreview({
@@ -34,7 +36,7 @@ export default function SelectedBlockPreview({
 }) {
   const PreviewBlock = PreviewBlockMap[type || ""] || null;
   const selectedBlockData = DefaultBlockData[type];
-  console.log({ selectedBlockData });
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 w-full pointer-events-none opacity-50">
       <BlockDisplayLayout

@@ -42,26 +42,8 @@ export default function FormBuilderHeader({
           <Eye className="w-4 h-4 mr-1" />
           Build
         </Button>
-        <Button variant="ghost" size="sm" disabled>
-          <Settings className="w-4 h-4 mr-1" />
-          Integrate
-        </Button>
-        <Button variant="ghost" size="sm" disabled>
-          <Share className="w-4 h-4 mr-1" />
-          Share
-        </Button>
-        <Button variant="ghost" size="sm" disabled>
-          <Eye className="w-4 h-4 mr-1" />
-          Results
-        </Button>
       </div>
       <div className="flex items-center space-x-2">
-        <Button variant="ghost" size="sm" disabled>
-          <Undo2 className="w-4 h-4" />
-        </Button>
-        <Button variant="ghost" size="sm" disabled>
-          <Redo2 className="w-4 h-4" />
-        </Button>
         <Link
           // variant="ghost"
           // size="sm"
@@ -71,11 +53,8 @@ export default function FormBuilderHeader({
         >
           <Link2 className="w-4 h-4" />
         </Link>
-        <Button variant="ghost" size="sm" disabled>
-          <Share className="w-4 h-4" />
-        </Button>
         <Button
-          className="bg-black text-white hover:bg-gray-800"
+          className="bg-black text-white hover:bg-gray-800 ml-5"
           onClick={onPublish}
           disabled={isPublishing || formStatus === "publish"}
         >

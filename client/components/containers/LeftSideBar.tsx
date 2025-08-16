@@ -3,10 +3,10 @@ import { Button } from "../ui/button";
 import BlockInfo from "../molecules/BlockInfo";
 import { useState } from "react";
 import { BlockType } from "@/types";
-import BlockDropdownMenuContainer from "../containers/BlockDropDownMenuContainer";
+import BlockDropdownMenuContainer from "./BlockDropDownMenuContainer";
 import CustomTooltip from "../molecules/CustomTooltip";
 import { AddNewBlockHoverText } from "@/constants";
-import BlockInfoLeftSidebarContainer from "../containers/blocks/BlockInfoLeftSidebarContainer";
+import BlockInfoLeftSidebarContainer from "./blocks/BlockInfoLeftSidebarContainer";
 
 type LeftSideBarProps = {
   formBlocks: BlockType[];

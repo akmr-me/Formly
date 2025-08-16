@@ -28,7 +28,6 @@ export default function BlockDisplayLayout({
   displayLayoutSize,
   required,
 }: BlockDisplayLayoutProps) {
-  console.log({ title, description, buttonText });
   const validDescription =
     description && description !== "<p><br></p>" ? description : "";
   return (

@@ -6,14 +6,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useUpdateCommonBlockFields } from "@/hooks/useUpdateCommonBlockFields";
-import { BlockType } from "@/types";
 import { useSearchParams } from "next/navigation";
 import { Label } from "@/components/ui/label";
 
 type LongTextTextSizeProps = {
-  selectedBlockData: BlockType;
+  selectedBlockData: {
+    optionalConfig?: {
+      textBoxSize?: string;
+      minCharacterLength?: number;
+      maxCharacterLength?: number;
+    };
+  };
 };
-
 const TextSizeOptions = [
   { value: "small", label: "Small" },
   { value: "medium", label: "Medium" },
@@ -23,7 +27,7 @@ const TextSizeOptions = [
 
 export function LongTextTextSize({ selectedBlockData }: LongTextTextSizeProps) {
   const searchParams = useSearchParams();
-  const blockId = searchParams.get("block_id");
+  const blockId = searchParams.get("block_id") as string;
   const { mutate } = useUpdateCommonBlockFields(blockId, "longText");
 
   // Derive current value directly from props
@@ -46,12 +50,8 @@ export function LongTextTextSize({ selectedBlockData }: LongTextTextSizeProps) {
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {TextSizeOptions.map((option, index) => (
-            <SelectItem
-              key={option.value}
-              value={option.value}
-              disabled={index === 1} // Fixed: use === instead of ==
-            >
+          {TextSizeOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
               {option.label}
             </SelectItem>
           ))}

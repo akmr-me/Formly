@@ -13,6 +13,7 @@ import LeftSideBarContainer from "../containers/LeftSideBarContainer";
 import FormBuilderHeaderContainer from "../containers/FormBuilderHeaderContainer";
 import ChooseBlockModalContainer from "../containers/blocks/ChooseBlockModalContainer";
 import { BlockType } from "@/types";
+import { cn } from "@/lib/utils";
 
 const FormBuilder = () => {
   const searchParams = useSearchParams();
@@ -76,7 +77,12 @@ const FormBuilder = () => {
             <BlockDisplayHeader
               handleOpenChooseBlockModal={handleOpenChooseBlockModal}
             />
-            <div className="h-full relative overflow-hidden">
+            <div
+              className={cn(
+                "h-full relative overflow-hidden",
+                isLoading && "opacity-50"
+              )}
+            >
               <BlockDisplay
                 selectedBlockData={selectedBlockData as BlockType}
                 triggerShakeButtonTextInput={triggerShakeButtonTextInput}

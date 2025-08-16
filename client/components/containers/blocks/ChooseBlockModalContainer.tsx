@@ -40,7 +40,6 @@ export default function ChooseBlockModalContainer(
       }
     );
   };
-
   return (
     <ChooseBlockModal
       {...props}

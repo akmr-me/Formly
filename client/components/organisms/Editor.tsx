@@ -97,7 +97,7 @@ export default function Editor({
   const OptionalConfigFields = OptionalEditorFieldMap[type] || null;
 
   return (
-    <div className="w-95 bg-white border-l border-gray-200 overflow-y-auto">
+    <div className="w-72 bg-white border-l border-gray-200 overflow-y-auto">
       <div className="p-4 space-y-6">
         <InputWithLabel
           title={selectedBlockData?.titleLabel || "Title"}

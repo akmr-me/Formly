@@ -1,12 +1,21 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
-export function RequiredFieldCheckbox({ checked, onChange, className = "" }) {
+export type RequiredFieldCheckboxProps = {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  className?: string;
+};
+
+export function RequiredFieldCheckbox({
+  checked,
+  onChange,
+  className,
+}: RequiredFieldCheckboxProps) {
   return (
     <div className="flex items-start space-x-3">
       <Checkbox
         checked={checked}
-        onChange={onChange}
         className={`mt-0.5 ${className}`}
         onCheckedChange={onChange}
       />

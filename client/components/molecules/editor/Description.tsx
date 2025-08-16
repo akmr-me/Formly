@@ -135,30 +135,17 @@ const Description: React.FC<DescriptionPropsType> = ({
     },
   };
 
-  const handleChange = useCallback(
-    (content: string, delta: any, source: string, editor: any) => {
-      if (!isInitialized || source !== "user") {
-        return;
-      }
-
-      console.log("handleChange called - source:", source);
-      setValue(content);
-      debouncedDescriptionUpdate(content, delta);
-
-      console.log("HTML Content:", content);
-      console.log("Plain Text:", editor.getText());
-      console.log("Delta (Rich Content):", editor.getContents());
-    },
-    [isInitialized]
-  );
-
   const debouncedDescriptionUpdate = useDebouncedCallback(
     (html: string, delta: any) => {
-      console.log("Saving content:", html);
       const updateData: Partial<UpdateBlockPayload> = {};
 
-      if (delta) {
+      // Only update if html is a string
+      if (html && typeof html === "string") {
         updateData.descriptionHtml = html;
+      }
+
+      // Only update if delta is a valid object
+      if (delta && typeof delta === "object") {
         updateData.descriptionDelta = delta;
       }
 
@@ -169,13 +156,28 @@ const Description: React.FC<DescriptionPropsType> = ({
     DefaultDebounceTime
   );
 
+  const handleChange = useCallback(
+    (content: string, delta: any, source: string, editor: any) => {
+      if (!isInitialized || source !== "user") return;
+
+      setValue(content);
+      debouncedDescriptionUpdate(content, delta);
+    },
+    [isInitialized, debouncedDescriptionUpdate]
+  );
+
+  useEffect(() => {
+    if (
+      selectedBlockData.descriptionHtml &&
+      typeof selectedBlockData.descriptionHtml === "string"
+    ) {
+      setValue(selectedBlockData.descriptionHtml);
+    }
+  }, [selectedBlockData.descriptionHtml]);
+
   const getInputPlaceholder = (): string => {
     return inputMode === "video" ? "Enter YouTube URL..." : "Enter link URL...";
   };
-
-  useEffect(() => {
-    setValue(selectedBlockData.descriptionHtml || value);
-  }, [selectedBlockData.descriptionHtml]);
 
   return (
     <div>
@@ -230,51 +232,40 @@ const Description: React.FC<DescriptionPropsType> = ({
           border-bottom: 1px solid #d1d5db;
           ${showInput ? "display: none;" : ""}
         }
-
         .quill-container .ql-container {
           border-radius: 0 0 8px 8px;
           background-color: white;
         }
-
         .quill-container.no-top-border .ql-container {
           border-top: none;
           border-radius: 0 0 8px 8px;
         }
-
         .custom-input-toolbar + .ql-container {
           border-top: none;
           border-radius: 0 0 8px 8px;
         }
-
         .custom-input-toolbar {
           border-bottom: 1px solid #d1d5db;
           border-radius: 8px 8px 0 0;
         }
-
         .quill-container .ql-editor {
           min-height: 80px;
           line-height: 1.5;
           padding: 12px 15px;
         }
-
         .quill-container .ql-toolbar .ql-formats {
           margin-right: 15px;
         }
-
         .quill-container .ql-toolbar button:hover {
           background-color: #e5e7eb;
         }
-
         .quill-container .ql-toolbar button.ql-active {
           background-color: #ddd6fe;
           color: #7c3aed;
         }
-
-        /* Replace video icon with YouTube icon */
         .ql-toolbar button.ql-video .ql-stroke {
           display: none;
         }
-
         .ql-toolbar button.ql-video::before {
           content: "📺";
           font-size: 14px;

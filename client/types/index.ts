@@ -105,6 +105,7 @@ export type AddressFieldConfig = {
 };
 
 export type AddressData = {
+  [key: string]: string;
   address: string;
   addressLine2: string;
   city: string;

@@ -51,29 +51,28 @@ const FormSubmissionLayout: React.FC<FormLayoutProps> = ({
 
       {/* Main Content Area */}
       <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-2xl">{children}</div>
+        <div className="w-full max-w-4xl">{children}</div>
       </div>
 
       {/* Bottom Navigation */}
-      <div className="flex items-center justify-between p-6 absolute w-full bottom-4">
-        {/* Powered By */}
-        <div className="flex items-center">
+      <div className="fixed bottom-8 left-8 flex justify-between items-end z-50">
+        <div className="flex flex-col gap-2 items-start">
           <div className="bg-black text-white px-3 py-1 rounded text-sm font-medium">
             {poweredByText}
           </div>
         </div>
-
-        {/* Navigation Arrows */}
-        {showNavigation && (
-          <div className="flex gap-1">
-            <button
-              onClick={onUpClick}
-              className="bg-black hover:bg-gray-800 text-white p-2 rounded transition-colors duration-200"
-              disabled={!onUpClick}
-            >
-              <ChevronUp className="w-4 h-4" />
-            </button>
-            {
+      </div>
+      <div className="fixed bottom-8 right-8 flex justify-between items-end z-50">
+        <div className="flex flex-col gap-2 items-start">
+          {showNavigation && (
+            <div className="flex gap-1">
+              <button
+                onClick={onUpClick}
+                className="bg-black hover:bg-gray-800 text-white p-2 rounded transition-colors duration-200"
+                disabled={!onUpClick}
+              >
+                <ChevronUp className="w-4 h-4" />
+              </button>
               <button
                 onClick={onDownClick}
                 className={cn(
@@ -84,9 +83,9 @@ const FormSubmissionLayout: React.FC<FormLayoutProps> = ({
               >
                 <ChevronDown className="w-4 h-4" />
               </button>
-            }
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

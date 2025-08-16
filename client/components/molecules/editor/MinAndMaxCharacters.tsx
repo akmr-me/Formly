@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 type MinAndMaxCharactersProps = {
-  value: number;
+  value?: number | null;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   label?: string;
@@ -13,10 +13,10 @@ type MinAndMaxCharactersProps = {
 export function MinAndMaxCharacters({
   value,
   onChange,
-  className = "",
-  label = "",
+  className,
+  label,
   placeholder,
-  info = "",
+  info,
 }: MinAndMaxCharactersProps) {
   return (
     <div className="space-y-2 mb-2">
@@ -24,7 +24,8 @@ export function MinAndMaxCharacters({
       <Input
         type="number"
         placeholder={placeholder}
-        value={value}
+        // value={value}
+        {...(value !== null && { value })}
         onChange={onChange}
         className={className}
         min="0"

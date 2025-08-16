@@ -131,7 +131,7 @@ export const DefaultBlockData = {
     urlParamsTooltip:
       "For e.g if you set this value to 'website' and then append ?website=https://example.com at the end of the form page URL then it will auto fill the field value with https://example.com. Click to learn more.",
   },
-  singleSelect: {
+  single: {
     type: "singleSelect",
     question: "Which do you prefer? 👇",
     description: "",
@@ -161,7 +161,7 @@ export const DefaultBlockData = {
     urlParamsTooltip:
       "For e.g if you set this value to 'choice' and then append ?choice=option_id_123 at the end of the form page URL then it will auto fill the field with that option. Use option IDs from the chevron menu above. Click to learn more.",
   },
-  multiSelect: {
+  multi: {
     type: "multiSelect",
     question: "Please choose at least one option 👇",
     description: "",
@@ -205,7 +205,7 @@ export const DefaultBlockData = {
       },
     ],
   },
-  drowdownList: {
+  dropdown: {
     type: "drowdownList",
     question: "Please choose 👇",
     description: "",
@@ -433,6 +433,9 @@ export const CreateNewBlockDataMap = {
       },
     },
   },
+  select: {},
+  multi: {},
+  dropdown: {},
 };
 
 export const UnpublishedFormMessage =

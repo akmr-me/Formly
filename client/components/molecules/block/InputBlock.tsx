@@ -88,31 +88,20 @@ export const LongText = forwardRef<
     TextareaHTMLAttributes<HTMLTextAreaElement>,
     HTMLTextAreaElement
   >
->(
-  (
-    {
-      placeholder = "Enter text...",
-      value,
-      onChange,
-      className = "",
-      ...props
-    },
-    ref
-  ) => {
-    return (
-      <div className="text-center space-y-6">
-        <Textarea
-          ref={ref}
-          {...props}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          className={className}
-        />
-      </div>
-    );
-  }
-);
+>(({ placeholder, value, onChange, className = "", ...props }, ref) => {
+  return (
+    <div className="text-center space-y-6 min-w-xl">
+      <Textarea
+        ref={ref}
+        {...props}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        className={`w-full border-b-2 border-gray-600 bg-transparent focus:outline-none focus:border-gray-800 text-lg ${className}`}
+      />
+    </div>
+  );
+});
 LongText.displayName = "LongText";
 
 interface URLInputProps

@@ -6,7 +6,11 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import BlockDisplayLayout from "../organisms/display/BlockDisplayLayout";
 import FormSubmissionLayout from "../organisms/FormSubmissionLayout";
 import StatementDisplayContainer from "../containers/display/StatementDisplayContainer";
-import { getFormById, getPaginatedPublishedBlocks } from "@/services/form";
+import {
+  createNewFormResponse,
+  getFormById,
+  getPaginatedPublishedBlocks,
+} from "@/services/form";
 import { BlockType } from "@/types";
 import FormNotPublishedMessage from "./FormNotPublishedMessage";
 import {
@@ -63,7 +67,6 @@ type PaginatedBlocksResponse = {
   totalCount: number;
   totalPages: number;
 };
-// type FormValues = Record<string, any>;
 
 // Map each block type to its corresponding React component
 const BlockDisplayMap: Record<
@@ -127,6 +130,7 @@ export default function FormSubmission() {
       "/forms/" + formId + "/response/" + submissionId,
       submissions
     );
+    console.log({ response });
     if (response.status === 201) {
       toast.success("Form submitted successfully.");
       setStorageValue((prevStorage) => {
@@ -183,7 +187,8 @@ export default function FormSubmission() {
       console.log({ values });
 
       if (!submissionId) {
-        const response = await apiClient.post(`/forms/${formId}/response`);
+        const response = await createNewFormResponse(formId);
+        console.log({ response });
         submissionId = response.data.id;
         const submittedAt = response.data.submittedAt;
 

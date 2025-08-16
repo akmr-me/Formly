@@ -30,3 +30,8 @@ export async function getPaginatedPublishedBlocks(
   });
   return res.data;
 }
+
+export async function createNewFormResponse(formId: string) {
+  const res = await apiClient.post(`/forms/${formId}/response`);
+  return res.data;
+}
