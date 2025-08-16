@@ -30,9 +30,9 @@ const AddressControl = ({
       <div className="flex items-center justify-between">
         <Label
           htmlFor={config.id}
-          className="text-sm font-medium text-gray-700"
+          className="text-sm font-medium text-gray-700 capitalize"
         >
-          {config.label}
+          {config.id}
           {config.required && <span className="text-red-500 ml-1">*</span>}
         </Label>
 

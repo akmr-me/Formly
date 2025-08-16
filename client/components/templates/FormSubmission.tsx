@@ -164,14 +164,27 @@ export default function FormSubmission() {
     const values: FormValues = {};
 
     formData.forEach((value, key) => {
-      if (values[key]) {
-        if (Array.isArray(values[key])) {
-          (values[key] as FormDataEntryValue[]).push(value);
+      const parts = key.split(".");
+      let current: any = values;
+
+      for (let i = 0; i < parts.length - 1; i++) {
+        const part = parts[i];
+        if (!current[part]) {
+          current[part] = {};
+        }
+        current = current[part];
+      }
+
+      const lastKey = parts[parts.length - 1];
+
+      if (current[lastKey] !== undefined) {
+        if (Array.isArray(current[lastKey])) {
+          current[lastKey].push(value);
         } else {
-          values[key] = [values[key] as FormDataEntryValue, value];
+          current[lastKey] = [current[lastKey], value];
         }
       } else {
-        values[key] = value;
+        current[lastKey] = value;
       }
     });
     console.log("values", values);

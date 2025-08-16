@@ -1,15 +1,17 @@
 import Address from "@/components/organisms/Address";
 import { AddressData, AddressFieldConfig, BlockType } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type AddressBlockContainerProps = {
   selectedBlockData: BlockType;
   className?: string;
+  defaultValue?: Record<string, string>;
 };
 
 const AddressBlockContainer = ({
   className = "",
   selectedBlockData,
+  defaultValue,
 }: AddressBlockContainerProps) => {
   const [addressData, setAddressData] = useState<AddressData>({
     address: "",
@@ -19,7 +21,7 @@ const AddressBlockContainer = ({
     zip: "",
     country: "",
   });
-
+  console.log({ defaultValue });
   const handleFieldChange = (fieldId: string, newValue: string) => {
     setAddressData((prev) => ({ ...prev, [fieldId]: newValue }));
   };
@@ -31,6 +33,12 @@ const AddressBlockContainer = ({
   )
     .sort((a, b) => a.order - b.order)
     .map((config) => config.id);
+
+  useEffect(() => {
+    if (defaultValue) {
+      setAddressData(defaultValue);
+    }
+  }, [defaultValue]);
 
   return (
     <div className={`max-w-2xl mx-auto p-6 bg-transparent ${className}`}>
@@ -51,6 +59,7 @@ const AddressBlockContainer = ({
                   config={config}
                   value={addressData[config.id]}
                   onChange={(value) => handleFieldChange(config.id, value)}
+                  name={`${selectedBlockData.id}.${config.id}`}
                 />
               </div>
             );

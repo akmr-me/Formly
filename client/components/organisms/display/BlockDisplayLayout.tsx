@@ -33,13 +33,19 @@ export default function BlockDisplayLayout({
   return (
     <div
       className={cn(
-        "rounded-2xl p-16 max-w-4xl w-full h-full grid overflow-y-auto scrollbar-hide",
+        "rounded-2xl p-16 max-w-4xl w-full h-full grid overflow-y-auto scrollbar-hide m-auto",
         textAlign === "center" && "text-center",
         textAlign === "left" && "text-left",
         displayLayoutSize === "small" && "p-4"
       )}
     >
-      <div className="place-self-center self-start w-full">
+      <div
+        className={cn(
+          "place-self-center self-start w-full",
+          textAlign === "center" && "text-center",
+          textAlign === "left" && "text-left"
+        )}
+      >
         <div className="w-auto max-h-64">
           {imageLayout === "stack" && imageUrl && (
             <Image
@@ -55,7 +61,7 @@ export default function BlockDisplayLayout({
             />
           )}
         </div>
-        <div className={cn(textAlign === "center" && "mx-auto")}>
+        <div className={cn(textAlign === "center" && "justify-center flex")}>
           <h1
             // TODO: removed w-fit
             className={cn(
