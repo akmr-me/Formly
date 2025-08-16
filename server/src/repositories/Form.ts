@@ -11,21 +11,19 @@ type FormWithBlocks = Selectable<TForm> & {
 
 class Form {
   async createForm(data: createFormInternal) {
-    const newForm = await db
+    return await db
       .insertInto("Form")
       .values({ ...data, updatedAt: new Date() })
       .returningAll()
       .executeTakeFirstOrThrow();
-    return newForm;
   }
 
   async getFormById(id: string) {
-    const form = await db
+    return await db
       .selectFrom("Form")
       .selectAll()
       .where("id", "=", id)
       .executeTakeFirstOrThrow();
-    return form;
   }
 
   async getFormWithBlocks(formId: string): Promise<FormWithBlocks | null> {
@@ -77,12 +75,11 @@ class Form {
   }
 
   async getFormByShortId(shortId: string) {
-    const form = await db
+    return await db
       .selectFrom("Form")
       .selectAll()
       .where("shortId", "=", shortId)
       .executeTakeFirstOrThrow();
-    return form;
   }
 
   async getCurrentAndAdjacentBlocks(
@@ -99,7 +96,7 @@ class Form {
         .select(["id", "formId", "position"])
         .where("id", "=", currentBlockId)
         .executeTakeFirst();
-
+      console.log("currentBlockDetails", currentBlockDetails);
       if (!currentBlockDetails) {
         throw new Error(`Block with ID ${currentBlockId} not found.`);
       }
@@ -128,7 +125,7 @@ class Form {
 
   // publish form
   async publishForm(shortId: string) {
-    await db.transaction().execute(async (trx) => {
+    return await db.transaction().execute(async (trx) => {
       // 1. Publish the form
       const form = await trx
         .updateTable("Form")
@@ -280,8 +277,7 @@ class Form {
 
     await db.transaction().execute(async (trx) => {
       for (const [blockId, valueObject] of Object.entries(
-        // @ts-ignore
-        ResponseData.submissions
+        ResponseData.submissions ?? {}
       )) {
         await trx
           .insertInto("ResponseValue")

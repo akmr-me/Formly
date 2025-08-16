@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Copy, Trash2 } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 
 type BlockDropdownMenuProps = {
   onDuplicate: () => void;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import BlockDisplayLayout from "../organisms/display/BlockDisplayLayout";
 import FormSubmissionLayout from "../organisms/FormSubmissionLayout";
@@ -68,7 +68,13 @@ type PaginatedBlocksResponse = {
 // Map each block type to its corresponding React component
 const BlockDisplayMap: Record<
   string,
-  React.FC<{ selectedBlockData: BlockType }>
+  React.FC<{
+    selectedBlockData: BlockType;
+    name?: string;
+    required?: boolean;
+    defaultValue?: string;
+    ref: RefObject<HTMLInputElement | null>;
+  }>
 > = {
   statement: StatementDisplayContainer,
   shortText: TextInput,
@@ -91,21 +97,24 @@ export default function FormSubmission() {
   );
   const [page, setPage] = useState(1);
 
-  const { data: form, isLoading: formLoading } = useQuery({
+  const { data: response, isLoading: formLoading } = useQuery({
     queryKey: ["forms", formId],
     queryFn: () => getFormById(formId),
+    enabled: !!formId,
   });
 
-  const {
-    data = {},
-    isLoading,
-    isError,
-    error,
-  } = useQuery<PaginatedBlocksResponse>({
-    queryKey: ["forms", formId, "published-blocks", page],
-    queryFn: () => getPaginatedPublishedBlocks(formId, page, 1),
-    placeholderData: keepPreviousData,
-  });
+  const form = response?.data;
+  console.log({ response, form });
+  const { data, isLoading, isError, error } = useQuery<PaginatedBlocksResponse>(
+    {
+      queryKey: ["forms", formId, "published-blocks", page],
+      queryFn: async () => {
+        const res = await getPaginatedPublishedBlocks(formId, page, 1);
+        return res.data;
+      },
+      placeholderData: keepPreviousData,
+    }
+  );
 
   async function submitResponse() {
     const submissionId = storageValue[formId].submission_id;

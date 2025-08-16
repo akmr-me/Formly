@@ -29,6 +29,8 @@ export default function BlockDisplayLayout({
   required,
 }: BlockDisplayLayoutProps) {
   console.log({ title, description, buttonText });
+  const validDescription =
+    description && description !== "<p><br></p>" ? description : "";
   return (
     <div
       className={cn(
@@ -58,7 +60,7 @@ export default function BlockDisplayLayout({
           <h1
             // TODO: removed w-fit
             className={cn(
-              "text-4xl font-bold text-black relative w-fit",
+              "text-4xl font-bold text-black relative w-fit py-6",
               displayLayoutSize === "small" && "text-xl"
             )}
             onClick={onHeaderClick}
@@ -73,14 +75,14 @@ export default function BlockDisplayLayout({
           </h1>
         </div>
 
-        {description && (
-          <div className="my-8 max-w-2xl">
+        {validDescription && (
+          <div className="my-4 max-w-2xl">
             <div
               className={cn(
                 "text-lg text-gray-700 leading-relaxed",
                 displayLayoutSize === "small" && "text-sm"
               )}
-              dangerouslySetInnerHTML={{ __html: description }}
+              dangerouslySetInnerHTML={{ __html: validDescription }}
             />
           </div>
         )}
@@ -88,7 +90,7 @@ export default function BlockDisplayLayout({
         <div>
           <Button
             className={cn(
-              "bg-black text-white px-8 py-4 rounded-md hover:bg-gray-800 text-lg font-medium",
+              "bg-black text-white px-8 py-4 rounded-md hover:bg-gray-800 text-lg font-medium mt-8",
               displayLayoutSize === "small" && "text-sm",
               displayLayoutSize === "small" && "px-4 py-2",
               displayLayoutSize === "small" && "font-semibold"

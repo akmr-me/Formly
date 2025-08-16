@@ -7,7 +7,7 @@ export async function updateBlockField(id: string, data: UpdateBlockPayload) {
   return res.data;
 }
 
-export async function createStatementBlock(data: DefaultBlockDataType) {
+export async function createNewBlock(data: DefaultBlockDataType) {
   const res = await apiClient.post("/blocks", data);
   return res.data;
 }

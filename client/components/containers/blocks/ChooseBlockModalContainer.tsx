@@ -33,7 +33,7 @@ export default function ChooseBlockModalContainer(
     mutate(
       { ...defaultData },
       {
-        onSuccess(data) {
+        onSuccess() {
           // close modal
           props.setIsOpen(false);
         },

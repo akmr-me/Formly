@@ -21,10 +21,12 @@ export default function LeftSideBarContainer({
     enabled: !!formId,
   });
 
-  const formBlocks = (data?.blocks || []).map((block: BlockType) => ({
-    ...block,
-    color: BlockTypeMap[block.type].color,
-  }));
+  // ✅ correctly access nested data
+  const formBlocks =
+    data?.data?.blocks?.map((block: BlockType) => ({
+      ...block,
+      color: BlockTypeMap[block.type].color,
+    })) || [];
 
   return (
     <LeftSideBar
