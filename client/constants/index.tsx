@@ -1,7 +1,5 @@
 import { BlockType } from "@/types";
 import { formBlocks } from "./blockTypes";
-import { Button } from "@/components/ui/button";
-import TextAlign from "@/components/molecules/editor/TextAlign";
 
 export const ImageLayoutOptions = [
   {
@@ -61,6 +59,7 @@ export const DefaultBlockData = {
   statement: {
     title: "Hey there 😀",
     description: "Mind filling out this form?",
+    displayQuestion: "Your title here...",
     button: "Let's start",
     displayTitle: "Welcome! Please take some time to fill up this form.",
     displayDescription: "This will only take 2 minutes.",
@@ -315,6 +314,15 @@ export const DefaultBlockData = {
 };
 
 export const CreateNewBlockDataMap = {
+  statement: {
+    type: "statement",
+    titleLabel: "Title",
+    title: "",
+    buttonText: "Continue",
+    placeholder: "",
+    required: false,
+    textAlign: "center",
+  },
   shortText: {
     type: "shortText",
     titleLabel: "Question",

@@ -1,8 +1,0 @@
-model Response {
-    id          String   @id @default(cuid())
-    formId      String   @db.Uuid
-    form        Form     @relation(fields: [formId], references: [shortId], onDelete: Cascade)
-    submittedAt DateTime @default(now())
-
-    values ResponseValue[]
-}

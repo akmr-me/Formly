@@ -1,31 +1,36 @@
 import { z } from "zod";
-import { baseBlockSchema } from ".";
+import {
+  baseBlockSchema,
+  blockReferenceSchema,
+  makeUpdateSchema,
+  positionSchema,
+  withOptionalConfig,
+} from ".";
 import { BlockType } from "../../generated/prisma/enum";
 
 const websiteUrlOptionalConfigSchema = z.object({});
 
-const websiteUrlBlockSchema = baseBlockSchema.extend({
-  optionalConfig: websiteUrlOptionalConfigSchema.optional(),
-  type: z.literal(BlockType.WEBSITE_URL),
-  referenceBlockId: z.string(),
-  newBlockPosition: z.enum(["before", "after"]).default("after"),
-});
+const websiteUrlBlockSchema = withOptionalConfig(websiteUrlOptionalConfigSchema)
+  .merge(blockReferenceSchema)
+  .extend({
+    type: z.literal(BlockType.WEBSITE_URL),
+  });
 
+// dto
 export const createWebsiteUrlBlockSchema = z.object({
   body: websiteUrlBlockSchema,
 });
 
 export const updateWebsiteUrlBlockSchema = z.object({
-  body: websiteUrlBlockSchema.partial().extend({
+  body: makeUpdateSchema(websiteUrlBlockSchema, {
     type: z.literal(BlockType.WEBSITE_URL),
-    // This one is for safty for rewrite base schema
-    newBlockPosition: z.enum(["before", "after"]).optional(),
     required: z.boolean().optional(),
+    newBlockPosition: positionSchema.optional(),
   }),
 });
 
-type CreateWebsiteUrlBlockType = z.infer<typeof createWebsiteUrlBlockSchema>;
-type UpdateWebsiteUrlBlockType = z.infer<typeof updateWebsiteUrlBlockSchema>;
-
-export type CreateWebsiteUrlBlockDto = CreateWebsiteUrlBlockType["body"];
-export type UpdateWebsiteUrlBlockDto = UpdateWebsiteUrlBlockType["body"];
+// type
+export type CreateWebsiteUrlBlockDto = z.infer<typeof websiteUrlBlockSchema>;
+export type UpdateWebsiteUrlBlockDto = z.infer<
+  typeof updateWebsiteUrlBlockSchema
+>["body"];

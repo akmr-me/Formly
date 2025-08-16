@@ -1,4 +1,3 @@
-import { Input } from "../ui/input";
 import { BlockType, BlockTypeEnum } from "@/types";
 import BlockDisplayLayout from "./display/BlockDisplayLayout";
 import { DefaultBlockData } from "@/constants";
@@ -9,16 +8,6 @@ import {
   URLInput,
 } from "../molecules/block/InputBlock";
 import AddressBlockContainer from "../containers/blocks/custom/AddressBlockContainer";
-
-function Ip() {
-  return (
-    <Input
-      placeholder="Your answer here..."
-      className="w-full pr-12"
-      disabled
-    />
-  );
-}
 
 const PreviewBlockMap: Record<
   BlockTypeEnum,

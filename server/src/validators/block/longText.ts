@@ -1,36 +1,53 @@
 import { z } from "zod";
-import { baseBlockSchema } from ".";
+import {
+  baseBlockSchema,
+  blockReferenceSchema,
+  makeUpdateSchema,
+  positionSchema,
+  withOptionalConfig,
+} from ".";
 import { BlockType } from "../../generated/prisma/enum";
+import { LongTextBoxSizes } from "../../constants";
 
-const longTextOptionalConfigSchema = z.object({
-  // placeholder: z.string().default(""),
-  textBoxSize: z.enum(["small", "medium", "large", "extraLarge"]).optional(),
-  minCharacterLength: z.number().int().nonnegative().nullable().optional(),
-  maxCharacterLength: z.number().int().positive().nullable().optional(),
-});
+// Optional config
+const longTextOptionalConfigSchema = z
+  .object({
+    textBoxSize: z.enum(LongTextBoxSizes).optional(),
+    minCharacterLength: z.number().int().nonnegative().nullable().optional(),
+    maxCharacterLength: z.number().int().positive().nullable().optional(),
+  })
+  .refine(
+    (data) =>
+      data.minCharacterLength == null ||
+      data.maxCharacterLength == null ||
+      data.minCharacterLength <= data.maxCharacterLength,
+    {
+      message: "minCharacterLength cannot be greater than maxCharacterLength",
+      path: ["minCharacterLength"],
+    }
+  );
 
-const longTextBlockSchema = baseBlockSchema.extend({
-  optionalConfig: longTextOptionalConfigSchema.optional(),
-  type: z.literal(BlockType.LONG_TEXT),
-  referenceBlockId: z.string(),
-  newBlockPosition: z.enum(["before", "after"]).default("after"),
-});
+const longTextBlockSchema = withOptionalConfig(longTextOptionalConfigSchema)
+  .merge(blockReferenceSchema)
+  .extend({
+    type: z.literal(BlockType.LONG_TEXT),
+  });
 
+// dto
 export const createLongTextBlockSchema = z.object({
   body: longTextBlockSchema,
 });
 
 export const updateLongTextBlockSchema = z.object({
-  body: longTextBlockSchema.partial().extend({
+  body: makeUpdateSchema(longTextBlockSchema, {
     type: z.literal(BlockType.LONG_TEXT),
-    // This one is for safty for rewrite base schema
-    newBlockPosition: z.enum(["before", "after"]).optional(),
+    newBlockPosition: positionSchema.optional(),
     required: z.boolean().optional(),
   }),
 });
 
-type CreateLongTextBlockType = z.infer<typeof createLongTextBlockSchema>;
-type UpdateLongTextBlockType = z.infer<typeof updateLongTextBlockSchema>;
-
-export type CreateLongTextBlockDto = CreateLongTextBlockType["body"];
-export type UpdateLongTextBlockDto = UpdateLongTextBlockType["body"];
+// types
+export type CreateLongTextBlockDto = z.infer<typeof longTextBlockSchema>;
+export type UpdateLongTextBlockDto = z.infer<
+  typeof updateLongTextBlockSchema
+>["body"];

@@ -1,34 +1,50 @@
 import { z } from "zod";
-import { baseBlockSchema } from ".";
+import {
+  baseBlockSchema,
+  blockReferenceSchema,
+  makeUpdateSchema,
+  positionSchema,
+  withOptionalConfig,
+} from ".";
 import { BlockType } from "../../generated/prisma/enum";
 
-const numberOptionalConfigSchema = z.object({
-  minimumNumber: z.number().optional().nullable(),
-  maximumNumber: z.number().optional().nullable(),
-});
+const numberOptionalConfigSchema = z
+  .object({
+    minimumNumber: z.number().optional().nullable(),
+    maximumNumber: z.number().optional().nullable(),
+  })
+  .refine(
+    (data) =>
+      data.minimumNumber == null ||
+      data.maximumNumber == null ||
+      data.minimumNumber <= data.maximumNumber,
+    {
+      message: "minimumNumber cannot be greater than maximumNumber",
+      path: ["minimumNumber"],
+    }
+  );
 
-const numberBlockSchema = baseBlockSchema.extend({
-  optionalConfig: numberOptionalConfigSchema.optional(),
-  type: z.literal(BlockType.NUMBER),
-  referenceBlockId: z.string(),
-  newBlockPosition: z.enum(["before", "after"]).default("after"),
-});
+const numberBlockSchema = withOptionalConfig(numberOptionalConfigSchema)
+  .merge(blockReferenceSchema)
+  .extend({
+    type: z.literal(BlockType.NUMBER),
+  });
 
+// dto
 export const createNumberBlockSchema = z.object({
   body: numberBlockSchema,
 });
 
 export const updateNumberBlockSchema = z.object({
-  body: numberBlockSchema.partial().extend({
+  body: makeUpdateSchema(numberBlockSchema, {
     type: z.literal(BlockType.NUMBER),
-    // This one is for safty for rewrite base schema
-    newBlockPosition: z.enum(["before", "after"]).optional(),
     required: z.boolean().optional(),
+    newBlockPosition: positionSchema.optional(),
   }),
 });
 
-type CreateNumberBlockType = z.infer<typeof createNumberBlockSchema>;
-type UpdateNumberBlockType = z.infer<typeof updateNumberBlockSchema>;
-
-export type CreateNumberBlockDto = CreateNumberBlockType["body"];
-export type UpdateNumberBlockDto = UpdateNumberBlockType["body"];
+// dto
+export type CreateNumberBlockDto = z.infer<typeof numberBlockSchema>;
+export type UpdateNumberBlockDto = z.infer<
+  typeof updateNumberBlockSchema
+>["body"];

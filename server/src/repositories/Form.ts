@@ -1,12 +1,12 @@
-import { sql } from "kysely";
+import { Selectable, sql } from "kysely";
 import { db } from "../config/db";
 import { Form as TForm, Block as TBlock } from "../generated/prisma/kysely";
 import ApiError from "../utils/ApiError";
 
 type createFormInternal = { shortId: string };
 
-type FormWithBlocks = TForm & {
-  blocks: Partial<TBlock>[];
+type FormWithBlocks = Selectable<TForm> & {
+  blocks: Array<Partial<Selectable<TBlock>>>;
 };
 
 class Form {
@@ -29,7 +29,6 @@ class Form {
   }
 
   async getFormWithBlocks(formId: string): Promise<FormWithBlocks | null> {
-    console.log("fromid", formId);
     const flatResults = await db
       .selectFrom("Form")
       .innerJoin("Block", "Form.shortId", "Block.formId")
@@ -53,14 +52,10 @@ class Form {
     }
 
     const form: FormWithBlocks = {
-      // @ts-ignore
       id: flatResults[0].id as string,
       shortId: flatResults[0].shortId,
-      // @ts-ignore
       createdAt: flatResults[0].createdAt,
-      // @ts-ignore
       updatedAt: flatResults[0].updatedAt,
-      // @ts-ignore
       status: flatResults[0].status,
       blocks: [],
     };
@@ -68,28 +63,13 @@ class Form {
     for (const row of flatResults) {
       if (row.block_id) {
         form.blocks.push({
-          // @ts-ignore
           id: row.block_id,
           title: row.block_title,
           titleLabel: row.block_titleLabel,
-          // descriptionDelta: row.block_descriptionDelta,
-          // descriptionHtml: row.block_descriptionHtml,
-          // textAlign: row.block_textAlign,
-          // buttonText: row.block_buttonText,
-          // coverImageOrigin: row.block_coverImageOrigin,
-          // coverImagePath: row.block_coverImagePath,
-          // @ts-ignore
           required: row.block_required as boolean,
-          // optionalConfig: row.block_optionalConfig,
           formId: row.shortId,
           type: row.block_type,
           position: row.block_position,
-          // placeholder: row.block_placeholder,
-          // urlParameter: row.block_urlParameter,
-          // createdAt: row.block_createdAt,
-          // updatedAt: row.block_updatedAt,
-          // blockOptions: [], // Assuming you might want to join these later
-          // responses: [], // Assuming you might want to join these later
         });
       }
     }
@@ -109,26 +89,24 @@ class Form {
     currentBlockId: string,
     prevOrNext = "after"
   ) {
-    // TODO: Optimize query
-    try {
+    return await db.transaction().execute(async (trx) => {
       const isNext = prevOrNext === "after";
       const positionOp = isNext ? ">" : "<";
       const orderDirection = isNext ? "asc" : "desc";
 
-      const currentBlockDetails = await db
+      const currentBlockDetails = await trx
         .selectFrom("Block")
         .select(["id", "formId", "position"])
         .where("id", "=", currentBlockId)
         .executeTakeFirst();
 
       if (!currentBlockDetails) {
-        console.error(`Block with ID ${currentBlockId} not found.`);
-        throw new Error("Block not found");
+        throw new Error(`Block with ID ${currentBlockId} not found.`);
       }
 
       const { id, formId, position } = currentBlockDetails;
 
-      const result = await db
+      const result = await trx
         .selectFrom("Block")
         .selectAll()
         .where((eb) =>
@@ -144,19 +122,11 @@ class Form {
         .limit(2)
         .execute();
 
-      console.log("result", result);
       return result;
-    } catch (error) {
-      if (error instanceof ApiError) {
-        throw error;
-      }
-      console.error("Error fetching blocks:", error);
-      throw error;
-    }
+    });
   }
 
   // publish form
-
   async publishForm(shortId: string) {
     await db.transaction().execute(async (trx) => {
       // 1. Publish the form
@@ -317,7 +287,6 @@ class Form {
           .insertInto("ResponseValue")
           .values({
             responseId,
-            blockId,
             publishedBlockId: blockId,
             value: String(valueObject.value),
             type: "STRING",

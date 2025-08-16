@@ -63,7 +63,7 @@ type PaginatedBlocksResponse = {
   totalCount: number;
   totalPages: number;
 };
-type FormValues = Record<string, any>;
+// type FormValues = Record<string, any>;
 
 // Map each block type to its corresponding React component
 const BlockDisplayMap: Record<

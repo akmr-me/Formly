@@ -1,33 +1,36 @@
 import { z } from "zod";
-import { baseBlockSchema } from ".";
+import {
+  baseBlockSchema,
+  blockReferenceSchema,
+  makeUpdateSchema,
+  positionSchema,
+  withOptionalConfig,
+} from ".";
 import { BlockType } from "../../generated/prisma/enum";
 
 const dateOptionalConfigSchema = z.object({
   autoFillParam: z.string().optional(),
 });
 
-const dateBlockSchema = baseBlockSchema.extend({
-  optionalConfig: dateOptionalConfigSchema.optional(),
-  type: z.literal(BlockType.DATE),
-  referenceBlockId: z.string(),
-  newBlockPosition: z.enum(["before", "after"]).default("after"),
-});
+const dateBlockSchema = withOptionalConfig(dateOptionalConfigSchema)
+  .merge(blockReferenceSchema)
+  .extend({
+    type: z.literal(BlockType.DATE),
+  });
 
+// dto
 export const createDateBlockSchema = z.object({
   body: dateBlockSchema,
 });
 
 export const updateDateBlockSchema = z.object({
-  body: dateBlockSchema.partial().extend({
+  body: makeUpdateSchema(dateBlockSchema, {
     type: z.literal(BlockType.DATE),
-    // This one is for safty for rewrite base schema
-    newBlockPosition: z.enum(["before", "after"]).optional(),
     required: z.boolean().optional(),
+    newBlockPosition: positionSchema.optional(),
   }),
 });
 
-type CreateDateBlockType = z.infer<typeof createDateBlockSchema>;
-type UpdateDateBlockType = z.infer<typeof updateDateBlockSchema>;
-
-export type CreateDateBlockDto = CreateDateBlockType["body"];
-export type UpdateDateBlockDto = UpdateDateBlockType["body"];
+// type
+export type CreateDateBlockDto = z.infer<typeof dateBlockSchema>;
+export type UpdateDateBlockDto = z.infer<typeof updateDateBlockSchema>["body"];

@@ -10,8 +10,8 @@ export const filterRequestByBlockType =
   (schemas: SchemaMap) => (req: Request, res: Response, next: NextFunction) => {
     try {
       const type = req.body.type;
-      const schema = schemas[type];
       console.log(" from filter schema", req.body);
+      const schema = schemas[type];
 
       if (!schema) {
         return next(new ApiError(400, `No schema found for type '${type}'`));
