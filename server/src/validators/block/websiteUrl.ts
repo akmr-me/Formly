@@ -2,11 +2,7 @@ import { z } from "zod";
 import { baseBlockSchema } from ".";
 import { BlockType } from "../../generated/prisma/enum";
 
-const websiteUrlOptionalConfigSchema = z.object({
-  placeholder: z.string().default(""),
-  minNumber: z.number().optional(),
-  autoFillParam: z.string().optional(),
-});
+const websiteUrlOptionalConfigSchema = z.object({});
 
 const websiteUrlBlockSchema = baseBlockSchema.extend({
   optionalConfig: websiteUrlOptionalConfigSchema.optional(),
@@ -22,7 +18,9 @@ export const createWebsiteUrlBlockSchema = z.object({
 export const updateWebsiteUrlBlockSchema = z.object({
   body: websiteUrlBlockSchema.partial().extend({
     type: z.literal(BlockType.WEBSITE_URL),
+    // This one is for safty for rewrite base schema
     newBlockPosition: z.enum(["before", "after"]).optional(),
+    required: z.boolean().optional(),
   }),
 });
 

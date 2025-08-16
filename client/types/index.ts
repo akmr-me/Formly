@@ -83,3 +83,24 @@ export const ValueType = {
   JSON: "JSON",
 } as const;
 export type ValueType = (typeof ValueType)[keyof typeof ValueType];
+
+export type AddressFieldConfig = {
+  id: string;
+  label: string;
+  placeholder: string;
+  required: boolean;
+  visible: boolean;
+  type?: "text" | "select";
+  options?: string[];
+  width?: "full" | "half";
+  order: number;
+};
+
+export type AddressData = {
+  address: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+};

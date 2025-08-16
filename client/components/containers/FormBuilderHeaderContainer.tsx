@@ -45,6 +45,7 @@ export default function FormBuilderHeaderContainer() {
       onPublish={handlePublishForm}
       formStatus={(formData || {}).status as PublishStatusType}
       isPublishing={isPublishing}
+      formUrl={`${window.origin}/form/${formId}`}
     />
   );
 }

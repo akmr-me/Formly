@@ -98,7 +98,7 @@ class Form {
 
   async getFormByShortId(shortId: string) {
     const form = await db
-      .selectFrom("Form") // Use PascalCase
+      .selectFrom("Form")
       .selectAll()
       .where("shortId", "=", shortId)
       .executeTakeFirstOrThrow();
@@ -287,6 +287,47 @@ class Form {
       limit,
     };
   }
+
+  // +++++++++++++++++++++++++++++++++++++++Response+++++++++++++++++++++++++++++++++++++++
+  async createResponse(shortFormId: string) {
+    return await db
+      .insertInto("Response")
+      .values({ formId: shortFormId })
+      .returningAll()
+      .executeTakeFirstOrThrow();
+  }
+
+  async createResponseValues(
+    responseId: string,
+    ResponseData: {
+      submissions?: Record<string, { value: string; publishedBlockId: string }>;
+    }
+  ) {
+    if (!ResponseData.submissions) {
+      console.warn("No submissions found in ResponseData");
+      throw new Error("Submissions not found in ResponseData");
+    }
+
+    await db.transaction().execute(async (trx) => {
+      for (const [blockId, valueObject] of Object.entries(
+        // @ts-ignore
+        ResponseData.submissions
+      )) {
+        await trx
+          .insertInto("ResponseValue")
+          .values({
+            responseId,
+            blockId,
+            publishedBlockId: blockId,
+            value: String(valueObject.value),
+            type: "STRING",
+          })
+          .execute();
+      }
+    });
+  }
+
+  // +++++++++++++++++++++++++++++++++++++++END OF CLASS+++++++++++++++++++++++++++++++++++++++
 }
 
 export default new Form();

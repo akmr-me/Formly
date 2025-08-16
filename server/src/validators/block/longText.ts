@@ -3,12 +3,10 @@ import { baseBlockSchema } from ".";
 import { BlockType } from "../../generated/prisma/enum";
 
 const longTextOptionalConfigSchema = z.object({
-  placeholder: z.string().default(""),
-  textBoxSize: z
-    .enum(["small", "medium", "large", "extraLarge"])
-    .default("medium"),
-  minCharacterLength: z.number().int().nonnegative().optional(),
-  maxCharacterLength: z.number().int().positive().optional(),
+  // placeholder: z.string().default(""),
+  textBoxSize: z.enum(["small", "medium", "large", "extraLarge"]).optional(),
+  minCharacterLength: z.number().int().nonnegative().nullable().optional(),
+  maxCharacterLength: z.number().int().positive().nullable().optional(),
 });
 
 const longTextBlockSchema = baseBlockSchema.extend({
@@ -25,7 +23,9 @@ export const createLongTextBlockSchema = z.object({
 export const updateLongTextBlockSchema = z.object({
   body: longTextBlockSchema.partial().extend({
     type: z.literal(BlockType.LONG_TEXT),
+    // This one is for safty for rewrite base schema
     newBlockPosition: z.enum(["before", "after"]).optional(),
+    required: z.boolean().optional(),
   }),
 });
 

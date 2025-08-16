@@ -53,24 +53,27 @@ export default function BlockDisplayLayout({
           />
         )}
       </div>
-      <h1
-        className={cn(
-          "text-4xl font-bold text-black mb-8 relative w-fit",
-          displayLayoutSize === "small" && "text-xl"
-        )}
-        onClick={onHeaderClick}
-      >
-        {title}
+      <div className={cn(textAlign === "center" && "mx-auto")}>
+        <h1
+          // TODO: removed w-fit
+          className={cn(
+            "text-4xl font-bold text-black relative w-fit",
+            displayLayoutSize === "small" && "text-xl"
+          )}
+          onClick={onHeaderClick}
+        >
+          {title}
 
-        {required && (
-          <span className="absolute -top-1 -right-1 text-red-500 text-lg font-bold">
-            *
-          </span>
-        )}
-      </h1>
+          {required && (
+            <span className="absolute -top-1 -right-1 text-red-500 text-lg font-bold">
+              *
+            </span>
+          )}
+        </h1>
+      </div>
 
       {description && (
-        <div className="mb-8 max-w-2xl">
+        <div className="my-8 max-w-2xl">
           <div
             className={cn(
               "text-lg text-gray-700 leading-relaxed",
@@ -90,6 +93,7 @@ export default function BlockDisplayLayout({
             displayLayoutSize === "small" && "font-semibold"
           )}
           onClick={onButtonClick}
+          type="submit"
         >
           {buttonText}
         </Button>

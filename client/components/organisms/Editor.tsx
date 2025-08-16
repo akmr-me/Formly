@@ -13,10 +13,17 @@ import { useQueryClient } from "@tanstack/react-query";
 import EmbedContainer from "../containers/blocks/EmbedContainer";
 import OptionalCommonFields from "../containers/OptionalCommonFields";
 import LongTextCustomFieldsContainer from "../containers/blocks/custom/longText";
+import NumberCustomFieldsContainer from "../containers/blocks/custom/number";
+import AddressCustomFieldsContainer from "../containers/blocks/custom/AddressCustomFieldsContainer";
 
-const OptionalEditorFieldMap: Record<string, React.FC<T>> = {
+const OptionalEditorFieldMap: Record<
+  string,
+  React.FC<{ selectedBlockData: BlockType }>
+> = {
   statement: EmbedContainer,
   longText: LongTextCustomFieldsContainer,
+  number: NumberCustomFieldsContainer,
+  address: AddressCustomFieldsContainer,
 };
 
 type EditorProp = {
@@ -86,7 +93,7 @@ export default function Editor({
     else setButtonText(defaultButtonText);
   }, [defaultButtonText]);
 
-  const OptionalConfigFields = OptionalEditorFieldMap[type];
+  const OptionalConfigFields = OptionalEditorFieldMap[type] || null;
 
   return (
     <div className="w-95 bg-white border-l border-gray-200 overflow-y-auto">

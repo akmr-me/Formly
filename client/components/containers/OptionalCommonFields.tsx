@@ -13,6 +13,7 @@ const BlockTypeHasRequiredField = [
   "longText",
   "number",
   "websiteUrl",
+  "date",
 ];
 const BlockTypeHasPlaceholder = [
   "shortText",
@@ -20,7 +21,7 @@ const BlockTypeHasPlaceholder = [
   "number",
   "websiteUrl",
 ];
-const BlockTypeHasUrlParameter = ["shortText", "number", "websiteUrl"];
+const BlockTypeHasUrlParameter = ["shortText", "number", "websiteUrl", "date"];
 
 export default function OptionalCommonFields({
   selectedBlockData,
@@ -57,26 +58,24 @@ export default function OptionalCommonFields({
     mutate({ urlParameter: value });
   }, DefaultDebounceTime);
 
-  // In case of fetched from db/network
   useEffect(() => {
-    setPlaceholderValue(selectedBlockData.placeholder || "Your answer here...");
-    setIsRequired(selectedBlockData.required || false);
+    setPlaceholderValue(selectedBlockData.placeholder || "");
+  }, [selectedBlockData.placeholder]);
+  useEffect(() => {
+    setIsRequired(selectedBlockData.required || "");
+  }, [selectedBlockData.required]);
+  useEffect(() => {
     setUrlParameter(selectedBlockData.urlParameter || "");
-  }, [
-    selectedBlockData.placeholder,
-    selectedBlockData.required,
-    selectedBlockData.urlParameter,
-  ]);
+  }, [selectedBlockData.urlParameter]);
 
-  const UrlParameterPlaceholder =
-    DefaultBlockData[type]?.urlParameterPlaceholder;
+  const UrlParameterPlaceholder = DefaultBlockData[type]?.urlParamsPlaceholder;
   const UrlParameterTooltipText = DefaultBlockData[type]?.urlParamsTooltip;
 
   return (
     <div className="space-y-6">
       {hasPlaceholder && (
         <PlaceholderInput
-          placeholder="Your answer here..."
+          placeholder=""
           value={placeholderValue}
           onChange={(e) => {
             setPlaceholderValue(e.target.value);
@@ -98,7 +97,7 @@ export default function OptionalCommonFields({
 
       {hasUrlParameter && (
         <AutoFillURLParameter
-          placeholder="e.g email"
+          placeholder={UrlParameterPlaceholder}
           value={urlParameter}
           tooltipContent={UrlParameterTooltipText}
           onChange={(e) => {

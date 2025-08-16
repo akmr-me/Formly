@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useUpdateCommonBlockFields } from "@/hooks/useUpdateCommonBlockFields";
 import { useDebouncedCallback } from "use-debounce";
 import { DefaultDebounceTime } from "@/constants";
+import { toast } from "sonner";
 
 interface LongTextCustomFieldsContainerProps {
   selectedBlockData: {
@@ -18,8 +19,8 @@ interface LongTextCustomFieldsContainerProps {
 export default function LongTextCustomFieldsContainer({
   selectedBlockData,
 }: LongTextCustomFieldsContainerProps) {
-  const [minCharacterLength, setMinCharacterLength] = useState<number>(0);
-  const [maxCharacterLength, setMaxCharacterLength] = useState<number>(0);
+  const [minCharacterLength, setMinCharacterLength] = useState<number | null>();
+  const [maxCharacterLength, setMaxCharacterLength] = useState<number | null>();
 
   const searchParams = useSearchParams();
   const blockId = searchParams.get("block_id");
@@ -28,9 +29,9 @@ export default function LongTextCustomFieldsContainer({
   // Initialize state from selectedBlockData
   useEffect(() => {
     const minLength =
-      selectedBlockData?.optionalConfig?.minCharacterLength ?? 0;
+      selectedBlockData?.optionalConfig?.minCharacterLength ?? null;
     const maxLength =
-      selectedBlockData?.optionalConfig?.maxCharacterLength ?? 0;
+      selectedBlockData?.optionalConfig?.maxCharacterLength ?? null;
 
     setMinCharacterLength(minLength);
     setMaxCharacterLength(maxLength);
@@ -39,12 +40,23 @@ export default function LongTextCustomFieldsContainer({
   const handleUpdateMinCharacterLength = useDebouncedCallback(
     (value: number) => {
       const currentValue =
-        selectedBlockData?.optionalConfig?.minCharacterLength ?? 0;
+        selectedBlockData?.optionalConfig?.minCharacterLength ?? null;
       if (value === currentValue) return;
+
+      if (
+        value !== null &&
+        maxCharacterLength !== null &&
+        value > maxCharacterLength
+      ) {
+        toast.error(
+          "Minimum characters cannot be greater than maximum characters"
+        );
+        return;
+      }
 
       mutate({
         optionalConfig: {
-          minCharacterLength: value || undefined, // Convert 0 to undefined for "no limit"
+          minCharacterLength: value || null,
         },
       });
     },
@@ -54,12 +66,23 @@ export default function LongTextCustomFieldsContainer({
   const handleUpdateMaxCharacterLength = useDebouncedCallback(
     (value: number) => {
       const currentValue =
-        selectedBlockData?.optionalConfig?.maxCharacterLength ?? 0;
+        selectedBlockData?.optionalConfig?.maxCharacterLength ?? null;
       if (value === currentValue) return;
+
+      if (
+        value !== null &&
+        minCharacterLength !== null &&
+        value < minCharacterLength
+      ) {
+        toast.error(
+          "Maximum characters cannot be less than minimum characters"
+        );
+        return;
+      }
 
       mutate({
         optionalConfig: {
-          maxCharacterLength: value || undefined, // Convert 0 to undefined for "no limit"
+          maxCharacterLength: value || null,
         },
       });
     },
@@ -67,13 +90,20 @@ export default function LongTextCustomFieldsContainer({
   );
 
   const handleMinCharacterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value) || 0;
+    const value =
+      typeof e.target.value === "string"
+        ? parseInt(e.target.value)
+        : e.target.value;
     setMinCharacterLength(value);
     handleUpdateMinCharacterLength(value);
   };
 
   const handleMaxCharacterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value) || 0;
+    const value =
+      typeof e.target.value === "string"
+        ? parseInt(e.target.value)
+        : e.target.value;
+
     setMaxCharacterLength(value);
     handleUpdateMaxCharacterLength(value);
   };

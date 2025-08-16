@@ -56,3 +56,27 @@ export async function getPaginatedPublishedBlocksService(
     console.log("getPaginatedPublishedBlocks error", error);
   }
 }
+
+export async function createResponseService(shortFormId: string) {
+  try {
+    const formResponse = await formRespository.createResponse(shortFormId);
+    return formResponse;
+  } catch (error) {
+    console.log("createResponse error", error);
+  }
+}
+
+export async function createResponseValuesService(
+  responseId: string,
+  responseData: Record<string, any>
+) {
+  try {
+    const formResponse = await formRespository.createResponseValues(
+      responseId,
+      responseData
+    );
+    return formResponse;
+  } catch (error) {
+    console.log("createResponse error", error);
+  }
+}
