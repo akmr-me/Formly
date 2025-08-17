@@ -38,10 +38,38 @@ export default function AddressCustomFieldsContainer({
     console.log(`Toggle visibility for ${fieldId}`);
     const isVisible = !AddressOptionalConfig[fieldId].visible;
     // Api call here
+    const currentConfig = AddressOptionalConfig[fieldId];
 
+    const halfFieldsA = ["address", "addressLine2"];
+    const halfFieldsB = ["city", "state"];
+
+    let adjecentField = null;
+
+    if (halfFieldsA.includes(fieldId)) {
+      const adjecentFieldId = halfFieldsA.find((f) => f !== fieldId);
+      adjecentField = AddressOptionalConfig[adjecentFieldId];
+    } else if (halfFieldsB.includes(fieldId)) {
+      const adjecentFieldId = halfFieldsB.find((f) => f !== fieldId);
+      adjecentField = AddressOptionalConfig[adjecentFieldId];
+    }
+    console.log(currentConfig);
+    // return;
     mutate({
       optionalConfig: {
-        [fieldId]: { ...AddressOptionalConfig[fieldId], visible: isVisible },
+        [fieldId]: {
+          ...AddressOptionalConfig[fieldId],
+          visible: isVisible,
+          width:
+            isVisible && adjecentField && adjecentField.visible
+              ? "half"
+              : "full",
+        },
+        ...(adjecentField && {
+          [adjecentField.id]: {
+            ...adjecentField,
+            width: isVisible ? "half" : "full",
+          },
+        }),
       },
     });
     console.log(AddressOptionalConfig[fieldId]);

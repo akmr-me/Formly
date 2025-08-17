@@ -55,11 +55,15 @@ export default function BlockInfo({
           {position}. {label}
         </span>
       </div>
-      {
-        <div onClick={(e) => e.stopPropagation()}>
-          {(show || dropdownOpen) && HoverComponent}
-        </div>
-      }
+
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative h-full min-h-full"
+      >
+        {(show || dropdownOpen) && (
+          <div className="absolute top-0 right-1">{HoverComponent}</div>
+        )}
+      </div>
     </div>
   );
 }

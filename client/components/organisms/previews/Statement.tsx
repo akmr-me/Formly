@@ -1,11 +1,18 @@
 import { Button } from "@/components/ui/button";
 
+type StatementProps = {
+  title: string;
+  description: string;
+  buttonText: string;
+  onButtonClick?: () => void;
+};
+
 export default function Statement({
-  title = "Hey there 😊",
-  description = "",
-  buttonText = "Let's start",
+  title,
+  description,
+  buttonText,
   onButtonClick = () => {},
-}) {
+}: StatementProps) {
   return (
     <div className="rounded-2xl p-16 max-w-4xl w-full text-center shadow-lg h-full flex flex-col justify-center">
       <h1 className="text-4xl font-bold text-black mb-8">{title}</h1>

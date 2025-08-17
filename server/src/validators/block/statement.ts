@@ -1,56 +1,36 @@
 import { z } from "zod";
-import { baseBlockSchema } from ".";
+import {
+  baseBlockSchema,
+  makeUpdateSchema,
+  positionSchema,
+  withOptionalConfig,
+} from ".";
 import { BlockType } from "../../generated/prisma/enum";
 
-const optionalConfigSchema = z.object({
+const statementOptionalConfigSchema = z.object({
   embed: z.string().default(""),
 });
 
-const statementBlockSchema = baseBlockSchema.extend({
-  optionalConfig: optionalConfigSchema.optional(),
+const statementBlockSchema = withOptionalConfig(
+  statementOptionalConfigSchema
+).extend({
   type: z.literal(BlockType.STATEMENT),
 });
 
+// dto
 export const createStatementBlockSchema = z.object({
   body: statementBlockSchema,
 });
 
 export const updateStatementBlockSchema = z.object({
-  body: statementBlockSchema.partial().extend({
+  body: makeUpdateSchema(statementBlockSchema, {
     type: z.literal(BlockType.STATEMENT),
+    newBlockPosition: positionSchema.optional(),
   }),
 });
 
-type CreateStatementBlockType = z.infer<typeof createStatementBlockSchema>;
-type UpdateStatementBlockType = z.infer<typeof updateStatementBlockSchema>;
-
-export type CreateStatementBlockDto = CreateStatementBlockType["body"];
-export type UpdateStatementBlockDto = UpdateStatementBlockType["body"];
-
-// const statementOptionalConfigSchema = z.object({
-//   embed: z.string().default(""),
-// });
-
-// const statementBlockSchema = baseBlockSchema.extend({
-//   optionalConfig: statementOptionalConfigSchema.optional(),
-//   type: z.literal(BlockType.STATEMENT),
-//   referenceBlockId: z.string(),
-//   newBlockPosition: z.enum(["before", "after"]).default("after"),
-// });
-
-// export const createStatementBlockSchema = z.object({
-//   body: statementBlockSchema,
-// });
-
-// export const updateStatementBlockSchema = z.object({
-//   body: statementBlockSchema.partial().extend({
-//     type: z.literal(BlockType.STATEMENT),
-//     newBlockPosition: z.enum(["before", "after"]).optional(),
-//   }),
-// });
-
-// type CreateStatementBlockType = z.infer<typeof createStatementBlockSchema>;
-// type UpdateStatementBlockType = z.infer<typeof updateStatementBlockSchema>;
-
-// export type CreateStatementBlockDto = CreateStatementBlockType["body"];
-// export type UpdateStatementBlockDto = UpdateStatementBlockType["body"];
+// types
+export type CreateStatementBlockDto = z.infer<typeof statementBlockSchema>;
+export type UpdateStatementBlockDto = z.infer<
+  typeof updateStatementBlockSchema
+>["body"];

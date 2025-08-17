@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateBlockField } from "@/services/block";
-import { BlockType, CoverImageLayout, TextAlignType } from "@/types";
+import { CoverImageLayout, TextAlignType } from "@/types";
 import { useParams } from "next/navigation";
 
 export type UpdateBlockPayload = {
@@ -24,7 +24,6 @@ export function useUpdateCommonBlockFields(blockId: string, type: string) {
     mutationFn: (data: Partial<UpdateBlockPayload>) =>
       updateBlockField(blockId, { ...data, type }),
     onSuccess: () => {
-      // TODO: invalidte multiple query
       queryClient.invalidateQueries({ queryKey: ["block", blockId] });
       queryClient.invalidateQueries({ queryKey: ["forms", formId, "blocks"] });
     },

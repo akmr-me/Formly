@@ -6,20 +6,20 @@ import { useDebouncedCallback } from "use-debounce";
 import { DefaultDebounceTime } from "@/constants";
 import { toast } from "sonner";
 
-interface NumberCustomFieldsContainerProps {
+type NumberCustomFieldsContainerProps = {
   selectedBlockData: {
     optionalConfig?: {
-      minNumberLength?: number;
-      maxNumberLength?: number;
+      minimumNumber?: number;
+      maximumNumber?: number;
     };
   };
-}
+};
 
 export default function NumberCustomFieldsContainer({
   selectedBlockData,
 }: NumberCustomFieldsContainerProps) {
-  const [minNumberLength, setMinNumberLength] = useState<number | null>();
-  const [maxNumberLength, setMaxNumberLength] = useState<number | null>();
+  const [minNumberLength, setMinNumberLength] = useState<number | undefined>();
+  const [maxNumberLength, setMaxNumberLength] = useState<number | undefined>();
 
   const searchParams = useSearchParams();
   const blockId = searchParams.get("block_id") as string;
@@ -36,10 +36,14 @@ export default function NumberCustomFieldsContainer({
 
   const handleUpdateMinNumberLength = useDebouncedCallback((value: number) => {
     const currentValue =
-      selectedBlockData?.optionalConfig?.minNumberLength ?? null;
+      selectedBlockData?.optionalConfig?.minimumNumber ?? null;
     if (value === currentValue) return;
 
-    if (value !== null && maxNumberLength !== null && value > maxNumberLength) {
+    if (
+      value !== null &&
+      maxNumberLength !== null &&
+      value > Number(maxNumberLength)
+    ) {
       toast.error("Minimum number should be less than maximum number.");
       return;
     }
@@ -54,10 +58,14 @@ export default function NumberCustomFieldsContainer({
   const handleUpdateMaxNumberLength = useDebouncedCallback((value: number) => {
     console.log("debound called", value);
     const currentValue =
-      selectedBlockData?.optionalConfig?.maxNumberLength ?? null;
+      selectedBlockData?.optionalConfig?.maximumNumber ?? null;
     if (value === currentValue) return;
 
-    if (value !== null && minNumberLength !== null && value < minNumberLength) {
+    if (
+      value !== null &&
+      minNumberLength !== null &&
+      value < Number(minNumberLength)
+    ) {
       toast.error("Maximum number should be greater than minimum number.");
       return;
     }

@@ -1,6 +1,13 @@
 import { z } from "zod";
-import { baseBlockSchema } from ".";
+import {
+  baseBlockSchema,
+  blockReferenceSchema,
+  makeUpdateSchema,
+  positionSchema,
+  withOptionalConfig,
+} from ".";
 import { BlockType } from "../../generated/prisma/enum";
+import { AddressFieldSizes } from "../../constants";
 
 const addressFieldSchema = z.object({
   id: z.string(),
@@ -8,9 +15,11 @@ const addressFieldSchema = z.object({
   placeholder: z.string().optional(),
   required: z.boolean().default(false),
   visible: z.boolean().default(true),
-  width: z.enum(["half", "full"]),
+  width: z.enum(AddressFieldSizes),
   order: z.number(),
 });
+
+//
 
 export const addressOptionalConfigSchema = z.object({
   address: addressFieldSchema,
@@ -21,13 +30,13 @@ export const addressOptionalConfigSchema = z.object({
   country: addressFieldSchema,
 });
 
-const addressBlockSchema = baseBlockSchema.extend({
-  optionalConfig: addressOptionalConfigSchema.optional(),
-  type: z.literal(BlockType.ADDRESS),
-  referenceBlockId: z.string(),
-  newBlockPosition: z.enum(["before", "after"]).default("after"),
-});
+const addressBlockSchema = withOptionalConfig(addressOptionalConfigSchema)
+  .merge(blockReferenceSchema)
+  .extend({
+    type: z.literal(BlockType.ADDRESS),
+  });
 
+// dto
 export const createAddressBlockSchema = z.object({
   body: addressBlockSchema,
 });
@@ -42,17 +51,15 @@ export const updateAddressOptionalConfigSchema = z.object({
 });
 
 export const updateAddressBlockSchema = z.object({
-  body: addressBlockSchema.partial().extend({
+  body: makeUpdateSchema(addressBlockSchema, {
     optionalConfig: updateAddressOptionalConfigSchema.optional(),
     type: z.literal(BlockType.ADDRESS),
-    // This one is for safty for rewrite base schema
-    newBlockPosition: z.enum(["before", "after"]).optional(),
     required: z.boolean().optional(),
+    newBlockPosition: positionSchema.optional(),
   }),
 });
 
-type CreateAddressBlockType = z.infer<typeof createAddressBlockSchema>;
-type UpdateAddressBlockType = z.infer<typeof updateAddressBlockSchema>;
-
-export type CreateAddressBlockDto = CreateAddressBlockType["body"];
-export type UpdateAddressBlockDto = UpdateAddressBlockType["body"];
+export type CreateAddressBlockDto = z.infer<typeof addressBlockSchema>;
+export type UpdateAddressBlockDto = z.infer<
+  typeof updateAddressBlockSchema
+>["body"];

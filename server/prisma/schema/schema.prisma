@@ -59,9 +59,8 @@ model Block {
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 
-  form         Form            @relation(fields: [formId], references: [shortId], onDelete: Cascade)
+  form         Form          @relation(fields: [formId], references: [shortId], onDelete: Cascade)
   blockOptions BlockOption[]
-  responses    ResponseValue[]
 
   @@unique([formId, position])
   @@index([formId, position])
@@ -128,9 +127,6 @@ model ResponseValue {
   responseId String   @db.Uuid
   response   Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
 
-  blockId String @db.Uuid
-  block   Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
-
   publishedBlockId String         @db.Uuid
   publishedBlock   PublishedBlock @relation(fields: [publishedBlockId], references: [id], onDelete: Cascade)
 
@@ -138,7 +134,6 @@ model ResponseValue {
   type  ValueType
 
   @@index([responseId])
-  @@index([blockId])
   @@index([publishedBlockId])
 }
 

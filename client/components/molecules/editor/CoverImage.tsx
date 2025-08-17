@@ -2,133 +2,41 @@ import React, { useState, useRef, useEffect } from "react";
 import { Label } from "@radix-ui/react-label";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import {
-  allowedTypes,
-  MaxSizeImageError,
-  ValidImageTypeError,
-} from "@/constants";
-import apiClient from "@/lib/apiClient";
+
 import Image from "next/image";
-import { CoverImageLayout } from "@/types";
 
-interface CoverImageProps {
+export type CoverImageProps = {
   onUploadComplete?: (imageUrl: string) => void;
-  uploadEndpoint: string;
-  type: string;
   imageUrl?: string;
-  coverImageLayout?: CoverImageLayout;
-}
+  uploadState: UploadState;
+  selectedFile: File | null;
+  onFileSelect: (file: File) => void;
+  onFileInputChange: React.ChangeEventHandler<HTMLInputElement>;
+  removeFile: () => void;
+  previewUrl: string | null;
+  setPreviewUrl: React.Dispatch<React.SetStateAction<string | null>>;
+};
 
-interface UploadState {
+export type UploadState = {
   isUploading: boolean;
   progress: number;
   error: string;
-}
+};
 
 const CoverImage: React.FC<CoverImageProps> = ({
-  onUploadComplete,
-  uploadEndpoint,
-  type,
   imageUrl,
-  coverImageLayout = "stack",
+  uploadState,
+  selectedFile,
+  onFileSelect,
+  onFileInputChange,
+  removeFile,
+  previewUrl,
+  setPreviewUrl,
 }) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  console.log({ uploadState });
   const [dragActive, setDragActive] = useState<boolean>(false);
-  const [uploadState, setUploadState] = useState<UploadState>({
-    isUploading: false,
-    progress: 0,
-    error: "",
-  });
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const maxSize = 5 * 1024 * 1024; // 5MB
-
-  const validateFile = (file: File): boolean => {
-    if (!allowedTypes.includes(file.type)) {
-      setUploadState((prev) => ({
-        ...prev,
-        error: ValidImageTypeError,
-      }));
-      return false;
-    }
-
-    if (file.size > maxSize) {
-      setUploadState((prev) => ({
-        ...prev,
-        error: MaxSizeImageError,
-      }));
-      return false;
-    }
-
-    setUploadState((prev) => ({ ...prev, error: "" }));
-    return true;
-  };
-
-  const uploadFile = async (file: File): Promise<void> => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("type", type);
-    // coverImageLayout default value is set to null at db level so we need to set it to stack
-    formData.append("coverImageLayout", coverImageLayout ?? "stack");
-
-    try {
-      setUploadState({ isUploading: true, progress: 0, error: "" });
-
-      const response = await apiClient.patch(uploadEndpoint, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (progressEvent) => {
-          if (progressEvent.total) {
-            const progress = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadState((prev) => ({ ...prev, progress }));
-          }
-        },
-      });
-
-      const uploadedUrl = response.data.url;
-      setUploadState({ isUploading: false, progress: 100, error: "" });
-
-      if (onUploadComplete) {
-        onUploadComplete(uploadedUrl);
-      }
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || "Upload failed. Please try again.";
-      setUploadState({
-        isUploading: false,
-        progress: 0,
-        error: errorMessage,
-      });
-    }
-  };
-
-  const handleFileSelect = async (file: File): Promise<void> => {
-    if (validateFile(file)) {
-      setSelectedFile(file);
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          setPreviewUrl(e.target.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
-      await uploadFile(file);
-    }
-  };
-
-  const handleFileInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleFileSelect(file);
-    }
-  };
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
@@ -146,20 +54,8 @@ const CoverImage: React.FC<CoverImageProps> = ({
     setDragActive(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFileSelect(e.dataTransfer.files[0]);
+      onFileSelect(e.dataTransfer.files[0]);
     }
-  };
-
-  const removeFile = (): void => {
-    setSelectedFile(null);
-    setPreviewUrl(null);
-    setUploadState({ isUploading: false, progress: 0, error: "" });
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-    apiClient.delete(uploadEndpoint).then(() => {
-      onUploadComplete && onUploadComplete("");
-    });
   };
 
   const openFileDialog = (): void => {
@@ -188,6 +84,15 @@ const CoverImage: React.FC<CoverImageProps> = ({
     return "text-gray-400";
   };
 
+  const onRemoveFile = (): void => {
+    setPreviewUrl(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    removeFile();
+    setPreviewUrl(null);
+  };
+
   // Note: this use effect is needed to update the previewUrl when the imageUrl prop changes
   useEffect(() => {
     if (imageUrl == undefined) setPreviewUrl(null);
@@ -204,7 +109,7 @@ const CoverImage: React.FC<CoverImageProps> = ({
         ref={fileInputRef}
         type="file"
         accept="image/*"
-        onChange={handleFileInputChange}
+        onChange={onFileInputChange}
         className="hidden"
         disabled={uploadState.isUploading}
       />
@@ -245,7 +150,7 @@ const CoverImage: React.FC<CoverImageProps> = ({
                 size="sm"
                 onClick={(e) => {
                   e.stopPropagation();
-                  removeFile();
+                  onRemoveFile();
                 }}
                 className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 w-8 h-8"
               >

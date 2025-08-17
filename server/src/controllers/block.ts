@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { createStatementBlockService } from "../services/block/statement";
 import {
   deleteBlockFileService,
@@ -7,104 +7,84 @@ import {
   getBlockByIdService,
   updateBlockFieldService,
 } from "../services/block";
+import { catchAsync } from "../utils/catchAsync";
 
-export const createBlockController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { type } = req.body;
+export const createBlockController = catchAsync(async (req, res) => {
+  const { type } = req.body;
 
-    // const blockServices: Record<string, (data: any) => Promise<any>> = {
-    //   statement: createStatementBlockService,
-    //   shortText: createStatementBlockService,
-    //   // other types mapped to services
-    // };
+  // const blockServices: Record<string, (data: any) => Promise<any>> = {
+  //   statement: createStatementBlockService,
+  //   shortText: createShortTextBlockService,
+  //   // other types...
+  // };
+  //
+  // const service = blockServices[type];
+  // if (!service) {
+  //   return res.status(400).json({
+  //     status: "error",
+  //     message: `Unsupported block type: ${type}`,
+  //   });
+  // }
 
-    // const service = blockServices[type];
-    // if (!service) {
-    //   return res.status(400).json({ error: `Unsupported block type: ${type}` });
-    // }
+  const result = await createStatementBlockService(req.body);
 
-    const result = await createStatementBlockService(req.body);
+  res.status(201).json({
+    status: "success",
+    data: result,
+  });
+});
 
-    return res.status(201).json(result);
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-};
+export const getBlockByIdController = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const block = await getBlockByIdService(id);
 
-export const getBlockByIdController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { id } = req.params;
-    const block = await getBlockByIdService(id);
+  res.status(200).json({
+    status: "success",
+    data: block,
+  });
+});
 
-    return res.status(200).json({ ...block });
-  } catch (error) {
-    return next(error);
-  }
-};
+export const updateBlockFieldController = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const { type, ...data } = req.body;
 
-export const updateBlockFieldController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { id } = req.params;
-    const { type, ...data } = req.body;
-    const updatedBlock = await updateBlockFieldService(id, data);
-    return res.status(200).json({ ...updatedBlock });
-  } catch (error) {
-    return next(error);
-  }
-};
+  const updatedBlock = await updateBlockFieldService(id, data);
 
-export const deleteBlockController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { id } = req.params;
-    await deleteBlockService(id);
-    return res.sendStatus(204);
-  } catch (error) {
-    return next(error);
-  }
-};
+  res.status(200).json({
+    status: "success",
+    data: updatedBlock,
+  });
+});
 
-export const deleteBlockFileController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { id } = req.params;
-    await deleteBlockFileService(id);
-    return res.sendStatus(204);
-  } catch (error) {
-    return next(error);
-  }
-};
+export const deleteBlockController = catchAsync(async (req, res) => {
+  const { id } = req.params;
 
-export const duplicateBlockController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { id } = req.params;
-    console.log("request for dulication", id);
-    const duplicatedBlock = await duplicateBlockService(id);
-    return res.status(201).json({ ...duplicatedBlock });
-  } catch (error) {
-    return next(error);
-  }
-};
+  await deleteBlockService(id);
+
+  res.status(204).json({
+    status: "success",
+    message: "Block deleted successfully",
+  });
+});
+
+export const deleteBlockFileController = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  await deleteBlockFileService(id);
+
+  res.status(204).json({
+    status: "success",
+    message: "Block file deleted successfully!",
+  });
+});
+
+export const duplicateBlockController = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  console.log("request for duplication", id);
+  const duplicatedBlock = await duplicateBlockService(id);
+
+  res.status(201).json({
+    status: "success",
+    data: duplicatedBlock,
+  });
+});

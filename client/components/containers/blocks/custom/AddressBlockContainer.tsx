@@ -1,20 +1,19 @@
 import Address from "@/components/organisms/Address";
-import { defaultFieldConfigs } from "@/components/organisms/AddressBlock";
-import { Button } from "@/components/ui/button";
-import { BlockType } from "@/types";
-import { useState } from "react";
+import { AddressData, AddressFieldConfig, BlockType } from "@/types";
+import { useEffect, useState } from "react";
 
 type AddressBlockContainerProps = {
   selectedBlockData: BlockType;
   className?: string;
+  defaultValue?: Record<string, string>;
 };
 
 const AddressBlockContainer = ({
   className = "",
   selectedBlockData,
+  defaultValue,
 }: AddressBlockContainerProps) => {
-  const [fieldConfigs, setFieldConfigs] = useState(defaultFieldConfigs);
-  const [addressData, setAddressData] = useState({
+  const [addressData, setAddressData] = useState<AddressData>({
     address: "",
     addressLine2: "",
     city: "",
@@ -22,49 +21,33 @@ const AddressBlockContainer = ({
     zip: "",
     country: "",
   });
-  const [settingsDialog, setSettingsDialog] = useState({
-    isOpen: false,
-    config: null,
-  });
-
-  const handleFieldChange = (fieldId, newValue) => {
+  console.log({ defaultValue });
+  const handleFieldChange = (fieldId: string, newValue: string) => {
     setAddressData((prev) => ({ ...prev, [fieldId]: newValue }));
   };
 
-  const handleToggleVisibility = (fieldId) => {
-    setFieldConfigs((configs) =>
-      configs.map((config) =>
-        config.id === fieldId ? { ...config, visible: !config.visible } : config
-      )
-    );
-  };
-
-  const handleOpenSettings = (fieldId) => {
-    const config = fieldConfigs.find((c) => c.id === fieldId);
-    if (config) {
-      setSettingsDialog({ isOpen: true, config });
-    }
-  };
-
-  const handleSaveFieldConfig = (updatedConfig) => {
-    setFieldConfigs((configs) =>
-      configs.map((config) =>
-        config.id === updatedConfig.id ? updatedConfig : config
-      )
-    );
-  };
   console.log("from adress", { selectedBlockData });
-  // TODO: Prone to errors
-  const AddressOptionalConfig = selectedBlockData.optionalConfig;
-  const AddressFieldsKeys = Object.values(AddressOptionalConfig)
+  const AddressOptionalConfig = selectedBlockData.optionalConfig || {};
+  const AddressFieldsKeys = Object.values(
+    AddressOptionalConfig as Record<string, AddressFieldConfig>
+  )
     .sort((a, b) => a.order - b.order)
     .map((config) => config.id);
+
+  useEffect(() => {
+    if (defaultValue) {
+      setAddressData(defaultValue);
+    }
+  }, [defaultValue]);
+
   return (
     <div className={`max-w-2xl mx-auto p-6 bg-transparent ${className}`}>
       <div className="space-y-6">
         <div className="flex flex-wrap -mx-2">
           {AddressFieldsKeys.map((addressField) => {
-            const config = AddressOptionalConfig[addressField];
+            const config = AddressOptionalConfig[
+              addressField
+            ] as AddressFieldConfig;
             return (
               <div
                 key={config.id}
@@ -76,9 +59,7 @@ const AddressBlockContainer = ({
                   config={config}
                   value={addressData[config.id]}
                   onChange={(value) => handleFieldChange(config.id, value)}
-                  showControl={true}
-                  onToggleVisibility={handleToggleVisibility}
-                  // onOpenSettings={handleOpenSettings}
+                  name={`${selectedBlockData.id}.${config.id}`}
                 />
               </div>
             );

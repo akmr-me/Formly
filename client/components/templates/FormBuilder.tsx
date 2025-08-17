@@ -1,12 +1,10 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useCallback, useState } from "react";
 import BlockDisplayHeader from "@/components/organisms/BlockDisplayHeder";
 import BlockDisplay from "@/components/organisms/BlockDisplay";
 import Editor from "@/components/organisms/Editor";
 import MobileWarning from "@/components/molecules/MobileWarning";
-import FormBuilderHeader from "@/components/organisms/FormBuilderHeader";
-import ChooseBlockModal from "../organisms/ChooseBlockModal";
-import { formBlocks } from "@/constants/blockTypes";
 import { useSearchParams } from "next/navigation";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getBlockById } from "@/services/block";
@@ -14,21 +12,26 @@ import { LoaderCircle } from "lucide-react";
 import LeftSideBarContainer from "../containers/LeftSideBarContainer";
 import FormBuilderHeaderContainer from "../containers/FormBuilderHeaderContainer";
 import ChooseBlockModalContainer from "../containers/blocks/ChooseBlockModalContainer";
+import { BlockType } from "@/types";
+import { cn } from "@/lib/utils";
 
 const FormBuilder = () => {
   const searchParams = useSearchParams();
   const blockId = searchParams.get("block_id");
 
   const {
-    data: selectedBlockData = {},
+    data: blockData,
     isLoading,
     isError,
     error,
-  } = useQuery({
+  } = useQuery<{ data: BlockType }>({
     queryKey: ["block", blockId],
     queryFn: () => getBlockById(blockId as string),
+    enabled: !!blockId,
     placeholderData: keepPreviousData,
   });
+
+  const selectedBlockData = blockData?.data ?? {};
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [shouldShakeTitleInput, setShouldShakeTitleInput] = useState(false);
@@ -36,22 +39,22 @@ const FormBuilder = () => {
     useState(false);
 
   const handleOpenChooseBlockModal = () => setIsModalOpen(true);
-
-  const triggerShakeTitleInput = () => {
+  console.log({ isModalOpen });
+  const triggerShakeTitleInput = useCallback(() => {
     setShouldShakeTitleInput(true);
     setTimeout(() => setShouldShakeTitleInput(false), 500);
-  };
+  }, []);
 
-  const triggerShakeButtonTextInput = () => {
+  const triggerShakeButtonTextInput = useCallback(() => {
     setShouldShakeButtonTextInput(true);
     setTimeout(() => setShouldShakeButtonTextInput(false), 500);
-  };
+  }, []);
 
   return (
     <div className="relative h-screen flex flex-col bg-gray-50">
       {isLoading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50 transition-opacity duration-300">
-          <LoaderCircle className="animate-spin text-white w-12 h-12" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-50 transition-opacity duration-300">
+          <LoaderCircle className="animate-spin text-black w-12 h-12" />
         </div>
       )}
 
@@ -74,9 +77,14 @@ const FormBuilder = () => {
             <BlockDisplayHeader
               handleOpenChooseBlockModal={handleOpenChooseBlockModal}
             />
-            <div className="h-full relative overflow-hidden">
+            <div
+              className={cn(
+                "h-full relative overflow-hidden",
+                isLoading && "opacity-50"
+              )}
+            >
               <BlockDisplay
-                selectedBlockData={selectedBlockData}
+                selectedBlockData={selectedBlockData as BlockType}
                 triggerShakeButtonTextInput={triggerShakeButtonTextInput}
                 triggerShakeTitleInput={triggerShakeTitleInput}
               />
@@ -88,7 +96,7 @@ const FormBuilder = () => {
             <div className="w-95 bg-white border-l border-gray-200 overflow-y-auto" />
           ) : (
             <Editor
-              selectedBlockData={selectedBlockData}
+              selectedBlockData={selectedBlockData as BlockType}
               shouldShakeButtonTextInput={shouldShakeButtonTextInput}
               shouldShakeTitleInput={shouldShakeTitleInput}
             />

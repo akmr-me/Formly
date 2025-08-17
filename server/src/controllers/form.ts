@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import {
   createFormService,
   getFormByShortIdService,
@@ -8,109 +8,87 @@ import {
   createResponseService,
   createResponseValuesService,
 } from "../services/form";
+import { catchAsync } from "../utils/catchAsync";
 
-export const createFormController = async (
-  _: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const newCreatedForm = await createFormService();
+export const createFormController = catchAsync(async (_, res) => {
+  const newCreatedForm = await createFormService();
 
-    return res.status(201).json({ ...newCreatedForm });
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-};
+  res.status(201).json({
+    status: "success",
+    data: newCreatedForm,
+  });
+});
 
-export const getFormByIdController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+export const getFormByIdController = catchAsync(async (req, res) => {
+  const { shortFormId } = req.params;
+
+  const form = await getFormByShortIdService(shortFormId);
+
+  res.status(200).json({
+    status: "success",
+    data: form,
+  });
+});
+
+export const getFormWithBlocksController = catchAsync(async (req, res) => {
+  const { shortFormId } = req.params;
+
+  const form = await getFormWithBlocksService(shortFormId);
+
+  res.status(200).json({
+    status: "success",
+    data: form,
+  });
+});
+
+export const publishFormController = catchAsync(async (req, res) => {
+  const { shortFormId } = req.params;
+
+  await publishFormService(shortFormId);
+
+  res.status(200).json({
+    status: "success",
+    message: "Form published successfully",
+  });
+});
+
+export const getPaginatedPublishedBlocksController = catchAsync(
+  async (req, res) => {
     const { shortFormId } = req.params;
-    const form = await getFormByShortIdService(shortFormId);
-    return res.status(200).json({ ...form });
-  } catch (error) {
-    return next(error);
-  }
-};
 
-export const getFormWithBlocksController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { shortFormId } = req.params;
-    const form = await getFormWithBlocksService(shortFormId);
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const limit = parseInt(req.query.limit as string, 10) || 10;
 
-    return res.status(200).json({ ...form });
-  } catch (error) {
-    return next(error);
-  }
-};
-
-export const publishFormController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { shortFormId } = req.params;
-    await publishFormService(shortFormId);
-    return res.status(200).json({});
-  } catch (error) {
-    return next(error);
-  }
-};
-
-export const getPaginatedPublishedBlocksController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { shortFormId } = req.params;
-    const { page, limit } = req.query;
     const blocks = await getPaginatedPublishedBlocksService(
       shortFormId,
-      Number(page),
-      Number(limit)
+      page,
+      limit
     );
-    return res.status(200).json({ ...blocks });
-  } catch (error) {
-    return next(error);
-  }
-};
 
-export const createResponseController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { shortFormId } = req.params;
-    const response = await createResponseService(shortFormId);
-    return res.status(200).json({ ...response });
-  } catch (error) {
-    return next(error);
+    res.status(200).json({
+      status: "success",
+      data: blocks,
+    });
   }
-};
+);
 
-export const createResponseValuesController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { shortFormId, responseId } = req.params;
-    // Will put validation here
-    const response = await createResponseValuesService(responseId, req.body);
-    return res.status(201).json({ message: "Form Saved!" });
-  } catch (error) {
-    return next(error);
-  }
-};
+export const createResponseController = catchAsync(async (req, res) => {
+  const { shortFormId } = req.params;
+  const response = await createResponseService(shortFormId);
+
+  res.status(201).json({
+    status: "success",
+    data: response,
+  });
+});
+
+export const createResponseValuesController = catchAsync(async (req, res) => {
+  const { responseId } = req.params;
+
+  await createResponseValuesService(responseId, req.body);
+
+  res.status(201).json({
+    status: "success",
+    message: "Form saved successfully",
+  });
+});

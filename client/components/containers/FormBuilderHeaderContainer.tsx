@@ -1,16 +1,23 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import FormBuilderHeader from "../organisms/FormBuilderHeader";
 import { useParams } from "next/navigation";
 import { PublishStatusType } from "@/types";
 import { publishForm } from "@/services/form";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ArrowUpRightFromSquare } from "lucide-react";
 
 export default function FormBuilderHeaderContainer() {
   const params = useParams();
   const formId = params.formId as string;
   const queryClient = useQueryClient();
-  const formData = queryClient.getQueryData(["forms", formId, "blocks"]);
+  const { data } = useQuery({
+    queryKey: ["forms", formId, "blocks"],
+    enabled: false,
+    initialData: () => queryClient.getQueryData(["forms", formId, "blocks"]),
+  });
+
+  const formData = data?.data;
   const [isPublishing, setIsPublishing] = useState(false);
   console.log("formData", formData);
   const handlePublishForm = () => {
@@ -28,9 +35,9 @@ export default function FormBuilderHeaderContainer() {
                 href={`${window.origin}/form/${formId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500 underline"
+                className="text-blue-500 underline flex"
               >
-                View form
+                View form <ArrowUpRightFromSquare fontSize={16} />
               </a>
             );
           },
@@ -38,12 +45,12 @@ export default function FormBuilderHeaderContainer() {
       })
       .finally(() => setIsPublishing(false));
   };
-
+  console.log({ formData, data });
   // if (!formData) return null;
   return (
     <FormBuilderHeader
       onPublish={handlePublishForm}
-      formStatus={(formData || {}).status as PublishStatusType}
+      formStatus={formData?.status as PublishStatusType}
       isPublishing={isPublishing}
       formUrl={`${window.origin}/form/${formId}`}
     />

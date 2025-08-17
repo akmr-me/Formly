@@ -5,6 +5,7 @@ import { CreateFormLabel, CreateFormLoadingLabel } from "@/constants";
 import { useCreateForm } from "@/hooks/useCreateForm";
 import { useRouter } from "next/navigation";
 import { useCreateStatementBlock } from "@/hooks/blocks/useCreateStatementBlock";
+import { toast } from "sonner";
 
 export default function Main() {
   const { mutate, isPending } = useCreateForm();
@@ -13,21 +14,26 @@ export default function Main() {
 
   const handleCreate = () => {
     mutate(undefined, {
-      onSuccess: (data) => {
-        console.log("Form created:", data);
-        const formShortId = data.shortId;
-        // create First statement block
+      onSuccess: (res) => {
+        const formShortId = res.data.shortId;
+        toast.success("Form created!");
+
         mutateStatement(
           { shortId: formShortId },
           {
-            onSuccess: (data) => {
-              router.push(`/form/${formShortId}/build?block_id=${data.id}`);
+            onSuccess: (blockRes) => {
+              router.push(
+                `/form/${formShortId}/build?block_id=${blockRes.data.id}`
+              );
+            },
+            onError: () => {
+              toast.error("Failed to create first block");
             },
           }
         );
       },
-      onError: (err) => {
-        console.error("Error creating form:", err);
+      onError: () => {
+        toast.error("Failed to create form");
       },
     });
   };

@@ -1,5 +1,5 @@
 import { useParams } from "next/navigation";
-import LeftSideBar from "../organisms/LeftSideBar";
+import LeftSideBar from "./LeftSideBar";
 import { useQuery } from "@tanstack/react-query";
 import { getFormWithBlocks } from "@/services/form";
 import { BlockType } from "@/types";
@@ -21,10 +21,12 @@ export default function LeftSideBarContainer({
     enabled: !!formId,
   });
 
-  const formBlocks = (data?.blocks || []).map((block: BlockType) => ({
-    ...block,
-    color: BlockTypeMap[block.type].color,
-  }));
+  // ✅ correctly access nested data
+  const formBlocks =
+    data?.data?.blocks?.map((block: BlockType) => ({
+      ...block,
+      color: BlockTypeMap[block.type].color,
+    })) || [];
 
   return (
     <LeftSideBar

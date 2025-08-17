@@ -15,6 +15,7 @@ import OptionalCommonFields from "../containers/OptionalCommonFields";
 import LongTextCustomFieldsContainer from "../containers/blocks/custom/longText";
 import NumberCustomFieldsContainer from "../containers/blocks/custom/number";
 import AddressCustomFieldsContainer from "../containers/blocks/custom/AddressCustomFieldsContainer";
+import CoverImageContainer from "../containers/blocks/CoverImageContainer";
 
 const OptionalEditorFieldMap: Record<
   string,
@@ -96,7 +97,7 @@ export default function Editor({
   const OptionalConfigFields = OptionalEditorFieldMap[type] || null;
 
   return (
-    <div className="w-95 bg-white border-l border-gray-200 overflow-y-auto">
+    <div className="w-72 bg-white border-l border-gray-200 overflow-y-auto">
       <div className="p-4 space-y-6">
         <InputWithLabel
           title={selectedBlockData?.titleLabel || "Title"}
@@ -132,7 +133,7 @@ export default function Editor({
         {Boolean(OptionalConfigFields && type !== "statement") && (
           <OptionalConfigFields selectedBlockData={selectedBlockData} />
         )}
-        <CoverImage
+        <CoverImageContainer
           onUploadComplete={handleUploadComplete}
           uploadEndpoint={`blocks/${blockId}/upload`}
           type={type}

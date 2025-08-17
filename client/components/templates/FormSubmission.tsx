@@ -1,12 +1,16 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import BlockDisplayLayout from "../organisms/display/BlockDisplayLayout";
 import FormSubmissionLayout from "../organisms/FormSubmissionLayout";
 import StatementDisplayContainer from "../containers/display/StatementDisplayContainer";
-import { getFormById, getPaginatedPublishedBlocks } from "@/services/form";
+import {
+  createNewFormResponse,
+  getFormById,
+  getPaginatedPublishedBlocks,
+} from "@/services/form";
 import { BlockType } from "@/types";
 import FormNotPublishedMessage from "./FormNotPublishedMessage";
 import {
@@ -63,12 +67,17 @@ type PaginatedBlocksResponse = {
   totalCount: number;
   totalPages: number;
 };
-type FormValues = Record<string, any>;
 
 // Map each block type to its corresponding React component
 const BlockDisplayMap: Record<
   string,
-  React.FC<{ selectedBlockData: BlockType }>
+  React.FC<{
+    selectedBlockData: BlockType;
+    name?: string;
+    required?: boolean;
+    defaultValue?: string;
+    ref: RefObject<HTMLInputElement | null>;
+  }>
 > = {
   statement: StatementDisplayContainer,
   shortText: TextInput,
@@ -91,21 +100,24 @@ export default function FormSubmission() {
   );
   const [page, setPage] = useState(1);
 
-  const { data: form, isLoading: formLoading } = useQuery({
+  const { data: response, isLoading: formLoading } = useQuery({
     queryKey: ["forms", formId],
     queryFn: () => getFormById(formId),
+    enabled: !!formId,
   });
 
-  const {
-    data = {},
-    isLoading,
-    isError,
-    error,
-  } = useQuery<PaginatedBlocksResponse>({
-    queryKey: ["forms", formId, "published-blocks", page],
-    queryFn: () => getPaginatedPublishedBlocks(formId, page, 1),
-    placeholderData: keepPreviousData,
-  });
+  const form = response?.data;
+  console.log({ response, form });
+  const { data, isLoading, isError, error } = useQuery<PaginatedBlocksResponse>(
+    {
+      queryKey: ["forms", formId, "published-blocks", page],
+      queryFn: async () => {
+        const res = await getPaginatedPublishedBlocks(formId, page, 1);
+        return res.data;
+      },
+      placeholderData: keepPreviousData,
+    }
+  );
 
   async function submitResponse() {
     const submissionId = storageValue[formId].submission_id;
@@ -118,6 +130,7 @@ export default function FormSubmission() {
       "/forms/" + formId + "/response/" + submissionId,
       submissions
     );
+    console.log({ response });
     if (response.status === 201) {
       toast.success("Form submitted successfully.");
       setStorageValue((prevStorage) => {
@@ -151,14 +164,27 @@ export default function FormSubmission() {
     const values: FormValues = {};
 
     formData.forEach((value, key) => {
-      if (values[key]) {
-        if (Array.isArray(values[key])) {
-          (values[key] as FormDataEntryValue[]).push(value);
+      const parts = key.split(".");
+      let current: any = values;
+
+      for (let i = 0; i < parts.length - 1; i++) {
+        const part = parts[i];
+        if (!current[part]) {
+          current[part] = {};
+        }
+        current = current[part];
+      }
+
+      const lastKey = parts[parts.length - 1];
+
+      if (current[lastKey] !== undefined) {
+        if (Array.isArray(current[lastKey])) {
+          current[lastKey].push(value);
         } else {
-          values[key] = [values[key] as FormDataEntryValue, value];
+          current[lastKey] = [current[lastKey], value];
         }
       } else {
-        values[key] = value;
+        current[lastKey] = value;
       }
     });
     console.log("values", values);
@@ -174,7 +200,8 @@ export default function FormSubmission() {
       console.log({ values });
 
       if (!submissionId) {
-        const response = await apiClient.post(`/forms/${formId}/response`);
+        const response = await createNewFormResponse(formId);
+        console.log({ response });
         submissionId = response.data.id;
         const submittedAt = response.data.submittedAt;
 

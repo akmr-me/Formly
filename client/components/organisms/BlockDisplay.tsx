@@ -11,7 +11,10 @@ import {
 } from "../molecules/block/InputBlock";
 import AddressBlockContainer from "../containers/blocks/custom/AddressBlockContainer";
 
-const BlockDisplayMap: Record<string, React.FC<T>> = {
+const BlockDisplayMap: Record<
+  string,
+  React.FC<{ selectedBlockData: BlockType; placeholder?: string }>
+> = {
   statement: StatementDisplayContainer,
   shortText: TextInput,
   longText: LongText,
@@ -50,15 +53,19 @@ export default function BlockDisplay({
       : { backgroundColor };
 
   const BlockDisplayComponent = BlockDisplayMap[selectedBlockData.type] || null;
-  const DefaultDisplayData = DefaultBlockData[selectedBlockData.type] || {};
+  const DefaultDisplayData =
+    DefaultBlockData[selectedBlockData.type as keyof typeof DefaultBlockData] ||
+    {};
+
+  const title = selectedBlockData.title || DefaultDisplayData.displayQuestion;
 
   return (
     <div
-      className="flex-1 bg-gray-100 flex items-center justify-center mt-2 rounded-2xl p-8 flex-col overflow-hidden h-full"
+      className="flex-1 bg-gray-100 flex justify-center mt-2 rounded-2xl p-8 flex-col h-full"
       style={backgroundStyle}
     >
       <BlockDisplayLayout
-        title={selectedBlockData.title || DefaultDisplayData.displayQuestion}
+        title={title}
         buttonText={selectedBlockData.buttonText}
         required={selectedBlockData.required}
         description={selectedBlockData.descriptionHtml}

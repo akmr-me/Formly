@@ -1,35 +1,32 @@
-import { sql } from "kysely";
+import { Selectable, sql } from "kysely";
 import { db } from "../config/db";
 import { Form as TForm, Block as TBlock } from "../generated/prisma/kysely";
 import ApiError from "../utils/ApiError";
 
 type createFormInternal = { shortId: string };
 
-type FormWithBlocks = TForm & {
-  blocks: Partial<TBlock>[];
+type FormWithBlocks = Selectable<TForm> & {
+  blocks: Array<Partial<Selectable<TBlock>>>;
 };
 
 class Form {
   async createForm(data: createFormInternal) {
-    const newForm = await db
+    return await db
       .insertInto("Form")
       .values({ ...data, updatedAt: new Date() })
       .returningAll()
       .executeTakeFirstOrThrow();
-    return newForm;
   }
 
   async getFormById(id: string) {
-    const form = await db
+    return await db
       .selectFrom("Form")
       .selectAll()
       .where("id", "=", id)
       .executeTakeFirstOrThrow();
-    return form;
   }
 
   async getFormWithBlocks(formId: string): Promise<FormWithBlocks | null> {
-    console.log("fromid", formId);
     const flatResults = await db
       .selectFrom("Form")
       .innerJoin("Block", "Form.shortId", "Block.formId")
@@ -53,14 +50,10 @@ class Form {
     }
 
     const form: FormWithBlocks = {
-      // @ts-ignore
       id: flatResults[0].id as string,
       shortId: flatResults[0].shortId,
-      // @ts-ignore
       createdAt: flatResults[0].createdAt,
-      // @ts-ignore
       updatedAt: flatResults[0].updatedAt,
-      // @ts-ignore
       status: flatResults[0].status,
       blocks: [],
     };
@@ -68,28 +61,13 @@ class Form {
     for (const row of flatResults) {
       if (row.block_id) {
         form.blocks.push({
-          // @ts-ignore
           id: row.block_id,
           title: row.block_title,
           titleLabel: row.block_titleLabel,
-          // descriptionDelta: row.block_descriptionDelta,
-          // descriptionHtml: row.block_descriptionHtml,
-          // textAlign: row.block_textAlign,
-          // buttonText: row.block_buttonText,
-          // coverImageOrigin: row.block_coverImageOrigin,
-          // coverImagePath: row.block_coverImagePath,
-          // @ts-ignore
           required: row.block_required as boolean,
-          // optionalConfig: row.block_optionalConfig,
           formId: row.shortId,
           type: row.block_type,
           position: row.block_position,
-          // placeholder: row.block_placeholder,
-          // urlParameter: row.block_urlParameter,
-          // createdAt: row.block_createdAt,
-          // updatedAt: row.block_updatedAt,
-          // blockOptions: [], // Assuming you might want to join these later
-          // responses: [], // Assuming you might want to join these later
         });
       }
     }
@@ -97,38 +75,35 @@ class Form {
   }
 
   async getFormByShortId(shortId: string) {
-    const form = await db
+    return await db
       .selectFrom("Form")
       .selectAll()
       .where("shortId", "=", shortId)
       .executeTakeFirstOrThrow();
-    return form;
   }
 
   async getCurrentAndAdjacentBlocks(
     currentBlockId: string,
     prevOrNext = "after"
   ) {
-    // TODO: Optimize query
-    try {
+    return await db.transaction().execute(async (trx) => {
       const isNext = prevOrNext === "after";
       const positionOp = isNext ? ">" : "<";
       const orderDirection = isNext ? "asc" : "desc";
 
-      const currentBlockDetails = await db
+      const currentBlockDetails = await trx
         .selectFrom("Block")
         .select(["id", "formId", "position"])
         .where("id", "=", currentBlockId)
         .executeTakeFirst();
-
+      console.log("currentBlockDetails", currentBlockDetails);
       if (!currentBlockDetails) {
-        console.error(`Block with ID ${currentBlockId} not found.`);
-        throw new Error("Block not found");
+        throw new Error(`Block with ID ${currentBlockId} not found.`);
       }
 
       const { id, formId, position } = currentBlockDetails;
 
-      const result = await db
+      const result = await trx
         .selectFrom("Block")
         .selectAll()
         .where((eb) =>
@@ -144,21 +119,13 @@ class Form {
         .limit(2)
         .execute();
 
-      console.log("result", result);
       return result;
-    } catch (error) {
-      if (error instanceof ApiError) {
-        throw error;
-      }
-      console.error("Error fetching blocks:", error);
-      throw error;
-    }
+    });
   }
 
   // publish form
-
   async publishForm(shortId: string) {
-    await db.transaction().execute(async (trx) => {
+    return await db.transaction().execute(async (trx) => {
       // 1. Publish the form
       const form = await trx
         .updateTable("Form")
@@ -206,6 +173,12 @@ class Form {
             .execute();
         }
       }
+
+      await trx
+        .deleteFrom("PublishedBlock")
+        .where("formId", "=", shortId)
+        .where("id", "not in", blockIds)
+        .execute();
 
       // 4. CopyBlockOption (insert/update/delete)
       for (const blockId of blockIds) {
@@ -310,14 +283,12 @@ class Form {
 
     await db.transaction().execute(async (trx) => {
       for (const [blockId, valueObject] of Object.entries(
-        // @ts-ignore
-        ResponseData.submissions
+        ResponseData.submissions ?? {}
       )) {
         await trx
           .insertInto("ResponseValue")
           .values({
             responseId,
-            blockId,
             publishedBlockId: blockId,
             value: String(valueObject.value),
             type: "STRING",

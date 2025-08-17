@@ -7,23 +7,28 @@ import { useDebouncedCallback } from "use-debounce";
 import { DefaultDebounceTime } from "@/constants";
 import { toast } from "sonner";
 
-interface LongTextCustomFieldsContainerProps {
+type LongTextCustomFieldsContainerProps = {
   selectedBlockData: {
     optionalConfig?: {
       minCharacterLength?: number;
       maxCharacterLength?: number;
+      textBoxSize?: string;
     };
   };
-}
+};
 
 export default function LongTextCustomFieldsContainer({
   selectedBlockData,
 }: LongTextCustomFieldsContainerProps) {
-  const [minCharacterLength, setMinCharacterLength] = useState<number | null>();
-  const [maxCharacterLength, setMaxCharacterLength] = useState<number | null>();
+  const [minCharacterLength, setMinCharacterLength] = useState<
+    number | null | undefined
+  >();
+  const [maxCharacterLength, setMaxCharacterLength] = useState<
+    number | null | undefined
+  >();
 
   const searchParams = useSearchParams();
-  const blockId = searchParams.get("block_id");
+  const blockId = searchParams.get("block_id") as string;
   const { mutate } = useUpdateCommonBlockFields(blockId, "longText");
 
   // Initialize state from selectedBlockData
@@ -46,7 +51,7 @@ export default function LongTextCustomFieldsContainer({
       if (
         value !== null &&
         maxCharacterLength !== null &&
-        value > maxCharacterLength
+        value > Number(maxCharacterLength)
       ) {
         toast.error(
           "Minimum characters cannot be greater than maximum characters"
@@ -72,7 +77,7 @@ export default function LongTextCustomFieldsContainer({
       if (
         value !== null &&
         minCharacterLength !== null &&
-        value < minCharacterLength
+        value < Number(minCharacterLength)
       ) {
         toast.error(
           "Maximum characters cannot be less than minimum characters"

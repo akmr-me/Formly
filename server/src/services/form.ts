@@ -1,43 +1,38 @@
+import ApiError from "../utils/ApiError";
 import formRespository from "../repositories/Form";
 import { generateFormId } from "../utils/generateFormId";
 
 export async function createFormService() {
   const shortId = generateFormId();
-  try {
-    const form = await formRespository.createForm({ shortId });
-    return form;
-  } catch (error) {
-    // generate shortid again if already exists
-    console.log("createForm error", error);
+
+  const form = await formRespository.createForm({ shortId });
+  if (!form) {
+    throw new ApiError(500, "Failed to create form");
   }
+
+  return form;
 }
 
 export async function getFormByShortIdService(shortId: string) {
-  try {
-    const form = await formRespository.getFormByShortId(shortId);
-    return form;
-  } catch (error) {
-    console.log("getFormByShortId error", error);
+  const form = await formRespository.getFormByShortId(shortId);
+  if (!form) {
+    throw new ApiError(404, `Form with shortId ${shortId} not found`);
   }
+  return form;
 }
 
 export async function getFormWithBlocksService(formId: string) {
-  try {
-    const form = await formRespository.getFormWithBlocks(formId);
-
-    return form;
-  } catch (error) {
-    console.log("getFormWithBlocks error", error);
+  const form = await formRespository.getFormWithBlocks(formId);
+  if (!form) {
+    throw new ApiError(404, `Form with ID ${formId} not found`);
   }
+  return form;
 }
 
 export async function publishFormService(shortFormId: string) {
-  try {
-    const form = await formRespository.publishForm(shortFormId);
-    return form;
-  } catch (error) {
-    console.log("publishForm error", error);
-  }
+  const form = await formRespository.publishForm(shortFormId);
+
+  return form;
 }
 
 export async function getPaginatedPublishedBlocksService(
@@ -45,38 +40,31 @@ export async function getPaginatedPublishedBlocksService(
   page: number,
   limit: number = 1
 ) {
-  try {
-    const form = await formRespository.getPaginatedPublishedBlocks(
-      shortFormId,
-      page,
-      limit
+  const form = await formRespository.getPaginatedPublishedBlocks(
+    shortFormId,
+    page,
+    limit
+  );
+  if (!form) {
+    throw new ApiError(
+      404,
+      `No published blocks found for form ${shortFormId}`
     );
-    return form;
-  } catch (error) {
-    console.log("getPaginatedPublishedBlocks error", error);
   }
+  return form;
 }
 
 export async function createResponseService(shortFormId: string) {
-  try {
-    const formResponse = await formRespository.createResponse(shortFormId);
-    return formResponse;
-  } catch (error) {
-    console.log("createResponse error", error);
+  const formResponse = await formRespository.createResponse(shortFormId);
+  if (!formResponse) {
+    throw new ApiError(404, `Form with shortId ${shortFormId} not found`);
   }
+  return formResponse;
 }
 
 export async function createResponseValuesService(
   responseId: string,
   responseData: Record<string, any>
 ) {
-  try {
-    const formResponse = await formRespository.createResponseValues(
-      responseId,
-      responseData
-    );
-    return formResponse;
-  } catch (error) {
-    console.log("createResponse error", error);
-  }
+  await formRespository.createResponseValues(responseId, responseData);
 }

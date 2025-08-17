@@ -1,41 +1,21 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createStatementBlock } from "@/services/block";
-import { formBlocks } from "@/constants/blockTypes";
+import { useMutation } from "@tanstack/react-query";
+import { createNewBlock } from "@/services/block";
+import { AlignType, BlockTypeEnum } from "@/types";
 
+// This creates the first block
 export function useCreateStatementBlock() {
-  const queryClient = useQueryClient();
-  //     {
-  //     id: 1,
-  //     type: "statement",
-  //     label: "Statement",
-  //     text: "Hey there 😊",
-  //     color: "bg-pink-200",
-  //     icon: "💬",
-  //     titleLabel: "Title",
-  //     titleDefaultValue: "Hey there 😀",
-  //     defaultButtonText: "Let's start",
-  //     description: `Primarily used as "Intro" or "Welcome" block (like in the screenshot below), but can be used anywhere in your form to display a message.`,
-  //   },type: z.literal(BlockType.STATEMENT),
-  // title: z.string().min(1).max(255).trim(),
-  // titleLabel: z.string().min(1).max(255).trim(),
-  // textAlign: z.literal(AlignType.CENTER),
-  // buttonText: z.string().min(1).max(255).trim(),
-  // shortId: z.string().length(8),
-
   return useMutation({
     mutationFn: (additionalData: { shortId: string }) => {
-      const { type, titleLabel, titleDefaultValue, defaultButtonText } =
-        formBlocks.find((block) => block.type === "statement") || {};
       const fullData = {
-        type,
-        titleLabel,
-        title: titleDefaultValue,
-        buttonText: defaultButtonText,
+        type: BlockTypeEnum.STATEMENT,
+        titleLabel: "Title",
+        title: "Hey there 😀",
+        buttonText: "Let's start",
         formId: additionalData.shortId,
-        textAlign: "center",
+        textAlign: AlignType.CENTER,
         position: 100,
       };
-      return createStatementBlock(fullData);
+      return createNewBlock(fullData);
     },
     onSuccess: (data) => {
       //   queryClient.invalidateQueries({ queryKey: ["forms"] });

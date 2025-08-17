@@ -1,7 +1,5 @@
 import { BlockType } from "@/types";
 import { formBlocks } from "./blockTypes";
-import { Button } from "@/components/ui/button";
-import TextAlign from "@/components/molecules/editor/TextAlign";
 
 export const ImageLayoutOptions = [
   {
@@ -61,6 +59,7 @@ export const DefaultBlockData = {
   statement: {
     title: "Hey there 😀",
     description: "Mind filling out this form?",
+    displayQuestion: "Your title here...",
     button: "Let's start",
     displayTitle: "Welcome! Please take some time to fill up this form.",
     displayDescription: "This will only take 2 minutes.",
@@ -132,7 +131,7 @@ export const DefaultBlockData = {
     urlParamsTooltip:
       "For e.g if you set this value to 'website' and then append ?website=https://example.com at the end of the form page URL then it will auto fill the field value with https://example.com. Click to learn more.",
   },
-  singleSelect: {
+  single: {
     type: "singleSelect",
     question: "Which do you prefer? 👇",
     description: "",
@@ -162,7 +161,7 @@ export const DefaultBlockData = {
     urlParamsTooltip:
       "For e.g if you set this value to 'choice' and then append ?choice=option_id_123 at the end of the form page URL then it will auto fill the field with that option. Use option IDs from the chevron menu above. Click to learn more.",
   },
-  multiSelect: {
+  multi: {
     type: "multiSelect",
     question: "Please choose at least one option 👇",
     description: "",
@@ -206,7 +205,7 @@ export const DefaultBlockData = {
       },
     ],
   },
-  drowdownList: {
+  dropdown: {
     type: "drowdownList",
     question: "Please choose 👇",
     description: "",
@@ -315,6 +314,15 @@ export const DefaultBlockData = {
 };
 
 export const CreateNewBlockDataMap = {
+  statement: {
+    type: "statement",
+    titleLabel: "Title",
+    title: "",
+    buttonText: "Continue",
+    placeholder: "",
+    required: false,
+    textAlign: "center",
+  },
   shortText: {
     type: "shortText",
     titleLabel: "Question",
@@ -425,6 +433,9 @@ export const CreateNewBlockDataMap = {
       },
     },
   },
+  select: {},
+  multi: {},
+  dropdown: {},
 };
 
 export const UnpublishedFormMessage =

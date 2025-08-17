@@ -1,6 +1,9 @@
 import { BlockType } from "@/types";
 
-export const formBlocks: Partial<BlockType>[] = [
+export const formBlocks: Omit<
+  BlockType,
+  "title" | "buttonText" | "textAlign" | "position"
+>[] = [
   {
     id: "1",
     type: "statement",

@@ -7,8 +7,6 @@ import SelectedBlockPreview from "./SelectedBlockPreview";
 import NoBlockSelected from "./previews/NoBlock";
 import PreviewLayout from "./previews/PreviewLayout";
 
-// TODO: Needs Refactoring
-
 export type ChooseBlockModalProps = {
   isOpen: boolean;
   onClose: () => void;

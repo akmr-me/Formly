@@ -1,14 +1,15 @@
+import { AddressFieldConfig } from "@/types";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-const Address = ({
-  config,
-  value,
-  onChange,
-  showControl,
-  onToggleVisibility,
-  onOpenSettings,
-}) => {
+type AddressProps = {
+  config: AddressFieldConfig;
+  value: string;
+  onChange: (value: string) => void;
+  name?: string;
+};
+
+const Address = ({ config, value, onChange, name }: AddressProps) => {
   if (!config.visible) return null;
 
   return (
@@ -30,6 +31,7 @@ const Address = ({
         onChange={(e) => onChange(e.target.value)}
         required={config.required}
         disabled={!config.visible}
+        name={name}
         className="w-full px-4 py-3 border-0 border-b-2 border-gray-300 bg-transparent focus:border-gray-600 focus:ring-0 rounded-none"
       />
     </div>

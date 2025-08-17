@@ -1,3 +1,11 @@
+export type Form = {
+  id: string;
+  status: PublishStatusType;
+  shortId: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export type BlockType = {
   id: string;
   type: BlockTypeEnum;
@@ -97,10 +105,22 @@ export type AddressFieldConfig = {
 };
 
 export type AddressData = {
+  [key: string]: string;
   address: string;
   addressLine2: string;
   city: string;
   state: string;
   zip: string;
   country: string;
+};
+
+export type ApiResponse<T> = {
+  status: string;
+  message: string;
+  data: T;
+};
+
+export type PaginatedBlocksResponse = {
+  blocks: BlockType[];
+  total: number;
 };
