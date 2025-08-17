@@ -28,14 +28,23 @@ class BlockRepository {
 
   async deleteBlockById(id: string) {
     return db.transaction().execute(async (trx) => {
-      await trx.deleteFrom("PublishedBlock").where("id", "=", id).execute();
-
-      const result = await trx
-        .deleteFrom("Block")
+      const block = await trx
+        .selectFrom("Block")
+        .select(["formId"])
         .where("id", "=", id)
+        .executeTakeFirst();
+
+      if (!block) throw new Error("Block not found");
+
+      await trx.deleteFrom("Block").where("id", "=", id).execute();
+
+      await trx
+        .updateTable("Form")
+        .set({ status: "draft" })
+        .where("shortId", "=", block.formId)
         .execute();
 
-      return result;
+      return { success: true };
     });
   }
 
@@ -56,11 +65,23 @@ class BlockRepository {
   }
 
   async insertBlock(data: any) {
-    return db
-      .insertInto("Block")
-      .values(data)
-      .returningAll()
-      .executeTakeFirst();
+    return db.transaction().execute(async (trx) => {
+      const block = await trx
+        .insertInto("Block")
+        .values(data)
+        .returningAll()
+        .executeTakeFirst();
+
+      if (!block) throw new Error("Failed to insert block");
+
+      await trx
+        .updateTable("Form")
+        .set({ status: "draft" })
+        .where("shortId", "=", block.formId)
+        .execute();
+
+      return block;
+    });
   }
 
   async countBlocksInFormByBlockId(id: string) {

@@ -174,6 +174,12 @@ class Form {
         }
       }
 
+      await trx
+        .deleteFrom("PublishedBlock")
+        .where("formId", "=", shortId)
+        .where("id", "not in", blockIds)
+        .execute();
+
       // 4. CopyBlockOption (insert/update/delete)
       for (const blockId of blockIds) {
         const sourceOptions = blockOptions.filter(

@@ -1,6 +1,7 @@
 import { db } from "../../config/db";
 import formRespository from "../../repositories/Form";
 import ApiError from "../../utils/ApiError";
+import blockRepository from "../../repositories/Block";
 
 export async function createStatementBlockService(data: any) {
   try {
@@ -32,11 +33,7 @@ export async function createStatementBlockService(data: any) {
       data.position = position;
     }
 
-    const statementBlock = await db
-      .insertInto("Block")
-      .values(data)
-      .returningAll()
-      .executeTakeFirstOrThrow();
+    const statementBlock = blockRepository.insertBlock(data);
     return statementBlock;
   } catch (error) {
     console.log("Error while createing statement block", error);

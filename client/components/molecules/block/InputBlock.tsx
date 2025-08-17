@@ -97,7 +97,7 @@ export const LongText = forwardRef<
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className={`w-full border-b-2 border-gray-600 bg-transparent focus:outline-none focus:border-gray-800 text-lg ${className}`}
+        className={`w-full px-4 mx-8 border-b-2 border-gray-600 bg-transparent focus:outline-none focus:border-gray-800 text-lg ${className}`}
       />
     </div>
   );

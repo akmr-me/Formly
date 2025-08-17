@@ -41,7 +41,7 @@ export default function BlockDisplayLayout({
     >
       <div
         className={cn(
-          "place-self-center self-start w-full",
+          "place-self-center self-start w-full m-auto",
           textAlign === "center" && "text-center",
           textAlign === "left" && "text-left"
         )}
