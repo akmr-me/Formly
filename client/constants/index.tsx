@@ -441,4 +441,4 @@ export const CreateNewBlockDataMap = {
 export const UnpublishedFormMessage =
   "Your form has unpublished changes. You can publish it from dashboard.";
 
-export const FermionFormLocalStorageKey = "fermion-form";
+export const FormlyLocalStorageKey = "formly";
