@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fermion Forms",
+  title: "Formly",
   description: "A form builder for all your needs",
 };
 

@@ -21,7 +21,7 @@ import {
   URLInput,
 } from "../molecules/block/InputBlock";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { FermionFormLocalStorageKey } from "@/constants";
+import { FormlyFormLocalStorageKey } from "@/constants";
 import apiClient from "@/lib/apiClient";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -95,7 +95,7 @@ export default function FormSubmission() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [storageValue, setStorageValue] = useLocalStorage(
-    FermionFormLocalStorageKey,
+    FormlyFormLocalStorageKey,
     { [formId]: {} }
   );
   const [page, setPage] = useState(1);

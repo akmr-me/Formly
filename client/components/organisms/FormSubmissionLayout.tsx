@@ -23,7 +23,7 @@ const FormSubmissionLayout: React.FC<FormLayoutProps> = ({
   currentStep = 1,
   totalSteps = 5,
   showProgress = true,
-  poweredByText = "Powered by Fermion Forms",
+  poweredByText = "Powered by Formly",
   showNavigation = true,
   onUpClick,
   onDownClick,
