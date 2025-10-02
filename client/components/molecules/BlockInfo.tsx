@@ -12,7 +12,7 @@ export type BlockInfoProps = BlockType & {
   required?: boolean; // Added required prop
   onClickHandler?: (id: string) => void;
   onDoubleClickHandler?: () => void;
-  selectedBlockid?: string;
+  selectedBlockId?: string;
   type: BlockTypeEnum;
 };
 
@@ -26,8 +26,8 @@ export default function BlockInfo({
   HoverComponent = null,
   dropdownOpen,
   onClickHandler,
-  onDoubleClickHandler,
-  selectedBlockid,
+  // onDoubleClickHandler,
+  selectedBlockId,
   type,
 }: BlockInfoProps) {
   const [show, setShow] = useState(false);
@@ -37,7 +37,7 @@ export default function BlockInfo({
   return (
     <div
       className={`p-3 rounded-md flex justify-between cursor-pointer transition-all relative ${colorClass} ${
-        selectedBlockid === id ? "ring-2 ring-blue-500" : ""
+        selectedBlockId === id ? "ring-2 ring-blue-500" : ""
       }`}
       onClick={() => onClickHandler && onClickHandler(id)}
       onMouseEnter={() => setShow(true)}

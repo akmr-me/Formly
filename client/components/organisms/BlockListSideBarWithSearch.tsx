@@ -1,7 +1,7 @@
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { formBlocks } from "@/constants/blockTypes";
-import { ArrowRight, ArrowUp, ArrowUpRightFromSquare } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import BlockInfoCreateNewBlockContainer from "../containers/blocks/BlockInfoCreateNewBlockContainer";
 
 type BlockListSideBarWithSearchProps = {
@@ -24,7 +24,7 @@ export default function BlockListSideBarWithSearch({
 
       {/* Scrollable Block Types List */}
       <div className="flex-1 overflow-y-auto p-4 scrollbar-hide">
-        <div className="border-b fixed w-64">
+        <div className="border-b fixed w-64 z-10">
           <Input
             placeholder="Search blocks.."
             value={searchQuery}
