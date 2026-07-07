@@ -23,8 +23,8 @@ const multiSelectOptionalConfigSchema = z.object({
 const multiSelectBlockSchema = baseBlockSchema.extend({
   optionalConfig: multiSelectOptionalConfigSchema.optional(),
   type: z.literal(BlockType.MULTI_SELECT),
-  referenceBlockId: z.string(),
-  newBlockPosition: z.enum(["before", "after"]).default("after"),
+  referenceBlockId: z.string().optional(),
+  newBlockPosition: z.enum(["before", "after"]).optional(),
 });
 
 export const createMultiSelectBlockSchema = z.object({

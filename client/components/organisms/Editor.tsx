@@ -15,6 +15,7 @@ import LongTextCustomFieldsContainer from "../containers/blocks/custom/longText"
 import NumberCustomFieldsContainer from "../containers/blocks/custom/number";
 import AddressCustomFieldsContainer from "../containers/blocks/custom/AddressCustomFieldsContainer";
 import CoverImageContainer from "../containers/blocks/CoverImageContainer";
+import SelectOptionsContainer from "../containers/blocks/custom/SelectOptionsContainer";
 
 const OptionalEditorFieldMap: Partial<Record<
   string,
@@ -24,6 +25,9 @@ const OptionalEditorFieldMap: Partial<Record<
   longText: LongTextCustomFieldsContainer,
   number: NumberCustomFieldsContainer,
   address: AddressCustomFieldsContainer,
+  single: SelectOptionsContainer,
+  multi: SelectOptionsContainer,
+  dropdown: SelectOptionsContainer,
 };
 
 type EditorProp = {

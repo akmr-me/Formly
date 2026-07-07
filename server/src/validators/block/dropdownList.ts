@@ -20,8 +20,8 @@ const dropdownOptionalConfigSchema = z.object({
 const dropdownBlockSchema = baseBlockSchema.extend({
   optionalConfig: dropdownOptionalConfigSchema.optional(),
   type: z.literal(BlockType.DROPDOWN),
-  referenceBlockId: z.string(),
-  newBlockPosition: z.enum(["before", "after"]).default("after"),
+  referenceBlockId: z.string().optional(),
+  newBlockPosition: z.enum(["before", "after"]).optional(),
 });
 
 export const createDropdownBlockSchema = z.object({

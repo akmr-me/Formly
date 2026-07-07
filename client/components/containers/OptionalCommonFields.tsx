@@ -14,6 +14,9 @@ const BlockTypeHasRequiredField = [
   "number",
   "websiteUrl",
   "date",
+  "single",
+  "multi",
+  "dropdown",
 ];
 const BlockTypeHasPlaceholder = [
   "shortText",
@@ -22,6 +25,7 @@ const BlockTypeHasPlaceholder = [
   "websiteUrl",
 ];
 const BlockTypeHasUrlParameter = ["shortText", "number", "websiteUrl", "date"];
+const SelectBlockTypes = ["single", "multi", "dropdown"];
 
 export default function OptionalCommonFields({
   selectedBlockData,
@@ -31,7 +35,9 @@ export default function OptionalCommonFields({
   const { type } = selectedBlockData;
   const hasPlaceholder = BlockTypeHasPlaceholder.includes(type || "");
   const hasRequired = BlockTypeHasRequiredField.includes(type || "");
-  const hasUrlParameter = BlockTypeHasUrlParameter.includes(type || "");
+  const hasUrlParameter =
+    BlockTypeHasUrlParameter.includes(type || "") ||
+    SelectBlockTypes.includes(type || "");
   const searchParams = useSearchParams();
   const blockId = searchParams.get("block_id") as string;
 
@@ -87,7 +93,6 @@ export default function OptionalCommonFields({
         <RequiredFieldCheckbox
           checked={isRequired}
           onChange={(e: boolean) => {
-            console.log(e);
             setIsRequired(e);
             debouncedIsRequiredUpdate(e);
           }}

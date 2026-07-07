@@ -10,6 +10,7 @@ import {
   URLInput,
 } from "../molecules/block/InputBlock";
 import AddressBlockContainer from "../containers/blocks/custom/AddressBlockContainer";
+import SelectBlock from "../molecules/block/SelectBlock";
 
 const BlockDisplayMap: Record<
   string,
@@ -22,6 +23,9 @@ const BlockDisplayMap: Record<
   websiteUrl: URLInput,
   date: DateInput,
   address: AddressBlockContainer,
+  single: SelectBlock,
+  multi: SelectBlock,
+  dropdown: SelectBlock,
 };
 
 type BlockDisplayProps = {

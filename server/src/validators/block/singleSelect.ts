@@ -15,8 +15,8 @@ const singleSelectOptionalConfigSchema = z.object({
 const singleSelectBlockSchema = baseBlockSchema.extend({
   optionalConfig: singleSelectOptionalConfigSchema.optional(),
   type: z.literal(BlockType.SINGLE_SELECT),
-  referenceBlockId: z.string(),
-  newBlockPosition: z.enum(["before", "after"]).default("after"),
+  referenceBlockId: z.string().optional(),
+  newBlockPosition: z.enum(["before", "after"]).optional(),
 });
 
 export const createSingleSelectBlockSchema = z.object({

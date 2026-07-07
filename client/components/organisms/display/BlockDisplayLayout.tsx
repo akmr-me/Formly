@@ -91,8 +91,22 @@ export default function BlockDisplayLayout({
             />
           </div>
         )}
-        <div>{children}</div>
-        <div>
+        <div
+          className={cn(
+            "flex w-full",
+            textAlign === "center" && "justify-center",
+            textAlign === "left" && "justify-start"
+          )}
+        >
+          {children}
+        </div>
+        <div
+          className={cn(
+            "flex w-full",
+            textAlign === "center" && "justify-center",
+            textAlign === "left" && "justify-start"
+          )}
+        >
           <Button
             className={cn(
               "bg-black text-white px-8 py-4 rounded-md hover:bg-gray-800 text-lg font-medium mt-8",

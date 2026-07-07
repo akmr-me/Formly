@@ -21,11 +21,11 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
     ref
   ) => {
     return (
-      <div className="text-center space-y-6">
+      <div className="w-full max-w-xl">
         <input
           ref={ref}
           type="text"
-          className={`w-full max-w-md mb-2 mx-auto block px-4 py-3 border-b-2 border-gray-600 bg-transparent focus:outline-none focus:border-gray-800 text-lg ${className}`}
+          className={`block w-full border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
@@ -63,11 +63,11 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     ref
   ) => {
     return (
-      <div className="text-center space-y-6">
+      <div className="w-full max-w-xl">
         <input
           ref={ref}
           type="number"
-          className={`w-full mb-2 max-w-md mx-auto block px-4 py-3 border-b-2 border-gray-600 bg-transparent focus:outline-none focus:border-gray-800 text-lg ${className}`}
+          className={`block w-full border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
@@ -90,14 +90,14 @@ export const LongText = forwardRef<
   >
 >(({ placeholder, value, onChange, className = "", ...props }, ref) => {
   return (
-    <div className="text-center space-y-6 min-w-xl">
+    <div className="w-full max-w-xl">
       <Textarea
         ref={ref}
         {...props}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className={`w-full px-4 mx-8 border-b-2 border-gray-600 bg-transparent focus:outline-none focus:border-gray-800 text-lg ${className}`}
+        className={`min-h-32 w-full resize-none rounded-none border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
       />
     </div>
   );
@@ -124,11 +124,11 @@ export const URLInput = forwardRef<HTMLInputElement, URLInputProps>(
     ref
   ) => {
     return (
-      <div className="text-center space-y-6 mb-4">
+      <div className="w-full max-w-xl">
         <input
           ref={ref}
           type="url"
-          className={`w-full max-w-md mx-auto block px-4 py-3 border-b-2 border-gray-600 bg-transparent focus:outline-none focus:border-gray-800 text-lg ${className}`}
+          className={`block w-full border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
@@ -164,11 +164,11 @@ export const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
     ref
   ) => {
     return (
-      <div className="text-center space-y-6">
+      <div className="w-full max-w-xl">
         <input
           ref={ref}
           type="date"
-          className={`w-full max-w-md mx-auto block px-4 py-3 border-b-2 border-gray-600 bg-transparent focus:outline-none focus:border-gray-800 text-lg ${className}`}
+          className={`block w-full border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
           placeholder={placeholder}
           value={value}
           onChange={onChange}

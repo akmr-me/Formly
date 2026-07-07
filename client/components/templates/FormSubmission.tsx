@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import BlockDisplayLayout from "../organisms/display/BlockDisplayLayout";
 import FormSubmissionLayout from "../organisms/FormSubmissionLayout";
@@ -26,6 +26,7 @@ import apiClient from "@/lib/apiClient";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import AddressBlockContainer from "../containers/blocks/custom/AddressBlockContainer";
+import SelectBlock from "../molecules/block/SelectBlock";
 
 type SubmissionStatus = "saved" | "submitted";
 
@@ -37,12 +38,14 @@ interface SubmissionData {
 }
 
 type FormStorage = {
-  [formId: string]: {
-    submission_id: string;
-    submitted_at: string;
-    submissions: {
-      [inputName: string]: SubmissionData;
-    };
+  [formId: string]: FormSubmissionState;
+};
+
+type FormSubmissionState = {
+  submission_id: string;
+  submitted_at: string;
+  submissions: {
+    [inputName: string]: SubmissionData;
   };
 };
 
@@ -60,6 +63,7 @@ export default function FormSubmission() {
   const params = useParams();
   const formId = params.formId as string;
   const [isSumbitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [storageValue, setStorageValue] = useLocalStorage(
@@ -75,7 +79,6 @@ export default function FormSubmission() {
   });
 
   const form = response?.data;
-  console.log({ response, form });
   const { data, isLoading, isError, error } = useQuery<PaginatedBlocksResponse>(
     {
       queryKey: ["forms", formId, "published-blocks", page],
@@ -87,32 +90,34 @@ export default function FormSubmission() {
     }
   );
 
-  const submitResponse = useCallback(async () => {
-    const submissionId = storageValue[formId].submission_id;
-    if (!submissionId) {
-      toast.error("No submission id found.");
-      return;
-    }
-    const submissions = storageValue[formId];
-    const response = await apiClient.post(
-      "/forms/" + formId + "/response/" + submissionId,
-      submissions
-    );
-    console.log({ response });
-    if (response.status === 201) {
-      toast.success("Form submitted successfully.");
-      setStorageValue((prevStorage) => {
-        const clone = structuredClone(prevStorage);
-        delete clone[formId];
-        return clone;
-      });
-      // e?.target?.reset();
-      console.log({ inputRef });
-      if (inputRef.current) inputRef.current.value = "";
-    }
-    setIsSubmitting(false);
-    console.log("response", response);
-  }, [formId, setStorageValue, storageValue]);
+  const submitResponse = useCallback(
+    async (submission: FormSubmissionState) => {
+      const submissionId = submission.submission_id;
+      if (!submissionId) {
+        toast.error("No submission id found.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const response = await apiClient.post(
+        "/forms/" + formId + "/response/" + submissionId,
+        submission
+      );
+
+      if (response.status === 201) {
+        setStorageValue((prevStorage) => {
+          const clone = structuredClone(prevStorage);
+          delete clone[formId];
+          return clone;
+        });
+        setIsSubmitted(true);
+        toast.success("Form submitted successfully.");
+        if (inputRef.current) inputRef.current.value = "";
+      }
+      setIsSubmitting(false);
+    },
+    [formId, setStorageValue]
+  );
 
   async function handleNextOrSubmitButtonClicked(
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
@@ -134,7 +139,8 @@ export default function FormSubmission() {
     formData.forEach((value, key) => {
       appendFormValue(values, key, value);
     });
-    console.log("values", values);
+    let updatedSubmission = storageValue[formId];
+
     if (
       Object.keys(values).length &&
       values[InputName] &&
@@ -143,61 +149,58 @@ export default function FormSubmission() {
         : Boolean(values[InputName]))
     ) {
       let submissionId = storageValue[formId]?.submission_id;
-      console.log("storageValue", storageValue);
-      console.log({ values });
 
       if (!submissionId) {
         const response = await createNewFormResponse(formId);
-        console.log({ response });
         submissionId = response.data.id;
         const submittedAt = response.data.submittedAt;
+        updatedSubmission = {
+          ...(storageValue[formId] || {}),
+          submission_id: submissionId!,
+          submitted_at: submittedAt,
+          submissions: {
+            ...(storageValue[formId]?.submissions || {}),
+            [InputName]: {
+              value: values[InputName],
+              status: "saved",
+            },
+          },
+        };
 
         setStorageValue((prev) => {
-          const prevFormData = prev[formId] || {};
           return {
             ...prev,
-            [formId]: {
-              ...prevFormData,
-              submission_id: submissionId!,
-              submitted_at: submittedAt,
-              submissions: {
-                ...prevFormData.submissions,
-                [InputName]: {
-                  value: values[InputName],
-                  status: "saved",
-                },
-              },
-            },
+            [formId]: updatedSubmission,
           };
         });
       } else {
-        setStorageValue((prevStorage) => ({
-          ...prevStorage,
-          [formId]: {
-            ...prevStorage[formId],
-            submissions: {
-              ...prevStorage[formId]?.submissions,
-              [InputName]: {
-                value: values[InputName],
-                status: "saved",
-              },
+        updatedSubmission = {
+          ...storageValue[formId],
+          submissions: {
+            ...storageValue[formId]?.submissions,
+            [InputName]: {
+              value: values[InputName],
+              status: "saved",
             },
           },
+        };
+
+        setStorageValue((prevStorage) => ({
+          ...prevStorage,
+          [formId]: updatedSubmission,
         }));
       }
     }
 
     if (!isLastPage) handleClickDown();
-    // may need time waiting
-    else setIsSubmitting(true);
+    else {
+      setIsSubmitting(true);
+      await submitResponse(updatedSubmission);
+    }
   }
 
   const handleClickUp = () => setPage((prevPage) => prevPage - 1);
   const handleClickDown = () => setPage((prevPage) => prevPage + 1);
-
-  useEffect(() => {
-    if (isSumbitting) submitResponse();
-  }, [isSumbitting, submitResponse]);
 
   if (isLoading || isError) {
     return error ? JSON.stringify(error) : null;
@@ -223,11 +226,14 @@ export default function FormSubmission() {
       : { backgroundColor: "#b59a94" };
 
   const InputName = selectedBlockData.id;
-  console.log({ InputName, selectedBlockData });
   const isLastPage = page === data.totalPages;
 
   const values = storageValue[formId]?.submissions?.[InputName]?.value || "";
-  console.log("values", storageValue, storageValue[formId], values);
+
+  if (isSubmitted) {
+    return <SubmittedSuccessScreen formStatus={form?.status} />;
+  }
+
   return (
     <FormSubmissionLayout
       currentStep={page}
@@ -266,6 +272,33 @@ export default function FormSubmission() {
             })}
           </BlockDisplayLayout>
         </form>
+      </div>
+    </FormSubmissionLayout>
+  );
+}
+
+function SubmittedSuccessScreen({
+  formStatus,
+}: {
+  formStatus?: "draft" | "publish";
+}) {
+  return (
+    <FormSubmissionLayout
+      showProgress={false}
+      showNavigation={false}
+      formStatus={formStatus}
+    >
+      <div className="flex min-h-[360px] flex-col items-center justify-center rounded-2xl bg-white px-8 py-12 text-center shadow-sm">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-3xl text-green-700">
+          ✓
+        </div>
+        <h1 className="mt-6 text-3xl font-bold text-gray-950">
+          Submitted successfully
+        </h1>
+        <p className="mt-3 max-w-md text-base text-gray-600">
+          Thanks for your response. Your answers were saved and this form is now
+          cleared on this device.
+        </p>
       </div>
     </FormSubmissionLayout>
   );
@@ -340,6 +373,17 @@ function renderSubmissionBlock({
           defaultValue={getAddressDefaultValue(value)}
         />
       );
+    case "single":
+    case "multi":
+    case "dropdown":
+      return (
+        <SelectBlock
+          selectedBlockData={selectedBlockData}
+          name={inputName}
+          required={required}
+          defaultValue={getSelectDefaultValue(value)}
+        />
+      );
     default:
       return null;
   }
@@ -387,6 +431,17 @@ function isFormValues(value: FormValue | undefined): value is FormValues {
 
 function getInputDefaultValue(value: FormValue) {
   return typeof value === "string" ? value : "";
+}
+
+function getSelectDefaultValue(value: FormValue) {
+  if (typeof value === "string") return value;
+  if (
+    Array.isArray(value) &&
+    value.every((item): item is string => typeof item === "string")
+  ) {
+    return value;
+  }
+  return "";
 }
 
 function getAddressDefaultValue(value: FormValue) {

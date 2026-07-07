@@ -8,6 +8,7 @@ import {
   URLInput,
 } from "../molecules/block/InputBlock";
 import AddressBlockContainer from "../containers/blocks/custom/AddressBlockContainer";
+import SelectBlock from "../molecules/block/SelectBlock";
 
 const PreviewBlockMap: Record<
   BlockTypeEnum,
@@ -24,9 +25,9 @@ const PreviewBlockMap: Record<
   // Selected Text input for visuals only
   date: TextInput,
   address: AddressBlockContainer,
-  single: () => null,
-  multi: () => null,
-  dropdown: () => null,
+  single: SelectBlock,
+  multi: SelectBlock,
+  dropdown: SelectBlock,
 };
 
 export default function SelectedBlockPreview({
@@ -96,5 +97,9 @@ function createPreviewBlockData(
     textAlign: "left",
     position: 0,
     placeholder: defaults.displayPlaceholder,
+    optionalConfig: {
+      options: ["Option 1", "Option 2"],
+      selectType: type,
+    },
   };
 }

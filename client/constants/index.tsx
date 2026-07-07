@@ -447,6 +447,10 @@ export const CreateNewBlockDataMap: Record<BlockTypeEnum, CreateBlockDefaults> =
     placeholder: "",
     required: false,
     textAlign: "center",
+    optionalConfig: {
+      options: ["Option 1", "Option 2"],
+      selectType: "single",
+    },
   },
   multi: {
     type: "multi",
@@ -456,6 +460,10 @@ export const CreateNewBlockDataMap: Record<BlockTypeEnum, CreateBlockDefaults> =
     placeholder: "",
     required: false,
     textAlign: "center",
+    optionalConfig: {
+      options: ["Option 1", "Option 2"],
+      selectType: "multi",
+    },
   },
   dropdown: {
     type: "dropdown",
@@ -465,6 +473,10 @@ export const CreateNewBlockDataMap: Record<BlockTypeEnum, CreateBlockDefaults> =
     placeholder: "",
     required: false,
     textAlign: "center",
+    optionalConfig: {
+      options: ["Option 1", "Option 2"],
+      selectType: "dropdown",
+    },
   },
 };
 
