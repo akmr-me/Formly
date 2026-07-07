@@ -1,24 +1,22 @@
 import Embed from "@/components/molecules/editor/Embed";
 import { useUpdateCommonBlockFields } from "@/hooks/useUpdateCommonBlockFields";
+import { BlockType } from "@/types";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 type EmbedContainerProp = {
-  selectedBlockData: {
-    optionalConfig: {
-      embed: string;
-    };
-  };
+  selectedBlockData: BlockType;
 };
 
 export default function EmbedContainer({
   selectedBlockData,
 }: EmbedContainerProp) {
   const { optionalConfig } = selectedBlockData;
+  const currentEmbedUrl = getEmbedUrl(optionalConfig);
   const searchParams = useSearchParams();
   const blockId = searchParams.get("block_id") as string;
   const { mutate } = useUpdateCommonBlockFields(blockId, "statement");
-  const [embedUrl, setEmbedUrl] = useState(optionalConfig?.embed);
+  const [embedUrl, setEmbedUrl] = useState(currentEmbedUrl);
 
   const handleEmbedUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -26,14 +24,14 @@ export default function EmbedContainer({
   };
 
   const handleUpdateEmbedUrl = () => {
-    if (embedUrl == selectedBlockData.optionalConfig?.embed) return;
+    if (embedUrl === currentEmbedUrl) return;
     mutate({ optionalConfig: { embed: embedUrl } });
   };
 
   //   In case of fetched from db/network
   useEffect(() => {
-    setEmbedUrl(selectedBlockData.optionalConfig?.embed);
-  }, [selectedBlockData.optionalConfig?.embed]);
+    setEmbedUrl(currentEmbedUrl);
+  }, [currentEmbedUrl]);
 
   return (
     <Embed
@@ -42,4 +40,8 @@ export default function EmbedContainer({
       handleUpdateEmbedUrl={handleUpdateEmbedUrl}
     />
   );
+}
+
+function getEmbedUrl(optionalConfig: BlockType["optionalConfig"]) {
+  return typeof optionalConfig?.embed === "string" ? optionalConfig.embed : "";
 }

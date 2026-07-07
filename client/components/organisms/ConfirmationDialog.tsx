@@ -10,6 +10,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "../ui/button";
 
 interface ConfirmationDialogProps {
   trigger?: React.ReactNode;
@@ -69,12 +70,14 @@ export default function ConfirmationDialog({
         <AlertDialogCancel onClick={handleCancel} disabled={isLoading}>
           {cancelText}
         </AlertDialogCancel>
-        <AlertDialogAction
-          onClick={handleConfirm}
-          variant={confirmVariant}
-          disabled={isLoading}
-        >
-          {isLoading ? "Loading..." : confirmText}
+        <AlertDialogAction asChild>
+          <Button
+            onClick={handleConfirm}
+            variant={confirmVariant}
+            disabled={isLoading}
+          >
+            {isLoading ? "Loading..." : confirmText}
+          </Button>
         </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>

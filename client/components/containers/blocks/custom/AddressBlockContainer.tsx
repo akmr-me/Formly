@@ -36,7 +36,7 @@ const AddressBlockContainer = ({
 
   useEffect(() => {
     if (defaultValue) {
-      setAddressData(defaultValue);
+      setAddressData(toAddressData(defaultValue));
     }
   }, [defaultValue]);
 
@@ -71,3 +71,14 @@ const AddressBlockContainer = ({
 };
 
 export default AddressBlockContainer;
+
+function toAddressData(value: Record<string, string>): AddressData {
+  return {
+    address: value.address ?? "",
+    addressLine2: value.addressLine2 ?? "",
+    city: value.city ?? "",
+    state: value.state ?? "",
+    zip: value.zip ?? "",
+    country: value.country ?? "",
+  };
+}

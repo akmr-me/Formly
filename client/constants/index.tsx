@@ -1,5 +1,5 @@
-import { BlockType } from "@/types";
-import { formBlocks } from "./blockTypes";
+import { BlockTypeEnum, DefaultBlockDataType } from "@/types";
+import { FormBlockDefinition, formBlocks } from "./blockTypes";
 
 export const ImageLayoutOptions = [
   {
@@ -21,7 +21,7 @@ export const CreateFormLoadingLabel = "Creating Form...";
 
 export const DefaultDebounceTime = 1000;
 
-export const BlockTypeMap = formBlocks.reduce<Record<string, BlockType>>(
+export const BlockTypeMap = formBlocks.reduce<Record<string, FormBlockDefinition>>(
   (acc, block) => {
     acc[block.type] = block;
     return acc;
@@ -313,7 +313,13 @@ export const DefaultBlockData = {
   },
 };
 
-export const CreateNewBlockDataMap = {
+type CreateBlockDefaults = Omit<DefaultBlockDataType, "formId" | "position"> & {
+  placeholder?: string;
+  required?: boolean;
+  optionalConfig?: Record<string, unknown>;
+};
+
+export const CreateNewBlockDataMap: Record<BlockTypeEnum, CreateBlockDefaults> = {
   statement: {
     type: "statement",
     titleLabel: "Title",
@@ -433,9 +439,33 @@ export const CreateNewBlockDataMap = {
       },
     },
   },
-  select: {},
-  multi: {},
-  dropdown: {},
+  single: {
+    type: "single",
+    titleLabel: "Question",
+    title: "Which do you prefer?",
+    buttonText: "Next",
+    placeholder: "",
+    required: false,
+    textAlign: "center",
+  },
+  multi: {
+    type: "multi",
+    titleLabel: "Question",
+    title: "Please choose at least one option",
+    buttonText: "Next",
+    placeholder: "",
+    required: false,
+    textAlign: "center",
+  },
+  dropdown: {
+    type: "dropdown",
+    titleLabel: "Question",
+    title: "Please choose",
+    buttonText: "Next",
+    placeholder: "",
+    required: false,
+    textAlign: "center",
+  },
 };
 
 export const UnpublishedFormMessage =

@@ -39,7 +39,7 @@ export default function BlockListSideBarWithSearch({
               key={block.id}
               {...block}
               position={Number(block.id)}
-              selectedBlockid={selectedBlock}
+              selectedBlockId={selectedBlock}
               onClickHandler={setSelectedBlock}
               HoverComponent={<ArrowRight />}
             />

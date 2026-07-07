@@ -1,9 +1,13 @@
-import { BlockType } from "@/types";
+import { BlockType, BlockTypeEnum } from "@/types";
 
-export const formBlocks: Omit<
+export type FormBlockDefinition = Omit<
   BlockType,
   "title" | "buttonText" | "textAlign" | "position"
->[] = [
+> & {
+  type: BlockTypeEnum;
+};
+
+export const formBlocks: FormBlockDefinition[] = [
   {
     id: "1",
     type: "statement",

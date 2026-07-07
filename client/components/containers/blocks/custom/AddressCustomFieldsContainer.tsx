@@ -43,14 +43,18 @@ export default function AddressCustomFieldsContainer({
     const halfFieldsA = ["address", "addressLine2"];
     const halfFieldsB = ["city", "state"];
 
-    let adjecentField = null;
+    let adjacentField: AddressFieldConfig | null = null;
 
     if (halfFieldsA.includes(fieldId)) {
-      const adjecentFieldId = halfFieldsA.find((f) => f !== fieldId);
-      adjecentField = AddressOptionalConfig[adjecentFieldId];
+      const adjacentFieldId = halfFieldsA.find((f) => f !== fieldId);
+      adjacentField = adjacentFieldId
+        ? AddressOptionalConfig[adjacentFieldId]
+        : null;
     } else if (halfFieldsB.includes(fieldId)) {
-      const adjecentFieldId = halfFieldsB.find((f) => f !== fieldId);
-      adjecentField = AddressOptionalConfig[adjecentFieldId];
+      const adjacentFieldId = halfFieldsB.find((f) => f !== fieldId);
+      adjacentField = adjacentFieldId
+        ? AddressOptionalConfig[adjacentFieldId]
+        : null;
     }
     console.log(currentConfig);
     // return;
@@ -60,13 +64,13 @@ export default function AddressCustomFieldsContainer({
           ...AddressOptionalConfig[fieldId],
           visible: isVisible,
           width:
-            isVisible && adjecentField && adjecentField.visible
+            isVisible && adjacentField && adjacentField.visible
               ? "half"
               : "full",
         },
-        ...(adjecentField && {
-          [adjecentField.id]: {
-            ...adjecentField,
+        ...(adjacentField && {
+          [adjacentField.id]: {
+            ...adjacentField,
             width: isVisible ? "half" : "full",
           },
         }),

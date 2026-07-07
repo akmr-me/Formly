@@ -12,7 +12,7 @@ export type ChooseBlockModalProps = {
   onClose: () => void;
   selectedBlock: string;
   setSelectedBlock: React.Dispatch<React.SetStateAction<string>>;
-  selectedBlockData: BlockType;
+  selectedBlockData?: Pick<BlockType, "label" | "description" | "type">;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onCreateNewBlock?: () => void;
 };

@@ -35,14 +35,15 @@ export default function SelectedBlockPreview({
   type: BlockTypeEnum;
 }) {
   const PreviewBlock = PreviewBlockMap[type || ""] || null;
-  const selectedBlockData = DefaultBlockData[type];
+  const displayDefaults = getPreviewDisplayDefaults(DefaultBlockData[type]);
+  const selectedBlockData = createPreviewBlockData(type, displayDefaults);
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 w-full pointer-events-none opacity-50">
       <BlockDisplayLayout
-        title={selectedBlockData.displayTitle}
+        title={displayDefaults.displayTitle}
         buttonText={"Next ✔️"}
-        description={selectedBlockData.displayDescription}
+        description={displayDefaults.displayDescription}
         textAlign={"left"}
         imageUrl={""}
         imageLayout={""}
@@ -52,10 +53,48 @@ export default function SelectedBlockPreview({
           <PreviewBlock
             selectedBlockData={selectedBlockData}
             // disabled
-            placeholder={selectedBlockData.displayPlaceholder}
+            placeholder={displayDefaults.displayPlaceholder}
           />
         )}
       </BlockDisplayLayout>
     </div>
   );
+}
+
+function getPreviewDisplayDefaults(blockDefaults: unknown) {
+  const defaults =
+    blockDefaults && typeof blockDefaults === "object"
+      ? (blockDefaults as {
+          displayTitle?: string;
+          displayQuestion?: string;
+          displayDescription?: string;
+          displayPlaceholder?: string;
+        })
+      : {};
+
+  return {
+    displayTitle: defaults.displayTitle ?? defaults.displayQuestion ?? "",
+    displayDescription: defaults.displayDescription ?? "",
+    displayPlaceholder: defaults.displayPlaceholder ?? "",
+  };
+}
+
+function createPreviewBlockData(
+  type: BlockTypeEnum,
+  defaults: ReturnType<typeof getPreviewDisplayDefaults>
+): BlockType {
+  return {
+    id: "preview",
+    type,
+    label: "",
+    title: defaults.displayTitle,
+    text: "",
+    color: "",
+    icon: "",
+    description: defaults.displayDescription,
+    buttonText: "Next",
+    textAlign: "left",
+    position: 0,
+    placeholder: defaults.displayPlaceholder,
+  };
 }

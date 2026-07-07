@@ -16,10 +16,10 @@ import NumberCustomFieldsContainer from "../containers/blocks/custom/number";
 import AddressCustomFieldsContainer from "../containers/blocks/custom/AddressCustomFieldsContainer";
 import CoverImageContainer from "../containers/blocks/CoverImageContainer";
 
-const OptionalEditorFieldMap: Record<
+const OptionalEditorFieldMap: Partial<Record<
   string,
   React.FC<{ selectedBlockData: BlockType }>
-> = {
+>> = {
   statement: EmbedContainer,
   longText: LongTextCustomFieldsContainer,
   number: NumberCustomFieldsContainer,
@@ -93,7 +93,7 @@ export default function Editor({
     else setButtonText(defaultButtonText);
   }, [defaultButtonText]);
 
-  const OptionalConfigFields = OptionalEditorFieldMap[type] || null;
+  const OptionalConfigFields = OptionalEditorFieldMap[type];
 
   return (
     <div className="w-72 bg-white border-l border-gray-200 overflow-y-auto">
@@ -109,9 +109,9 @@ export default function Editor({
         />
         <Description mutate={mutate} selectedBlockData={selectedBlockData} />
         {/* Optional editor block fields */}
-        {Boolean(OptionalConfigFields && type === "statement") && (
+        {OptionalConfigFields && type === "statement" ? (
           <OptionalConfigFields selectedBlockData={selectedBlockData} />
-        )}
+        ) : null}
         <TextAlign
           textAlign={textAlign}
           handleUpdateAlign={handleUpdateAlign}
@@ -129,9 +129,9 @@ export default function Editor({
         <OptionalCommonFields selectedBlockData={selectedBlockData} />
 
         {/*  */}
-        {Boolean(OptionalConfigFields && type !== "statement") && (
+        {OptionalConfigFields && type !== "statement" ? (
           <OptionalConfigFields selectedBlockData={selectedBlockData} />
-        )}
+        ) : null}
         <CoverImageContainer
           onUploadComplete={handleUploadComplete}
           uploadEndpoint={`blocks/${blockId}/upload`}

@@ -53,11 +53,11 @@ export default function BlockDisplay({
       : { backgroundColor };
 
   const BlockDisplayComponent = BlockDisplayMap[selectedBlockData.type] || null;
-  const DefaultDisplayData =
-    DefaultBlockData[selectedBlockData.type as keyof typeof DefaultBlockData] ||
-    {};
+  const defaultDisplayData = getDefaultDisplayData(
+    DefaultBlockData[selectedBlockData.type as keyof typeof DefaultBlockData]
+  );
 
-  const title = selectedBlockData.title || DefaultDisplayData.displayQuestion;
+  const title = selectedBlockData.title || defaultDisplayData.displayQuestion;
 
   return (
     <div
@@ -81,7 +81,7 @@ export default function BlockDisplay({
               selectedBlockData={selectedBlockData}
               placeholder={
                 selectedBlockData.placeholder ||
-                DefaultDisplayData.displayPlaceholder
+                defaultDisplayData.displayPlaceholder
               }
             />
           </div>
@@ -89,4 +89,20 @@ export default function BlockDisplay({
       </BlockDisplayLayout>
     </div>
   );
+}
+
+function getDefaultDisplayData(blockDefaults: unknown) {
+  if (!blockDefaults || typeof blockDefaults !== "object") {
+    return {};
+  }
+
+  const defaults = blockDefaults as {
+    displayQuestion?: string;
+    displayPlaceholder?: string;
+  };
+
+  return {
+    displayQuestion: defaults.displayQuestion,
+    displayPlaceholder: defaults.displayPlaceholder,
+  };
 }

@@ -44,7 +44,11 @@ export type DefaultBlockDataType = {
   buttonText: string;
   formId: string;
   textAlign: TextAlignType;
-  position: number;
+  position?: number;
+  placeholder?: string;
+  required?: boolean;
+  optionalConfig?: Record<string, unknown>;
+  referenceBlockId?: string | null;
 };
 export const BlockTypeEnum = {
   STATEMENT: "statement",

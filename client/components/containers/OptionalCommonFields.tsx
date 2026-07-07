@@ -62,14 +62,13 @@ export default function OptionalCommonFields({
     setPlaceholderValue(selectedBlockData.placeholder || "");
   }, [selectedBlockData.placeholder]);
   useEffect(() => {
-    setIsRequired(selectedBlockData.required || "");
+    setIsRequired(selectedBlockData.required ?? false);
   }, [selectedBlockData.required]);
   useEffect(() => {
     setUrlParameter(selectedBlockData.urlParameter || "");
   }, [selectedBlockData.urlParameter]);
 
-  const UrlParameterPlaceholder = DefaultBlockData[type]?.urlParamsPlaceholder;
-  const UrlParameterTooltipText = DefaultBlockData[type]?.urlParamsTooltip;
+  const urlParameterConfig = getUrlParameterConfig(DefaultBlockData[type]);
 
   return (
     <div className="space-y-6">
@@ -97,9 +96,9 @@ export default function OptionalCommonFields({
 
       {hasUrlParameter && (
         <AutoFillURLParameter
-          placeholder={UrlParameterPlaceholder}
+          placeholder={urlParameterConfig.placeholder}
           value={urlParameter}
-          tooltipContent={UrlParameterTooltipText}
+          tooltipContent={urlParameterConfig.tooltip}
           onChange={(e) => {
             setUrlParameter(e.target.value);
             debouncedUrlParameterUpdate(e.target.value);
@@ -108,4 +107,27 @@ export default function OptionalCommonFields({
       )}
     </div>
   );
+}
+
+function getUrlParameterConfig(blockDefaults: unknown) {
+  if (
+    blockDefaults &&
+    typeof blockDefaults === "object" &&
+    "urlParamsPlaceholder" in blockDefaults
+  ) {
+    const config = blockDefaults as {
+      urlParamsPlaceholder?: string;
+      urlParamsTooltip?: string;
+    };
+
+    return {
+      placeholder: config.urlParamsPlaceholder ?? "",
+      tooltip: config.urlParamsTooltip,
+    };
+  }
+
+  return {
+    placeholder: "",
+    tooltip: undefined,
+  };
 }

@@ -5,13 +5,13 @@ type PlaceholderInputProps = {
   placeholder: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  className: string;
+  className?: string;
 };
 export function PlaceholderInput({
   placeholder,
   value,
   onChange,
-  className,
+  className = "",
 }: PlaceholderInputProps) {
   return (
     <div className="space-y-2">

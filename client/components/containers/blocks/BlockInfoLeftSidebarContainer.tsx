@@ -6,7 +6,7 @@ export default function BlockInfoLeftSidebarContainer(props: BlockInfoProps) {
 
   return (
     <BlockInfo
-      selectedBlockid={currentBlockId}
+      selectedBlockId={currentBlockId}
       onClickHandler={handleChangeBlockId}
       {...props}
     />

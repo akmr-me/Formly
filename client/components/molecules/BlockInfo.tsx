@@ -1,14 +1,15 @@
 import { formBlocks } from "@/constants/blockTypes";
-import { BlockType, BlockTypeEnum } from "@/types";
+import { BlockTypeEnum } from "@/types";
 import { useState } from "react";
 
-export type BlockInfoProps = BlockType & {
+export type BlockInfoProps = {
   HoverComponent: React.ReactNode;
   dropdownOpen?: boolean;
   position?: number;
   id: string;
   label: string;
   icon: string;
+  color: string;
   required?: boolean; // Added required prop
   onClickHandler?: (id: string) => void;
   onDoubleClickHandler?: () => void;

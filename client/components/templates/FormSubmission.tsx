@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import BlockDisplayLayout from "../organisms/display/BlockDisplayLayout";
 import FormSubmissionLayout from "../organisms/FormSubmissionLayout";
@@ -36,7 +36,7 @@ interface SubmissionData {
   status: SubmissionStatus;
 }
 
-interface FormStorage {
+type FormStorage = {
   [formId: string]: {
     submission_id: string;
     submitted_at: string;
@@ -44,7 +44,7 @@ interface FormStorage {
       [inputName: string]: SubmissionData;
     };
   };
-}
+};
 
 type FormValues = {
   [key: string]: FormValue;
@@ -56,26 +56,6 @@ type PaginatedBlocksResponse = {
   totalPages: number;
 };
 
-// Map each block type to its corresponding React component
-const BlockDisplayMap: Record<
-  string,
-  React.FC<{
-    selectedBlockData: BlockType;
-    name?: string;
-    required?: boolean;
-    defaultValue?: string;
-    ref: RefObject<HTMLInputElement | null>;
-  }>
-> = {
-  statement: StatementDisplayContainer,
-  shortText: TextInput,
-  longText: LongText,
-  number: NumberInput,
-  websiteUrl: URLInput,
-  address: AddressBlockContainer,
-  date: DateInput,
-};
-
 export default function FormSubmission() {
   const params = useParams();
   const formId = params.formId as string;
@@ -84,7 +64,7 @@ export default function FormSubmission() {
 
   const [storageValue, setStorageValue] = useLocalStorage(
     FormlyFormLocalStorageKey,
-    { [formId]: {} }
+    { [formId]: {} } as FormStorage
   );
   const [page, setPage] = useState(1);
 
@@ -242,7 +222,6 @@ export default function FormSubmission() {
         }
       : { backgroundColor: "#b59a94" };
 
-  const BlockDisplayComponent = BlockDisplayMap[selectedBlockData.type] || null;
   const InputName = selectedBlockData.id;
   console.log({ InputName, selectedBlockData });
   const isLastPage = page === data.totalPages;
@@ -278,21 +257,92 @@ export default function FormSubmission() {
             // onButtonClick={handleNextOrSubmitButtonClicked}
             required={selectedBlockData.required}
           >
-            {BlockDisplayComponent && (
-              <BlockDisplayComponent
-                selectedBlockData={selectedBlockData}
-                name={InputName}
-                key={selectedBlockData.id}
-                required={selectedBlockData.required}
-                defaultValue={getInputDefaultValue(values)}
-                ref={inputRef}
-              />
-            )}
+            {renderSubmissionBlock({
+              selectedBlockData,
+              inputName: InputName,
+              required: selectedBlockData.required,
+              value: values,
+              inputRef,
+            })}
           </BlockDisplayLayout>
         </form>
       </div>
     </FormSubmissionLayout>
   );
+}
+
+function renderSubmissionBlock({
+  selectedBlockData,
+  inputName,
+  required,
+  value,
+  inputRef,
+}: {
+  selectedBlockData: BlockType;
+  inputName: string;
+  required?: boolean;
+  value: FormValue;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+}) {
+  const defaultValue = getInputDefaultValue(value);
+
+  switch (selectedBlockData.type) {
+    case "statement":
+      return <StatementDisplayContainer selectedBlockData={selectedBlockData} />;
+    case "shortText":
+      return (
+        <TextInput
+          name={inputName}
+          required={required}
+          defaultValue={defaultValue}
+          ref={inputRef}
+        />
+      );
+    case "longText":
+      return (
+        <LongText
+          name={inputName}
+          required={required}
+          defaultValue={defaultValue}
+        />
+      );
+    case "number":
+      return (
+        <NumberInput
+          name={inputName}
+          required={required}
+          defaultValue={defaultValue}
+          ref={inputRef}
+        />
+      );
+    case "websiteUrl":
+      return (
+        <URLInput
+          name={inputName}
+          required={required}
+          defaultValue={defaultValue}
+          ref={inputRef}
+        />
+      );
+    case "date":
+      return (
+        <DateInput
+          name={inputName}
+          required={required}
+          defaultValue={defaultValue}
+          ref={inputRef}
+        />
+      );
+    case "address":
+      return (
+        <AddressBlockContainer
+          selectedBlockData={selectedBlockData}
+          defaultValue={getAddressDefaultValue(value)}
+        />
+      );
+    default:
+      return null;
+  }
 }
 
 function appendFormValue(
@@ -337,4 +387,21 @@ function isFormValues(value: FormValue | undefined): value is FormValues {
 
 function getInputDefaultValue(value: FormValue) {
   return typeof value === "string" ? value : "";
+}
+
+function getAddressDefaultValue(value: FormValue) {
+  if (
+    value &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    !(value instanceof File)
+  ) {
+    return Object.fromEntries(
+      Object.entries(value).filter(
+        (entry): entry is [string, string] => typeof entry[1] === "string"
+      )
+    );
+  }
+
+  return undefined;
 }
