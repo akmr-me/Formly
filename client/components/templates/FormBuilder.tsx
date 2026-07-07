@@ -5,7 +5,7 @@ import BlockDisplayHeader from "@/components/organisms/BlockDisplayHeder";
 import BlockDisplay from "@/components/organisms/BlockDisplay";
 import Editor from "@/components/organisms/Editor";
 import MobileWarning from "@/components/molecules/MobileWarning";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getBlockById } from "@/services/block";
 import { LoaderCircle } from "lucide-react";
@@ -15,10 +15,13 @@ import ChooseBlockModalContainer from "../containers/blocks/ChooseBlockModalCont
 import { BlockType } from "@/types";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthProvider";
+import { getFormWithBlocks } from "@/services/form";
 
 const FormBuilder = () => {
   const searchParams = useSearchParams();
+  const params = useParams();
   const router = useRouter();
+  const formId = params.formId as string;
   const blockId = searchParams.get("block_id");
   const { user, isLoading: isAuthLoading } = useAuth();
 
@@ -37,8 +40,21 @@ const FormBuilder = () => {
     enabled: !!blockId && !!user,
     placeholderData: keepPreviousData,
   });
+  const { data: formData, isLoading: isFormBlocksLoading } = useQuery({
+    queryKey: ["forms", formId, "blocks"],
+    queryFn: () => getFormWithBlocks(formId),
+    enabled: !!formId && !!user,
+  });
 
-  const selectedBlockData = blockData?.data ?? {};
+  const firstBlockId = formData?.data?.blocks?.[0]?.id;
+
+  useEffect(() => {
+    if (!blockId && firstBlockId) {
+      router.replace(`/form/${formId}/build?block_id=${firstBlockId}`);
+    }
+  }, [blockId, firstBlockId, formId, router]);
+
+  const selectedBlockData = blockData?.data;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [shouldShakeTitleInput, setShouldShakeTitleInput] = useState(false);
@@ -46,7 +62,6 @@ const FormBuilder = () => {
     useState(false);
 
   const handleOpenChooseBlockModal = () => setIsModalOpen(true);
-  console.log({ isModalOpen });
   const triggerShakeTitleInput = useCallback(() => {
     setShouldShakeTitleInput(true);
     setTimeout(() => setShouldShakeTitleInput(false), 500);
@@ -65,8 +80,26 @@ const FormBuilder = () => {
     );
   }
 
+  const isResolvingBlock = !blockId || isFormBlocksLoading || !selectedBlockData;
+
+  if (isResolvingBlock) {
+    return (
+      <div className="relative flex h-screen flex-col bg-gray-50">
+        <MobileWarning />
+        <div className="hidden h-screen flex-col md:flex">
+          <FormBuilderHeaderContainer />
+          <div className="flex flex-1 items-center justify-center text-sm text-gray-500">
+            {isFormBlocksLoading || firstBlockId
+              ? "Opening your form..."
+              : "This form does not have any blocks yet."}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="relative h-screen flex flex-col bg-gray-50">
+    <div className="relative flex h-screen flex-col bg-gray-50">
       {isLoading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-50 transition-opacity duration-300">
           <LoaderCircle className="animate-spin text-black w-12 h-12" />
@@ -75,7 +108,7 @@ const FormBuilder = () => {
 
       <MobileWarning />
 
-      <div className="hidden md:flex flex-col h-screen">
+      <div className="hidden h-screen flex-col md:flex">
         <FormBuilderHeaderContainer />
 
         <div className="flex flex-1 overflow-hidden">
@@ -83,7 +116,7 @@ const FormBuilder = () => {
             handleOpenChooseBlockModal={handleOpenChooseBlockModal}
           />
 
-          <div className="flex-1 flex flex-col p-2 bg-white justify-between relative">
+          <div className="relative flex flex-1 flex-col justify-between bg-white p-2">
             <ChooseBlockModalContainer
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
@@ -108,7 +141,7 @@ const FormBuilder = () => {
 
           {/* Right Sidebar */}
           {isModalOpen ? (
-            <div className="w-95 bg-white border-l border-gray-200 overflow-y-auto" />
+            <div className="w-72 border-l border-gray-200 bg-white" />
           ) : (
             <Editor
               selectedBlockData={selectedBlockData as BlockType}

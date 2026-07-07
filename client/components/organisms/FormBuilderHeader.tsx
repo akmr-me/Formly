@@ -28,49 +28,50 @@ export default function FormBuilderHeader({
   onLogout,
 }: FormBuilderHeaderProps) {
   return (
-    <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-      <div className="flex items-center space-x-4">
-        <ArrowLeft className="w-5 h-5 text-gray-600" />
-        <h1 className="text-lg font-semibold">My Form</h1>
+    <header className="grid min-h-16 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-gray-200 bg-white px-4 py-3">
+      <div className="flex min-w-0 items-center gap-3">
+        <Button variant="ghost" size="icon" asChild>
+          <Link href="/">
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </Link>
+        </Button>
+        <h1 className="truncate text-lg font-semibold">My Form</h1>
       </div>
 
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center justify-center">
         <Button
           variant="secondary"
           size="sm"
-          className="text-blue-600 flex flex-col cursor-not-allowed"
+          className="cursor-not-allowed text-blue-600"
           disabled
         >
-          <Eye className="w-4 h-4 mr-1" />
+          <Eye className="w-4 h-4" />
           Build
         </Button>
       </div>
-      <div className="flex items-center space-x-2">
+
+      <div className="flex min-w-0 items-center justify-end gap-2">
         <Button variant="ghost" size="sm" asChild>
           <Link href={responsesUrl}>
-            <BarChart3 className="w-4 h-4 mr-1" />
+            <BarChart3 className="w-4 h-4" />
             Responses
           </Link>
         </Button>
-        <Link
-          // variant="ghost"
-          // size="sm"
-          type="link"
-          href={formUrl || ""}
-          target="_blank"
-        >
-          <Link2 className="w-4 h-4" />
-        </Link>
+        <Button variant="ghost" size="icon" asChild>
+          <Link href={formUrl || ""} target="_blank">
+            <Link2 className="w-4 h-4" />
+          </Link>
+        </Button>
         <Button
-          className="bg-black text-white hover:bg-gray-800 ml-5"
+          className="bg-black text-white hover:bg-gray-800"
           onClick={onPublish}
           disabled={isPublishing || formStatus === "publish"}
         >
-          <Crown className="w-4 h-4 mr-1" />
+          <Crown className="w-4 h-4" />
           {isPublishing ? "Publishing..." : "Publish"}
-        </Button>{" "}
+        </Button>
         <Button variant="ghost" size="sm" onClick={onLogout}>
-          <LogOut className="w-4 h-4 mr-1" />
+          <LogOut className="w-4 h-4" />
           Logout
         </Button>
       </div>

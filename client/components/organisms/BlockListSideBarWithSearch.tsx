@@ -19,20 +19,17 @@ export default function BlockListSideBarWithSearch({
     block.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
-    <div className="relative w-70 flex flex-col h-full">
-      {/* Fixed Search Input */}
+    <div className="relative flex h-full w-72 flex-col">
+      <div className="border-b border-gray-200 bg-white p-4">
+        <Input
+          placeholder="Search blocks.."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full bg-white"
+        />
+      </div>
 
-      {/* Scrollable Block Types List */}
-      <div className="flex-1 overflow-y-auto p-4 scrollbar-hide">
-        <div className="border-b fixed w-64 z-10">
-          <Input
-            placeholder="Search blocks.."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white"
-          />
-        </div>
-        <div className="h-14" />
+      <div className="scrollbar-hide flex-1 overflow-y-auto p-4">
         <div className="space-y-2">
           {filteredBlocks.map((block) => (
             <BlockInfoCreateNewBlockContainer

@@ -13,6 +13,10 @@ export async function createFormService(ownerId: string) {
   return form;
 }
 
+export async function getOwnerFormsService(ownerId: string) {
+  return await formRespository.getFormsByOwnerId(ownerId);
+}
+
 export async function getFormByShortIdService(shortId: string) {
   const form = await formRespository.getFormByShortId(shortId);
   if (!form) {

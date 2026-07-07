@@ -9,17 +9,11 @@ export default function BlockDisplayHeader({
   handleOpenChooseBlockModal,
 }: BlockDisplayHeaderProps) {
   return (
-    <div className="bg-gray-300 border-b border-gray-200 px-4 py-3 flex items-center space-x-4 rounded-4xl w-full">
-      <div className="flex items-center">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleOpenChooseBlockModal}
-        >
-          <Plus className="w-4 h-4 mr-1" />
-          Add Block
-        </Button>
-      </div>
+    <div className="mb-2 flex w-full items-center justify-end rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+      <Button variant="outline" size="sm" onClick={handleOpenChooseBlockModal}>
+        <Plus className="w-4 h-4" />
+        Add Block
+      </Button>
     </div>
   );
 }

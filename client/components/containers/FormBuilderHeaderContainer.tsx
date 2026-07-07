@@ -23,10 +23,8 @@ export default function FormBuilderHeaderContainer() {
 
   const formData = data?.data;
   const [isPublishing, setIsPublishing] = useState(false);
-  console.log("formData", formData);
   const handlePublishForm = () => {
     setIsPublishing(true);
-    console.log("handle pulist form trigger");
     publishForm(formId)
       .then(() => {
         queryClient.invalidateQueries({
@@ -53,8 +51,7 @@ export default function FormBuilderHeaderContainer() {
     await logout();
     router.replace("/login");
   };
-  console.log({ formData, data });
-  // if (!formData) return null;
+
   return (
     <FormBuilderHeader
       onPublish={handlePublishForm}

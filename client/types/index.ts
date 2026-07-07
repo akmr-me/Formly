@@ -14,6 +14,10 @@ export type User = {
   updatedAt: string;
 };
 
+export type OwnerFormSummary = Form & {
+  responseCount: number;
+};
+
 export type BlockType = {
   id: string;
   type: BlockTypeEnum;

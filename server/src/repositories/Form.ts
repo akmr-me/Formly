@@ -18,6 +18,32 @@ class Form {
       .executeTakeFirstOrThrow();
   }
 
+  async getFormsByOwnerId(ownerId: string) {
+    return await db
+      .selectFrom("Form")
+      .leftJoin("Response", "Response.formId", "Form.shortId")
+      .select([
+        "Form.id",
+        "Form.shortId",
+        "Form.status",
+        "Form.ownerId",
+        "Form.createdAt",
+        "Form.updatedAt",
+        sql<number>`count("Response"."id")::int`.as("responseCount"),
+      ])
+      .where("Form.ownerId", "=", ownerId)
+      .groupBy([
+        "Form.id",
+        "Form.shortId",
+        "Form.status",
+        "Form.ownerId",
+        "Form.createdAt",
+        "Form.updatedAt",
+      ])
+      .orderBy("Form.updatedAt", "desc")
+      .execute();
+  }
+
   async getFormById(id: string) {
     return await db
       .selectFrom("Form")

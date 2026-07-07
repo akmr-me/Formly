@@ -19,7 +19,7 @@ export default function LeftSideBar({
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
-    <div className="w-65 bg-white border-r border-gray-200 overflow-y-auto">
+    <div className="w-64 bg-white border-r border-gray-200 overflow-y-auto">
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold text-gray-800">Blocks</h3>

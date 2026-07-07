@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import {
   createFormService,
+  getOwnerFormsService,
   getFormByShortIdService,
   getPaginatedPublishedBlocksService,
   publishFormService,
@@ -17,6 +18,15 @@ export const createFormController = catchAsync(async (req, res) => {
   res.status(201).json({
     status: "success",
     data: newCreatedForm,
+  });
+});
+
+export const getOwnerFormsController = catchAsync(async (req, res) => {
+  const forms = await getOwnerFormsService(req.user!.id);
+
+  res.status(200).json({
+    status: "success",
+    data: forms,
   });
 });
 

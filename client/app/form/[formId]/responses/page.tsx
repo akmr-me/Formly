@@ -53,26 +53,30 @@ export default function FormResponsesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
+    <main className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6">
       <div className="mx-auto flex max-w-7xl flex-col gap-6">
-        <div className="flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-5 shadow-sm md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm md:flex-row md:items-center md:justify-between">
+          <div className="flex min-w-0 items-center gap-3">
             <Button variant="outline" size="icon" asChild>
               <Link href={`/form/${formId}/build`}>
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             </Button>
-            <div>
+            <div className="min-w-0">
               <h1 className="text-2xl font-semibold text-gray-900">
                 Form Responses
               </h1>
-              <p className="text-sm text-gray-500">
+              <p className="truncate text-sm text-gray-500">
                 View and export submitted answers for form {formId}.
               </p>
             </div>
           </div>
 
-          <Button onClick={handleDownloadCsv} disabled={!hasResponses}>
+          <Button
+            className="w-full md:w-auto"
+            onClick={handleDownloadCsv}
+            disabled={!hasResponses}
+          >
             <Download className="h-4 w-4" />
             Export CSV
           </Button>

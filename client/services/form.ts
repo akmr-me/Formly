@@ -1,8 +1,15 @@
 import apiClient from "@/lib/apiClient";
-import { FormResponsesData } from "@/types";
+import { FormResponsesData, OwnerFormSummary } from "@/types";
 
 export async function createForm() {
   const res = await apiClient.post("/forms", {});
+  return res.data;
+}
+
+export async function getMyForms() {
+  const res = await apiClient.get<{ status: string; data: OwnerFormSummary[] }>(
+    "/forms"
+  );
   return res.data;
 }
 
