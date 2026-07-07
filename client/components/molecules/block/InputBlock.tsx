@@ -27,9 +27,9 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           type="text"
           className={`block w-full border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
           placeholder={placeholder}
-          value={value}
           onChange={onChange}
           {...props}
+          {...(value !== undefined ? { value } : {})}
         />
       </div>
     );
@@ -69,12 +69,12 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           type="number"
           className={`block w-full border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
           placeholder={placeholder}
-          value={value}
           onChange={onChange}
           min={min}
           max={max}
           step={step}
           {...props}
+          {...(value !== undefined ? { value } : {})}
         />
       </div>
     );
@@ -93,11 +93,11 @@ export const LongText = forwardRef<
     <div className="w-full max-w-xl">
       <Textarea
         ref={ref}
-        {...props}
         placeholder={placeholder}
-        value={value}
         onChange={onChange}
         className={`min-h-32 w-full resize-none rounded-none border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
+        {...props}
+        {...(value !== undefined ? { value } : {})}
       />
     </div>
   );
@@ -130,9 +130,9 @@ export const URLInput = forwardRef<HTMLInputElement, URLInputProps>(
           type="url"
           className={`block w-full border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
           placeholder={placeholder}
-          value={value}
           onChange={onChange}
           {...props}
+          {...(value !== undefined ? { value } : {})}
         />
       </div>
     );
@@ -170,11 +170,11 @@ export const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
           type="date"
           className={`block w-full border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
           placeholder={placeholder}
-          value={value}
           onChange={onChange}
           min={min}
           max={max}
           {...props}
+          {...(value !== undefined ? { value } : {})}
         />
       </div>
     );

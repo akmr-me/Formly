@@ -346,18 +346,22 @@ function renderSubmissionBlock({
     case "shortText":
       return (
         <TextInput
+          key={inputName}
           name={inputName}
           required={required}
           defaultValue={defaultValue}
+          placeholder={selectedBlockData.placeholder || undefined}
           ref={inputRef}
         />
       );
     case "longText":
       return (
         <LongText
+          key={inputName}
           name={inputName}
           required={required}
           defaultValue={defaultValue}
+          placeholder={selectedBlockData.placeholder || undefined}
           minLength={constraints.minLength}
           maxLength={constraints.maxLength}
         />
@@ -365,9 +369,11 @@ function renderSubmissionBlock({
     case "number":
       return (
         <NumberInput
+          key={inputName}
           name={inputName}
           required={required}
           defaultValue={defaultValue}
+          placeholder={selectedBlockData.placeholder || undefined}
           min={constraints.minNumber}
           max={constraints.maxNumber}
           ref={inputRef}
@@ -376,15 +382,18 @@ function renderSubmissionBlock({
     case "websiteUrl":
       return (
         <URLInput
+          key={inputName}
           name={inputName}
           required={required}
           defaultValue={defaultValue}
+          placeholder={selectedBlockData.placeholder || undefined}
           ref={inputRef}
         />
       );
     case "date":
       return (
         <DateInput
+          key={inputName}
           name={inputName}
           required={required}
           defaultValue={defaultValue}
@@ -394,6 +403,7 @@ function renderSubmissionBlock({
     case "address":
       return (
         <AddressBlockContainer
+          key={inputName}
           selectedBlockData={selectedBlockData}
           defaultValue={getAddressDefaultValue(value)}
         />
@@ -403,6 +413,7 @@ function renderSubmissionBlock({
     case "dropdown":
       return (
         <SelectBlock
+          key={inputName}
           selectedBlockData={selectedBlockData}
           name={inputName}
           required={required}
