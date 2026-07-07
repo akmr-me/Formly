@@ -54,6 +54,11 @@ export async function getPaginatedPublishedBlocksService(
   return form;
 }
 
+export async function getFormResponsesService(shortFormId: string) {
+  await getFormByShortIdService(shortFormId);
+  return await formRespository.getResponsesByFormId(shortFormId);
+}
+
 export async function createResponseService(shortFormId: string) {
   const formResponse = await formRespository.createResponse(shortFormId);
   if (!formResponse) {

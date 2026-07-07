@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import FormBuilderHeader from "../organisms/FormBuilderHeader";
 import { useParams } from "next/navigation";
 import { PublishStatusType } from "@/types";
-import { publishForm } from "@/services/form";
+import { getFormWithBlocks, publishForm } from "@/services/form";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ArrowUpRightFromSquare } from "lucide-react";
@@ -13,7 +13,8 @@ export default function FormBuilderHeaderContainer() {
   const queryClient = useQueryClient();
   const { data } = useQuery({
     queryKey: ["forms", formId, "blocks"],
-    enabled: false,
+    queryFn: () => getFormWithBlocks(formId),
+    enabled: !!formId,
     initialData: () => queryClient.getQueryData(["forms", formId, "blocks"]),
   });
 
@@ -53,6 +54,7 @@ export default function FormBuilderHeaderContainer() {
       formStatus={formData?.status as PublishStatusType}
       isPublishing={isPublishing}
       formUrl={`${window.origin}/form/${formId}`}
+      responsesUrl={`/form/${formId}/responses`}
     />
   );
 }

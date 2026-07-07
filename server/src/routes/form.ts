@@ -9,6 +9,7 @@ import {
   getFormByIdController,
   createResponseController,
   createResponseValuesController,
+  getFormResponsesController,
 } from "../controllers/form";
 
 const router = Router();
@@ -22,6 +23,8 @@ router.get("/:shortFormId", getFormByIdController);
 router.get("/:shortFormId/blocks", getFormWithBlocksController);
 
 router.patch("/:shortFormId/publish", publishFormController);
+
+router.get("/:shortFormId/responses", getFormResponsesController);
 
 router.post("/:shortFormId/response", createResponseController);
 router.post(

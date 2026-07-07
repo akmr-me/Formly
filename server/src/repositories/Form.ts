@@ -270,6 +270,79 @@ class Form {
       .executeTakeFirstOrThrow();
   }
 
+  async getResponsesByFormId(shortFormId: string) {
+    const blocks = await db
+      .selectFrom("PublishedBlock")
+      .select(["id", "title", "type", "position"])
+      .where("formId", "=", shortFormId)
+      .orderBy("position", "asc")
+      .execute();
+
+    const responses = await db
+      .selectFrom("Response")
+      .select(["id", "submittedAt"])
+      .where("formId", "=", shortFormId)
+      .orderBy("submittedAt", "desc")
+      .execute();
+
+    const responseIds = responses.map((response) => response.id);
+    const values =
+      responseIds.length > 0
+        ? await db
+            .selectFrom("ResponseValue")
+            .innerJoin(
+              "PublishedBlock",
+              "PublishedBlock.id",
+              "ResponseValue.publishedBlockId"
+            )
+            .select([
+              "ResponseValue.responseId",
+              "ResponseValue.publishedBlockId",
+              "ResponseValue.value",
+              "ResponseValue.type",
+              "PublishedBlock.title",
+              "PublishedBlock.position",
+            ])
+            .where("ResponseValue.responseId", "in", responseIds)
+            .orderBy("PublishedBlock.position", "asc")
+            .execute()
+        : [];
+
+    const valuesByResponseId = new Map<
+      string,
+      Record<
+        string,
+        {
+          blockId: string;
+          title: string;
+          value: string;
+          type: string;
+        }
+      >
+    >();
+
+    for (const value of values) {
+      const responseValues = valuesByResponseId.get(value.responseId) ?? {};
+      responseValues[value.publishedBlockId] = {
+        blockId: value.publishedBlockId,
+        title: value.title,
+        value: value.value,
+        type: value.type,
+      };
+      valuesByResponseId.set(value.responseId, responseValues);
+    }
+
+    return {
+      formId: shortFormId,
+      blocks,
+      responses: responses.map((response) => ({
+        id: response.id,
+        submittedAt: response.submittedAt,
+        answers: valuesByResponseId.get(response.id) ?? {},
+      })),
+    };
+  }
+
   async createResponseValues(
     responseId: string,
     ResponseData: {
@@ -290,7 +363,7 @@ class Form {
           .values({
             responseId,
             publishedBlockId: blockId,
-            value: String(valueObject.value),
+            value: serializeResponseValue(valueObject.value),
             type: "STRING",
           })
           .execute();
@@ -302,3 +375,9 @@ class Form {
 }
 
 export default new Form();
+
+function serializeResponseValue(value: unknown) {
+  if (typeof value === "string") return value;
+  if (value === null || value === undefined) return "";
+  return JSON.stringify(value);
+}

@@ -7,6 +7,7 @@ import {
   getFormWithBlocksService,
   createResponseService,
   createResponseValuesService,
+  getFormResponsesService,
 } from "../services/form";
 import { catchAsync } from "../utils/catchAsync";
 
@@ -71,6 +72,16 @@ export const getPaginatedPublishedBlocksController = catchAsync(
     });
   }
 );
+
+export const getFormResponsesController = catchAsync(async (req, res) => {
+  const { shortFormId } = req.params;
+  const responses = await getFormResponsesService(shortFormId);
+
+  res.status(200).json({
+    status: "success",
+    data: responses,
+  });
+});
 
 export const createResponseController = catchAsync(async (req, res) => {
   const { shortFormId } = req.params;

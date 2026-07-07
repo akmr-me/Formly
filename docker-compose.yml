@@ -3,28 +3,28 @@ version: "3.8"
 services:
   postgres:
     image: postgres:15
-    container_name: my_postgres
+    container_name: formly_postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgrespassword
-      POSTGRES_DB: mydatabase
+      POSTGRES_USER: formly_user
+      POSTGRES_PASSWORD: formly_password
+      POSTGRES_DB: formly_db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - formly_pgdata:/var/lib/postgresql/data
     restart: unless-stopped
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: my_pgadmin
+    container_name: formly_pgadmin
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_DEFAULT_EMAIL: formly@example.com
+      PGADMIN_DEFAULT_PASSWORD: formly_admin
     ports:
       - "8080:80"
     depends_on:
       - postgres
 
 volumes:
-  pgdata:
+  formly_pgdata:

@@ -1,4 +1,5 @@
 import apiClient from "@/lib/apiClient";
+import { FormResponsesData } from "@/types";
 
 export async function createForm() {
   const res = await apiClient.post("/forms", {});
@@ -33,5 +34,12 @@ export async function getPaginatedPublishedBlocks(
 
 export async function createNewFormResponse(formId: string) {
   const res = await apiClient.post(`/forms/${formId}/response`);
+  return res.data;
+}
+
+export async function getFormResponses(formId: string) {
+  const res = await apiClient.get<{ status: string; data: FormResponsesData }>(
+    `/forms/${formId}/responses`
+  );
   return res.data;
 }

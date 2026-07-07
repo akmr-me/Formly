@@ -1,10 +1,7 @@
 import {
   ArrowLeft,
+  BarChart3,
   Eye,
-  Settings,
-  Share,
-  Undo2,
-  Redo2,
   Link2,
   Crown,
 } from "lucide-react";
@@ -17,6 +14,7 @@ type FormBuilderHeaderProps = {
   formStatus: PublishStatusType;
   isPublishing: boolean;
   formUrl: string;
+  responsesUrl: string;
 };
 
 export default function FormBuilderHeader({
@@ -24,6 +22,7 @@ export default function FormBuilderHeader({
   formStatus,
   isPublishing,
   formUrl,
+  responsesUrl,
 }: FormBuilderHeaderProps) {
   return (
     <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
@@ -44,6 +43,12 @@ export default function FormBuilderHeader({
         </Button>
       </div>
       <div className="flex items-center space-x-2">
+        <Button variant="ghost" size="sm" asChild>
+          <Link href={responsesUrl}>
+            <BarChart3 className="w-4 h-4 mr-1" />
+            Responses
+          </Link>
+        </Button>
         <Link
           // variant="ghost"
           // size="sm"

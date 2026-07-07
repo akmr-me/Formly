@@ -124,3 +124,29 @@ export type PaginatedBlocksResponse = {
   blocks: BlockType[];
   total: number;
 };
+
+export type FormResponseBlock = {
+  id: string;
+  title: string;
+  type: BlockTypeEnum;
+  position: number;
+};
+
+export type FormResponseAnswer = {
+  blockId: string;
+  title: string;
+  value: string;
+  type: ValueType;
+};
+
+export type FormResponseRow = {
+  id: string;
+  submittedAt: string;
+  answers: Record<string, FormResponseAnswer>;
+};
+
+export type FormResponsesData = {
+  formId: string;
+  blocks: FormResponseBlock[];
+  responses: FormResponseRow[];
+};
