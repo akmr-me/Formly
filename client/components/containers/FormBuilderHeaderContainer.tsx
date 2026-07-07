@@ -7,6 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ArrowUpRightFromSquare } from "lucide-react";
 import { useAuth } from "@/context/AuthProvider";
+import EmbedCodeModal from "@/components/molecules/EmbedCodeModal";
 
 export default function FormBuilderHeaderContainer() {
   const params = useParams();
@@ -23,6 +24,7 @@ export default function FormBuilderHeaderContainer() {
 
   const formData = data?.data;
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isEmbedModalOpen, setIsEmbedModalOpen] = useState(false);
   const handlePublishForm = () => {
     setIsPublishing(true);
     publishForm(formId)
@@ -53,14 +55,23 @@ export default function FormBuilderHeaderContainer() {
   };
 
   return (
-    <FormBuilderHeader
-      onPublish={handlePublishForm}
-      formStatus={formData?.status as PublishStatusType}
-      isPublishing={isPublishing}
-      formUrl={`${window.origin}/form/${formId}`}
-      responsesUrl={`/form/${formId}/responses`}
-      formId={formId}
-      onLogout={handleLogout}
-    />
+    <>
+      <FormBuilderHeader
+        onPublish={handlePublishForm}
+        formStatus={formData?.status as PublishStatusType}
+        isPublishing={isPublishing}
+        formUrl={`${window.origin}/form/${formId}`}
+        responsesUrl={`/form/${formId}/responses`}
+        formId={formId}
+        canEmbed={formData?.status === "publish"}
+        onOpenEmbed={() => setIsEmbedModalOpen(true)}
+        onLogout={handleLogout}
+      />
+      <EmbedCodeModal
+        isOpen={isEmbedModalOpen}
+        onClose={() => setIsEmbedModalOpen(false)}
+        formId={formId}
+      />
+    </>
   );
 }

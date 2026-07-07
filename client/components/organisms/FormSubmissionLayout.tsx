@@ -16,6 +16,7 @@ interface FormLayoutProps {
   onDownClick?: () => void;
   className?: string;
   formStatus?: "draft" | "publish";
+  isEmbed?: boolean;
 }
 
 const FormSubmissionLayout: React.FC<FormLayoutProps> = ({
@@ -29,11 +30,18 @@ const FormSubmissionLayout: React.FC<FormLayoutProps> = ({
   onDownClick,
   className = "",
   formStatus,
+  isEmbed = false,
 }) => {
   const progressPercentage = (currentStep / totalSteps) * 100;
 
   return (
-    <div className={`min-h-screen bg-[#B5979B] flex flex-col ${className}`}>
+    <div
+      className={cn(
+        "min-h-screen bg-[#B5979B] flex flex-col",
+        isEmbed && "min-h-[600px]",
+        className
+      )}
+    >
       <NotificationBanner
         defaultVisible={formStatus === "draft"}
         message={UnpublishedFormMessage}
@@ -50,19 +58,39 @@ const FormSubmissionLayout: React.FC<FormLayoutProps> = ({
       )}
 
       {/* Main Content Area */}
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div
+        className={cn(
+          "flex-1 flex items-center justify-center",
+          isEmbed ? "p-4" : "p-8"
+        )}
+      >
         <div className="w-full max-w-4xl">{children}</div>
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-8 left-8 flex justify-between items-end z-50">
+      <div
+        className={cn(
+          "fixed flex justify-between items-end z-50",
+          isEmbed ? "bottom-4 left-4" : "bottom-8 left-8"
+        )}
+      >
         <div className="flex flex-col gap-2 items-start">
-          <div className="bg-black text-white px-3 py-1 rounded text-sm font-medium">
+          <div
+            className={cn(
+              "bg-black text-white rounded text-sm font-medium",
+              isEmbed ? "px-2 py-0.5 text-xs" : "px-3 py-1"
+            )}
+          >
             {poweredByText}
           </div>
         </div>
       </div>
-      <div className="fixed bottom-8 right-8 flex justify-between items-end z-50">
+      <div
+        className={cn(
+          "fixed flex justify-between items-end z-50",
+          isEmbed ? "bottom-4 right-4" : "bottom-8 right-8"
+        )}
+      >
         <div className="flex flex-col gap-2 items-start">
           {showNavigation && (
             <div className="flex gap-1">

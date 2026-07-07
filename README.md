@@ -158,6 +158,36 @@ See `.env.production.example` for the full list. Key values:
 | `NEXT_PUBLIC_API_URL` | Client API base (`/api` in production) |
 | `DOMAIN` | Public hostname for Nginx + deploy |
 
+
+## Embed on other websites
+
+Published forms can be embedded on any site with an iframe.
+
+**Embed URL:** `https://your-domain.com/embed/{formId}`
+
+```html
+<iframe
+  src="https://your-domain.com/embed/qCrA9qZ9"
+  width="100%"
+  height="600"
+  style="border:0;"
+  loading="lazy"
+  title="Formly form"
+></iframe>
+```
+
+In the builder, click **Embed** (available after publish) to copy the iframe code.
+
+On successful submit, embedded forms send a `postMessage` to the parent page:
+
+```js
+window.addEventListener("message", (event) => {
+  if (event.data?.type === "formly:submitted") {
+    console.log("Form submitted:", event.data.formId);
+  }
+});
+```
+
 ## Roadmap
 
 - [ ] Response analytics (charts, per-question breakdown)

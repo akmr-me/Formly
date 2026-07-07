@@ -60,7 +60,7 @@ type PaginatedBlocksResponse = {
   totalPages: number;
 };
 
-export default function FormSubmission() {
+export default function FormSubmission({ isEmbed = false }: { isEmbed?: boolean }) {
   const params = useParams();
   const formId = params.formId as string;
   const [isSumbitting, setIsSubmitting] = useState(false);
@@ -112,12 +112,18 @@ export default function FormSubmission() {
           return clone;
         });
         setIsSubmitted(true);
+        if (isEmbed && window.parent !== window) {
+          window.parent.postMessage(
+            { type: "formly:submitted", formId },
+            "*"
+          );
+        }
         toast.success("Form submitted successfully.");
         if (inputRef.current) inputRef.current.value = "";
       }
       setIsSubmitting(false);
     },
-    [formId, setStorageValue]
+    [formId, isEmbed, setStorageValue]
   );
 
   async function handleNextOrSubmitButtonClicked(
@@ -209,6 +215,10 @@ export default function FormSubmission() {
 
   if (!data?.blocks) return <FormNotPublishedMessage />;
 
+  if (isEmbed && form?.status !== "publish") {
+    return <FormNotPublishedMessage />;
+  }
+
   const selectedBlockData = data.blocks;
 
   const coverImageUrl =
@@ -232,7 +242,9 @@ export default function FormSubmission() {
   const values = storageValue[formId]?.submissions?.[InputName]?.value || "";
 
   if (isSubmitted) {
-    return <SubmittedSuccessScreen formStatus={form?.status} />;
+    return (
+      <SubmittedSuccessScreen formStatus={form?.status} isEmbed={isEmbed} />
+    );
   }
 
   return (
@@ -242,7 +254,8 @@ export default function FormSubmission() {
       showNavigation={page > 1}
       onDownClick={handleClickDown}
       onUpClick={handleClickUp}
-      formStatus={form?.status}
+      formStatus={isEmbed ? "publish" : form?.status}
+      isEmbed={isEmbed}
     >
       <div
         className={cn(
@@ -280,14 +293,17 @@ export default function FormSubmission() {
 
 function SubmittedSuccessScreen({
   formStatus,
+  isEmbed = false,
 }: {
   formStatus?: "draft" | "publish";
+  isEmbed?: boolean;
 }) {
   return (
     <FormSubmissionLayout
       showProgress={false}
       showNavigation={false}
       formStatus={formStatus}
+      isEmbed={isEmbed}
     >
       <div className="flex min-h-[360px] flex-col items-center justify-center rounded-2xl bg-white px-8 py-12 text-center shadow-sm">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-3xl text-green-700">

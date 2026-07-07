@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   BarChart3,
+  Code2,
   Eye,
   Link2,
   Crown,
@@ -18,6 +19,8 @@ type FormBuilderHeaderProps = {
   responsesUrl: string;
   onLogout: () => void;
   formId?: string;
+  onOpenEmbed?: () => void;
+  canEmbed?: boolean;
 };
 
 export default function FormBuilderHeader({
@@ -28,6 +31,8 @@ export default function FormBuilderHeader({
   responsesUrl,
   onLogout,
   formId,
+  onOpenEmbed,
+  canEmbed = false,
 }: FormBuilderHeaderProps) {
   return (
     <header className="grid min-h-16 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-gray-200 bg-white px-4 py-3">
@@ -68,6 +73,20 @@ export default function FormBuilderHeader({
           <Link href={formUrl || ""} target="_blank">
             <Link2 className="w-4 h-4" />
           </Link>
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onOpenEmbed}
+          disabled={!canEmbed}
+          title={
+            canEmbed
+              ? "Copy embed code"
+              : "Publish the form to enable embedding"
+          }
+        >
+          <Code2 className="w-4 h-4" />
+          Embed
         </Button>
         <Button
           className="bg-black text-white hover:bg-gray-800"
