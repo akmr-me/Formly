@@ -22,8 +22,6 @@ const FormBuilder = () => {
   const {
     data: blockData,
     isLoading,
-    isError,
-    error,
   } = useQuery<{ data: BlockType }>({
     queryKey: ["block", blockId],
     queryFn: () => getBlockById(blockId as string),

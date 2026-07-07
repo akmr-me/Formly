@@ -1,6 +1,5 @@
 import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
-import BlockInfo from "../molecules/BlockInfo";
 import { useState } from "react";
 import { BlockType } from "@/types";
 import BlockDropdownMenuContainer from "./BlockDropDownMenuContainer";

@@ -42,7 +42,7 @@ export default function Embed({
 
   useEffect(() => {
     if (!showInput) handleUpdateEmbedUrl();
-  }, [showInput]);
+  }, [showInput, handleUpdateEmbedUrl]);
 
   return (
     <div ref={containerRef}>

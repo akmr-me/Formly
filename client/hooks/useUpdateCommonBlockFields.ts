@@ -13,6 +13,8 @@ export type UpdateBlockPayload = {
   required?: boolean;
   placeholder?: string;
   urlParameter?: string;
+  descriptionHtml?: string;
+  descriptionDelta?: Record<string, unknown>;
 };
 
 export function useUpdateCommonBlockFields(blockId: string, type: string) {

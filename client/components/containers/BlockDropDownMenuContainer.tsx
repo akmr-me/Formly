@@ -13,7 +13,7 @@ export default function BlockDropdownMenuContainer({
   blockId,
   setDropdownOpen,
 }: BlockDropdownMenuContainerProps) {
-  const { deleteBlock, deleteLoading, duplicateBlock, duplicateLoading } =
+  const { deleteBlock, deleteLoading, duplicateBlock } =
     useDuplicateOrDelete(blockId);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 

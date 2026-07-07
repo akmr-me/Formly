@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import BlockDisplayLayout from "../organisms/display/BlockDisplayLayout";
 import FormSubmissionLayout from "../organisms/FormSubmissionLayout";
@@ -29,8 +29,10 @@ import AddressBlockContainer from "../containers/blocks/custom/AddressBlockConta
 
 type SubmissionStatus = "saved" | "submitted";
 
+type FormValue = FormDataEntryValue | FormValue[] | FormValues;
+
 interface SubmissionData {
-  value: string | string[];
+  value: FormValue;
   status: SubmissionStatus;
 }
 
@@ -44,23 +46,9 @@ interface FormStorage {
   };
 }
 
-interface FormValues {
-  [key: string]: FormDataEntryValue | FormDataEntryValue[];
-}
-
-interface HandleSubmitParams {
-  e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>;
-  formId: string;
-  inputName: string;
-  storageValue: FormStorage;
-  setStorage: React.Dispatch<React.SetStateAction<FormStorage>>;
-  apiClient: {
-    post: (
-      url: string
-    ) => Promise<{ data: { id: string; submittedAt: string } }>;
-  };
-  handleClickDown: () => void;
-}
+type FormValues = {
+  [key: string]: FormValue;
+};
 
 type PaginatedBlocksResponse = {
   blocks: BlockType;
@@ -100,7 +88,7 @@ export default function FormSubmission() {
   );
   const [page, setPage] = useState(1);
 
-  const { data: response, isLoading: formLoading } = useQuery({
+  const { data: response } = useQuery({
     queryKey: ["forms", formId],
     queryFn: () => getFormById(formId),
     enabled: !!formId,
@@ -119,7 +107,7 @@ export default function FormSubmission() {
     }
   );
 
-  async function submitResponse() {
+  const submitResponse = useCallback(async () => {
     const submissionId = storageValue[formId].submission_id;
     if (!submissionId) {
       toast.error("No submission id found.");
@@ -144,7 +132,7 @@ export default function FormSubmission() {
     }
     setIsSubmitting(false);
     console.log("response", response);
-  }
+  }, [formId, setStorageValue, storageValue]);
 
   async function handleNextOrSubmitButtonClicked(
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
@@ -164,28 +152,7 @@ export default function FormSubmission() {
     const values: FormValues = {};
 
     formData.forEach((value, key) => {
-      const parts = key.split(".");
-      let current: any = values;
-
-      for (let i = 0; i < parts.length - 1; i++) {
-        const part = parts[i];
-        if (!current[part]) {
-          current[part] = {};
-        }
-        current = current[part];
-      }
-
-      const lastKey = parts[parts.length - 1];
-
-      if (current[lastKey] !== undefined) {
-        if (Array.isArray(current[lastKey])) {
-          current[lastKey].push(value);
-        } else {
-          current[lastKey] = [current[lastKey], value];
-        }
-      } else {
-        current[lastKey] = value;
-      }
+      appendFormValue(values, key, value);
     });
     console.log("values", values);
     if (
@@ -216,7 +183,7 @@ export default function FormSubmission() {
               submissions: {
                 ...prevFormData.submissions,
                 [InputName]: {
-                  value: values[InputName] as string | string[],
+                  value: values[InputName],
                   status: "saved",
                 },
               },
@@ -231,7 +198,7 @@ export default function FormSubmission() {
             submissions: {
               ...prevStorage[formId]?.submissions,
               [InputName]: {
-                value: values[InputName] as string | string[],
+                value: values[InputName],
                 status: "saved",
               },
             },
@@ -250,7 +217,7 @@ export default function FormSubmission() {
 
   useEffect(() => {
     if (isSumbitting) submitResponse();
-  }, [isSumbitting]);
+  }, [isSumbitting, submitResponse]);
 
   if (isLoading || isError) {
     return error ? JSON.stringify(error) : null;
@@ -317,7 +284,7 @@ export default function FormSubmission() {
                 name={InputName}
                 key={selectedBlockData.id}
                 required={selectedBlockData.required}
-                defaultValue={values}
+                defaultValue={getInputDefaultValue(values)}
                 ref={inputRef}
               />
             )}
@@ -326,4 +293,48 @@ export default function FormSubmission() {
       </div>
     </FormSubmissionLayout>
   );
+}
+
+function appendFormValue(
+  values: FormValues,
+  dottedKey: string,
+  value: FormDataEntryValue
+) {
+  const parts = dottedKey.split(".");
+  let current = values;
+
+  for (let i = 0; i < parts.length - 1; i++) {
+    const part = parts[i];
+    const next = current[part];
+    if (!isFormValues(next)) {
+      current[part] = {};
+      current = current[part] as FormValues;
+    } else {
+      current = next;
+    }
+  }
+
+  const lastKey = parts[parts.length - 1];
+  const existing = current[lastKey];
+
+  if (existing === undefined) {
+    current[lastKey] = value;
+  } else if (Array.isArray(existing)) {
+    current[lastKey] = [...existing, value];
+  } else {
+    current[lastKey] = [existing, value];
+  }
+}
+
+function isFormValues(value: FormValue | undefined): value is FormValues {
+  return Boolean(
+    value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      !(value instanceof File)
+  );
+}
+
+function getInputDefaultValue(value: FormValue) {
+  return typeof value === "string" ? value : "";
 }

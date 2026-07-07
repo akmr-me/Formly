@@ -3,7 +3,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AddressFieldConfig } from "@/types";
-import { CheckedState } from "@radix-ui/react-checkbox";
 import { Eye, EyeOff, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -18,9 +17,7 @@ type AddressControlProps = {
 };
 const AddressControl = ({
   config,
-  value,
   onChange,
-  showControl,
   onToggleVisibility,
   onOpenSettings,
   editConfig,

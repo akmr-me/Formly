@@ -97,7 +97,7 @@ const CoverImage: React.FC<CoverImageProps> = ({
   useEffect(() => {
     if (imageUrl == undefined) setPreviewUrl(null);
     else setPreviewUrl(imageUrl);
-  }, [imageUrl]);
+  }, [imageUrl, setPreviewUrl]);
 
   return (
     <div>

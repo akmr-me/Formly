@@ -1,7 +1,6 @@
 import InputWithLabel from "../molecules/editor/InputWithLabel";
 import Description from "../molecules/editor/Description";
 import TextAlign from "../molecules/editor/TextAlign";
-import CoverImage from "../molecules/editor/CoverImage";
 import { ImageLayout } from "../molecules/editor/ImageLayout";
 import { BlockType, TextAlignType } from "@/types";
 import React, { useEffect, useState } from "react";
@@ -55,7 +54,7 @@ export default function Editor({
   const [title, setTitle] = useState<string>(defaultTitle);
   const [buttonText, setButtonText] = useState<string>(defaultButtonText);
 
-  const { mutate, isPending } = useUpdateCommonBlockFields(blockId, type);
+  const { mutate } = useUpdateCommonBlockFields(blockId, type);
 
   const debouncedTitleUpdate = useDebouncedCallback((value: string) => {
     mutate({ title: value });

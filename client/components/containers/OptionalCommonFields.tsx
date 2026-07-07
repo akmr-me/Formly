@@ -41,7 +41,7 @@ export default function OptionalCommonFields({
   const [isRequired, setIsRequired] = useState(false);
   const [urlParameter, setUrlParameter] = useState("");
 
-  const { mutate, isPending } = useUpdateCommonBlockFields(blockId, type);
+  const { mutate } = useUpdateCommonBlockFields(blockId, type);
 
   // Update placeholder
   const debouncedPlaceholderUpdate = useDebouncedCallback((value: string) => {

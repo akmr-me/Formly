@@ -17,7 +17,7 @@ export default function ChooseBlockModalContainer(
   const params = useParams();
   const formId = params.formId as string;
   const [selectedBlock, setSelectedBlock] = useState<string>("0");
-  const { mutate, isPending } = useCreateNewBlock(formId);
+  const { mutate } = useCreateNewBlock(formId);
 
   const selectedBlockData = formBlocks.find(
     (block) => block.id === selectedBlock

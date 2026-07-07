@@ -124,7 +124,7 @@ export default function CoverImageContainer({
     setPreviewUrl(null);
     setUploadState({ isUploading: false, progress: 0, error: "" });
     apiClient.delete(uploadEndpoint).then(() => {
-      onUploadComplete && onUploadComplete("");
+      onUploadComplete?.("");
     });
   };
   console.log({ uploadState });

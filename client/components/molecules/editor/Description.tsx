@@ -1,14 +1,13 @@
 import { DefaultDebounceTime, SupportedQuillEditorFormats } from "@/constants";
 import { UpdateBlockPayload } from "@/hooks/useUpdateCommonBlockFields";
 import { BlockType } from "@/types";
-import { UseMutateFunction } from "@tanstack/react-query";
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import ReactQuill, { Quill } from "react-quill-new";
+import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { useDebouncedCallback } from "use-debounce";
 
 interface DescriptionPropsType {
-  mutate: UseMutateFunction<any, Error, Partial<UpdateBlockPayload>, unknown>;
+  mutate: (data: Partial<UpdateBlockPayload>) => void;
   selectedBlockData: BlockType;
 }
 
@@ -38,12 +37,12 @@ const Description: React.FC<DescriptionPropsType> = ({
     setIsInitialized(true);
   }, []);
 
-  const extractYouTubeId = (url: string): string | null => {
-    const regExp =
-      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
-    return match && match[2].length === 11 ? match[2] : null;
-  };
+  const cancelInput = useCallback(() => {
+    setShowInput(false);
+    setInputUrl("");
+    setInputRange(null);
+    setInputMode(null);
+  }, []);
 
   // video handler
   const videoHandler = useCallback(() => {
@@ -100,14 +99,7 @@ const Description: React.FC<DescriptionPropsType> = ({
     }
 
     cancelInput();
-  }, [inputRange, inputUrl, inputMode]);
-
-  const cancelInput = useCallback(() => {
-    setShowInput(false);
-    setInputUrl("");
-    setInputRange(null);
-    setInputMode(null);
-  }, []);
+  }, [inputRange, inputUrl, inputMode, cancelInput]);
 
   const handleInputKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -136,7 +128,7 @@ const Description: React.FC<DescriptionPropsType> = ({
   };
 
   const debouncedDescriptionUpdate = useDebouncedCallback(
-    (html: string, delta: any) => {
+    (html: string, delta: unknown) => {
       const updateData: Partial<UpdateBlockPayload> = {};
 
       // Only update if html is a string
@@ -145,7 +137,7 @@ const Description: React.FC<DescriptionPropsType> = ({
       }
 
       // Only update if delta is a valid object
-      if (delta && typeof delta === "object") {
+      if (isRecord(delta)) {
         updateData.descriptionDelta = delta;
       }
 
@@ -157,7 +149,7 @@ const Description: React.FC<DescriptionPropsType> = ({
   );
 
   const handleChange = useCallback(
-    (content: string, delta: any, source: string, editor: any) => {
+    (content: string, delta: unknown, source: string) => {
       if (!isInitialized || source !== "user") return;
 
       setValue(content);
@@ -277,3 +269,14 @@ const Description: React.FC<DescriptionPropsType> = ({
 };
 
 export default Description;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function extractYouTubeId(url: string): string | null {
+  const regExp =
+    /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return match && match[2].length === 11 ? match[2] : null;
+}

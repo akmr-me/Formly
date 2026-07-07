@@ -4,25 +4,25 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { ImageLayoutOptions } from "@/constants";
-import { UseMutateFunction } from "@tanstack/react-query";
 import { UpdateBlockPayload } from "@/hooks/useUpdateCommonBlockFields";
 import { CoverImageLayout } from "@/types";
 import { Label } from "@/components/ui/label";
 
 type ImageLayoutProps = {
-  mutate: UseMutateFunction<any, Error, Partial<UpdateBlockPayload>, unknown>;
+  mutate: (data: Partial<UpdateBlockPayload>) => void;
   coverImageLayout?: CoverImageLayout;
 };
 
 export function ImageLayout({ mutate, coverImageLayout }: ImageLayoutProps) {
   const currentValue = coverImageLayout || ImageLayoutOptions[0]?.value;
 
-  const handleValueChange = (value: CoverImageLayout) => {
+  const handleValueChange = (value: string) => {
+    if (!isCoverImageLayout(value)) return;
+
     if (value !== currentValue) {
       mutate({ coverImageLayout: value });
     }
@@ -50,4 +50,8 @@ export function ImageLayout({ mutate, coverImageLayout }: ImageLayoutProps) {
       </Select>
     </>
   );
+}
+
+function isCoverImageLayout(value: string): value is CoverImageLayout {
+  return ImageLayoutOptions.some((option) => option.value === value);
 }
