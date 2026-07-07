@@ -121,11 +121,82 @@ export DOMAIN APP_SCHEME APP_URL CLIENT_PORT SERVER_PORT CLIENT_HOST SERVER_HOST
 export POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB DATABASE_URL JWT_SECRET
 
 mkdir -p "${ROOT_DIR}/deploy"
-sed \
-  -e "s|__DOMAIN__|${DOMAIN}|g" \
-  -e "s|__SERVER_PORT__|${SERVER_PORT}|g" \
-  -e "s|__CLIENT_PORT__|${CLIENT_PORT}|g" \
-  "${NGINX_TEMPLATE}" > "${NGINX_RENDERED}"
+
+SSL_CERT="/etc/letsencrypt/live/${DOMAIN}/fullchain.pem"
+SSL_KEY="/etc/letsencrypt/live/${DOMAIN}/privkey.pem"
+SSL_OPTIONS="/etc/letsencrypt/options-ssl-nginx.conf"
+SSL_DHPARAM="/etc/letsencrypt/ssl-dhparams.pem"
+
+if [[ -f "${SSL_CERT}" && -f "${SSL_KEY}" ]]; then
+  cat > "${NGINX_RENDERED}" <<EOF
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ${DOMAIN};
+
+    return 301 https://\$host\$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name ${DOMAIN};
+
+    ssl_certificate ${SSL_CERT};
+    ssl_certificate_key ${SSL_KEY};
+    include ${SSL_OPTIONS};
+    ssl_dhparam ${SSL_DHPARAM};
+
+    client_max_body_size 25m;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:${SERVER_PORT}/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    location = /api {
+        proxy_pass http://127.0.0.1:${SERVER_PORT}/api;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    location /cover/ {
+        proxy_pass http://127.0.0.1:${SERVER_PORT}/cover/;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:${CLIENT_PORT};
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+}
+EOF
+  echo "Rendered HTTPS Nginx config for ${DOMAIN}"
+else
+  sed \
+    -e "s|__DOMAIN__|${DOMAIN}|g" \
+    -e "s|__SERVER_PORT__|${SERVER_PORT}|g" \
+    -e "s|__CLIENT_PORT__|${CLIENT_PORT}|g" \
+    "${NGINX_TEMPLATE}" > "${NGINX_RENDERED}"
+  echo "Rendered HTTP Nginx config for ${DOMAIN}. Run Certbot once to enable HTTPS."
+fi
 
 compose() {
   "${COMPOSE_BIN[@]}" --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" "$@"
