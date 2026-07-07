@@ -1,0 +1,65 @@
+name: ${COMPOSE_PROJECT_NAME:-formly}
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - formly_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - formly
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ${APP_ENV_FILE:-.env.production}
+    environment:
+      NODE_ENV: production
+      PORT: 8000
+    ports:
+      - "${SERVER_HOST:-127.0.0.1}:${SERVER_PORT:-8000}:8000"
+    volumes:
+      - formly_uploads:/app/public
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - formly
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+        NEXT_PUBLIC_ASSETS_BASE_URL: ${NEXT_PUBLIC_ASSETS_BASE_URL}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    ports:
+      - "${CLIENT_HOST:-127.0.0.1}:${CLIENT_PORT:-3000}:3000"
+    depends_on:
+      - server
+    networks:
+      - formly
+
+volumes:
+  formly_postgres_data:
+  formly_uploads:
+
+networks:
+  formly:

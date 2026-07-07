@@ -5,13 +5,14 @@ import helmet from "helmet";
 import routes from "./routes";
 import errorHandler from "./middlewares/errorHandler";
 import path from "node:path";
+import { env } from "./config/env";
 
 const app: express.Application = express();
 
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: env.CORS_ORIGIN,
     methods: ["GET", "POST", "PATCH", "DELETE"],
   })
 );
