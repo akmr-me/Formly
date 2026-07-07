@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import AddressBlockContainer from "../containers/blocks/custom/AddressBlockContainer";
 import SelectBlock from "../molecules/block/SelectBlock";
+import { getBlockInputConstraints } from "@/lib/blockConstraints";
 
 type SubmissionStatus = "saved" | "submitted";
 
@@ -318,6 +319,10 @@ function renderSubmissionBlock({
   inputRef: React.RefObject<HTMLInputElement | null>;
 }) {
   const defaultValue = getInputDefaultValue(value);
+  const constraints = getBlockInputConstraints(
+    selectedBlockData.type,
+    selectedBlockData.optionalConfig
+  );
 
   switch (selectedBlockData.type) {
     case "statement":
@@ -337,6 +342,8 @@ function renderSubmissionBlock({
           name={inputName}
           required={required}
           defaultValue={defaultValue}
+          minLength={constraints.minLength}
+          maxLength={constraints.maxLength}
         />
       );
     case "number":
@@ -345,6 +352,8 @@ function renderSubmissionBlock({
           name={inputName}
           required={required}
           defaultValue={defaultValue}
+          min={constraints.minNumber}
+          max={constraints.maxNumber}
           ref={inputRef}
         />
       );

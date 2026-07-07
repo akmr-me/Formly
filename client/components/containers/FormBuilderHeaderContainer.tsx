@@ -59,6 +59,7 @@ export default function FormBuilderHeaderContainer() {
       isPublishing={isPublishing}
       formUrl={`${window.origin}/form/${formId}`}
       responsesUrl={`/form/${formId}/responses`}
+      formId={formId}
       onLogout={handleLogout}
     />
   );

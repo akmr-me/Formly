@@ -3,10 +3,10 @@ export default function MobileWarning() {
     <div className="md:hidden flex items-center justify-center h-screen bg-gray-100 p-6">
       <div className="text-center">
         <h2 className="text-xl font-semibold mb-4">
-          Sorry! Youform builder is not available in small screen.
+          Sorry! The Formly builder is not available on small screens.
         </h2>
         <p className="text-gray-600">
-          Please open this in laptop or desktop for better experience.
+          Please open this on a laptop or desktop for a better experience.
         </p>
       </div>
     </div>

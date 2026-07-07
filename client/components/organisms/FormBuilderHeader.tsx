@@ -17,6 +17,7 @@ type FormBuilderHeaderProps = {
   formUrl: string;
   responsesUrl: string;
   onLogout: () => void;
+  formId?: string;
 };
 
 export default function FormBuilderHeader({
@@ -26,6 +27,7 @@ export default function FormBuilderHeader({
   formUrl,
   responsesUrl,
   onLogout,
+  formId,
 }: FormBuilderHeaderProps) {
   return (
     <header className="grid min-h-16 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-gray-200 bg-white px-4 py-3">
@@ -35,7 +37,12 @@ export default function FormBuilderHeader({
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </Link>
         </Button>
-        <h1 className="truncate text-lg font-semibold">My Form</h1>
+        <div className="min-w-0">
+          <h1 className="truncate text-lg font-semibold">Formly</h1>
+          {formId && (
+            <p className="truncate text-xs text-gray-500">Form {formId}</p>
+          )}
+        </div>
       </div>
 
       <div className="flex items-center justify-center">

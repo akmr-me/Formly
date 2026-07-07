@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Formly",
-  description: "A form builder for all your needs",
+  description: "Build and publish beautiful forms with Formly.",
 };
 
 export default function RootLayout({
