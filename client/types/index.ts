@@ -2,8 +2,16 @@ export type Form = {
   id: string;
   status: PublishStatusType;
   shortId: string;
+  ownerId?: string | null;
   createdAt: Date;
   updatedAt: Date;
+};
+
+export type User = {
+  id: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type BlockType = {

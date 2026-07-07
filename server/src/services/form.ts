@@ -2,10 +2,10 @@ import ApiError from "../utils/ApiError";
 import formRespository from "../repositories/Form";
 import { generateFormId } from "../utils/generateFormId";
 
-export async function createFormService() {
+export async function createFormService(ownerId: string) {
   const shortId = generateFormId();
 
-  const form = await formRespository.createForm({ shortId });
+  const form = await formRespository.createForm({ shortId, ownerId });
   if (!form) {
     throw new ApiError(500, "Failed to create form");
   }

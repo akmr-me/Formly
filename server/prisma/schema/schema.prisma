@@ -23,18 +23,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  forms Form[]
+}
+
 model Form {
   id        String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   status    PublishStatusType @default(DRAFT)
   shortId   String            @db.VarChar(8)
+  ownerId   String?           @db.Uuid
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
+  owner           User?            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   blocks          Block[]
   responses       Response[]
   publishedBlocks PublishedBlock[]
 
   @@unique([shortId])
+  @@index([ownerId])
   @@index([shortId])
 }
 

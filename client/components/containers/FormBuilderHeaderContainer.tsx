@@ -1,16 +1,19 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import FormBuilderHeader from "../organisms/FormBuilderHeader";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { PublishStatusType } from "@/types";
 import { getFormWithBlocks, publishForm } from "@/services/form";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ArrowUpRightFromSquare } from "lucide-react";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function FormBuilderHeaderContainer() {
   const params = useParams();
+  const router = useRouter();
   const formId = params.formId as string;
   const queryClient = useQueryClient();
+  const { logout } = useAuth();
   const { data } = useQuery({
     queryKey: ["forms", formId, "blocks"],
     queryFn: () => getFormWithBlocks(formId),
@@ -46,6 +49,10 @@ export default function FormBuilderHeaderContainer() {
       })
       .finally(() => setIsPublishing(false));
   };
+  const handleLogout = async () => {
+    await logout();
+    router.replace("/login");
+  };
   console.log({ formData, data });
   // if (!formData) return null;
   return (
@@ -55,6 +62,7 @@ export default function FormBuilderHeaderContainer() {
       isPublishing={isPublishing}
       formUrl={`${window.origin}/form/${formId}`}
       responsesUrl={`/form/${formId}/responses`}
+      onLogout={handleLogout}
     />
   );
 }

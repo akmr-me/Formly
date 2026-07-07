@@ -5,6 +5,7 @@ const defaultApiUrl =
 
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || defaultApiUrl,
+  withCredentials: true,
 });
 
 export default apiClient;

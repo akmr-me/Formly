@@ -3,7 +3,7 @@ import { db } from "../config/db";
 import { Form as TForm, Block as TBlock } from "../generated/prisma/kysely";
 import ApiError from "../utils/ApiError";
 
-type createFormInternal = { shortId: string };
+type createFormInternal = { shortId: string; ownerId: string };
 
 type FormWithBlocks = Selectable<TForm> & {
   blocks: Array<Partial<Selectable<TBlock>>>;
@@ -52,6 +52,7 @@ class Form {
     const form: FormWithBlocks = {
       id: flatResults[0].id as string,
       shortId: flatResults[0].shortId,
+      ownerId: flatResults[0].ownerId,
       createdAt: flatResults[0].createdAt,
       updatedAt: flatResults[0].updatedAt,
       status: flatResults[0].status,

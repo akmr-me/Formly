@@ -11,20 +11,42 @@ import {
   createResponseValuesController,
   getFormResponsesController,
 } from "../controllers/form";
+import { authenticate } from "../middlewares/auth";
+import { requireFormOwnerByShortId } from "../middlewares/ownership";
 
 const router = Router();
 
 // router.get("/", (req, res) => {});
 // TODO: fix spelling change
-router.post("/", fileterRequest(createFormSchema), createFormController);
+router.post(
+  "/",
+  authenticate,
+  fileterRequest(createFormSchema),
+  createFormController
+);
 
 router.get("/:shortFormId", getFormByIdController);
 
-router.get("/:shortFormId/blocks", getFormWithBlocksController);
+router.get(
+  "/:shortFormId/blocks",
+  authenticate,
+  requireFormOwnerByShortId,
+  getFormWithBlocksController
+);
 
-router.patch("/:shortFormId/publish", publishFormController);
+router.patch(
+  "/:shortFormId/publish",
+  authenticate,
+  requireFormOwnerByShortId,
+  publishFormController
+);
 
-router.get("/:shortFormId/responses", getFormResponsesController);
+router.get(
+  "/:shortFormId/responses",
+  authenticate,
+  requireFormOwnerByShortId,
+  getFormResponsesController
+);
 
 router.post("/:shortFormId/response", createResponseController);
 router.post(

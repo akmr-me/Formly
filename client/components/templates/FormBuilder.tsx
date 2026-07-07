@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import BlockDisplayHeader from "@/components/organisms/BlockDisplayHeder";
 import BlockDisplay from "@/components/organisms/BlockDisplay";
 import Editor from "@/components/organisms/Editor";
 import MobileWarning from "@/components/molecules/MobileWarning";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getBlockById } from "@/services/block";
 import { LoaderCircle } from "lucide-react";
@@ -14,10 +14,19 @@ import FormBuilderHeaderContainer from "../containers/FormBuilderHeaderContainer
 import ChooseBlockModalContainer from "../containers/blocks/ChooseBlockModalContainer";
 import { BlockType } from "@/types";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthProvider";
 
 const FormBuilder = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const blockId = searchParams.get("block_id");
+  const { user, isLoading: isAuthLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      router.replace("/login");
+    }
+  }, [isAuthLoading, router, user]);
 
   const {
     data: blockData,
@@ -25,7 +34,7 @@ const FormBuilder = () => {
   } = useQuery<{ data: BlockType }>({
     queryKey: ["block", blockId],
     queryFn: () => getBlockById(blockId as string),
-    enabled: !!blockId,
+    enabled: !!blockId && !!user,
     placeholderData: keepPreviousData,
   });
 
@@ -47,6 +56,14 @@ const FormBuilder = () => {
     setShouldShakeButtonTextInput(true);
     setTimeout(() => setShouldShakeButtonTextInput(false), 500);
   }, []);
+
+  if (isAuthLoading || !user) {
+    return (
+      <div className="flex h-screen items-center justify-center text-sm text-gray-500">
+        Checking your session...
+      </div>
+    );
+  }
 
   return (
     <div className="relative h-screen flex flex-col bg-gray-50">

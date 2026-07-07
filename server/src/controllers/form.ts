@@ -11,8 +11,8 @@ import {
 } from "../services/form";
 import { catchAsync } from "../utils/catchAsync";
 
-export const createFormController = catchAsync(async (_, res) => {
-  const newCreatedForm = await createFormService();
+export const createFormController = catchAsync(async (req, res) => {
+  const newCreatedForm = await createFormService(req.user!.id);
 
   res.status(201).json({
     status: "success",

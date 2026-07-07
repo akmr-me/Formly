@@ -1,7 +1,9 @@
 import express from "express";
+import "./types/express";
 import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 import routes from "./routes";
 import errorHandler from "./middlewares/errorHandler";
 import path from "node:path";
@@ -13,11 +15,13 @@ const app: express.Application = express();
 app.use(
   cors({
     origin: env.CORS_ORIGIN,
+    credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE"],
   })
 );
 app.use(helmet());
 app.use(morgan("dev"));
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

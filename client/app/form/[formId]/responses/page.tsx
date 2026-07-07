@@ -1,21 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getFormResponses } from "@/services/form";
 import { FormResponseAnswer, FormResponsesData } from "@/types";
+import { useAuth } from "@/context/AuthProvider";
+import { useEffect } from "react";
 
 export default function FormResponsesPage() {
   const params = useParams();
+  const router = useRouter();
   const formId = params.formId as string;
+  const { user, isLoading: isAuthLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      router.replace("/login");
+    }
+  }, [isAuthLoading, router, user]);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["forms", formId, "responses"],
     queryFn: () => getFormResponses(formId),
-    enabled: !!formId,
+    enabled: !!formId && !!user,
   });
 
   const responseData = data?.data;
@@ -32,6 +42,14 @@ export default function FormResponsesPage() {
     link.download = `form-${formId}-responses.csv`;
     link.click();
     URL.revokeObjectURL(url);
+  }
+
+  if (isAuthLoading || !user) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-gray-50 text-sm text-gray-500">
+        Checking your session...
+      </main>
+    );
   }
 
   return (

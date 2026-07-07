@@ -4,6 +4,7 @@ import {
   Eye,
   Link2,
   Crown,
+  LogOut,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { PublishStatusType } from "@/types";
@@ -15,6 +16,7 @@ type FormBuilderHeaderProps = {
   isPublishing: boolean;
   formUrl: string;
   responsesUrl: string;
+  onLogout: () => void;
 };
 
 export default function FormBuilderHeader({
@@ -23,6 +25,7 @@ export default function FormBuilderHeader({
   isPublishing,
   formUrl,
   responsesUrl,
+  onLogout,
 }: FormBuilderHeaderProps) {
   return (
     <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
@@ -66,6 +69,10 @@ export default function FormBuilderHeader({
           <Crown className="w-4 h-4 mr-1" />
           {isPublishing ? "Publishing..." : "Publish"}
         </Button>{" "}
+        <Button variant="ghost" size="sm" onClick={onLogout}>
+          <LogOut className="w-4 h-4 mr-1" />
+          Logout
+        </Button>
       </div>
     </header>
   );

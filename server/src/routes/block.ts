@@ -49,6 +49,11 @@ import {
   createDropdownBlockSchema,
   updateDropdownBlockSchema,
 } from "../validators/block/dropdownList";
+import { authenticate } from "../middlewares/auth";
+import {
+  requireBlockOwnerById,
+  requireFormOwnerByShortId,
+} from "../middlewares/ownership";
 
 const router = Router();
 
@@ -80,26 +85,37 @@ const updateSchema = {
 
 router.post(
   "/",
+  authenticate,
   // @ts-ignore
   filterRequestByBlockType(schemas),
+  requireFormOwnerByShortId,
   createBlockController
 );
 
 router
   .route("/:id")
-  .get(getBlockByIdController)
-  .patch(filterRequestByBlockType(updateSchema), updateBlockFieldController)
-  .delete(deleteBlockController);
+  .get(authenticate, requireBlockOwnerById, getBlockByIdController)
+  .patch(
+    authenticate,
+    requireBlockOwnerById,
+    filterRequestByBlockType(updateSchema),
+    updateBlockFieldController
+  )
+  .delete(authenticate, requireBlockOwnerById, deleteBlockController);
 
 router
   .route("/:id/upload")
   .patch(
+    authenticate,
+    requireBlockOwnerById,
     upload.single("file"),
     filterRequestByBlockType(updateSchema),
     updateBlockFieldController
   )
-  .delete(deleteBlockFileController);
+  .delete(authenticate, requireBlockOwnerById, deleteBlockFileController);
 
-router.route("/:id/duplicate").post(duplicateBlockController);
+router
+  .route("/:id/duplicate")
+  .post(authenticate, requireBlockOwnerById, duplicateBlockController);
 
 export default router;
