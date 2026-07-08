@@ -55,19 +55,23 @@ const FormSubmissionLayout: React.FC<FormLayoutProps> = ({
 
       {/* Progress Bar */}
       {showProgress && (
-        <div className="w-full bg-gray-400 h-1">
+        <div className="w-full bg-white/40 h-1.5">
           <div
-            className="h-full bg-gray-700 transition-all duration-300 ease-out"
-            style={{ width: `${progressPercentage}%` }}
+            className="h-full transition-all duration-300 ease-out"
+            style={{
+              width: `${progressPercentage}%`,
+              backgroundColor: "var(--form-accent)",
+            }}
           />
         </div>
       )}
 
-      {/* Main Content Area */}
+      {/* Main Content Area — extra bottom padding reserves room for the fixed
+          "Powered by" badge and nav arrows so they never overlap content. */}
       <div
         className={cn(
           "flex-1 flex items-center justify-center",
-          isEmbed ? "p-4" : "p-8"
+          isEmbed ? "p-4 pb-16" : "p-8 pb-20"
         )}
       >
         <div className="w-full max-w-4xl">{children}</div>

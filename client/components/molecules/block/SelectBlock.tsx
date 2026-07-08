@@ -25,6 +25,7 @@ export default function SelectBlock({
     return (
       <select
         name={name}
+        aria-labelledby="form-block-title"
         required={required}
         defaultValue={typeof defaultValue === "string" ? defaultValue : ""}
         className={formSelectClass}
@@ -44,7 +45,11 @@ export default function SelectBlock({
   const inputType = selectedBlockData.type === "multi" ? "checkbox" : "radio";
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-3">
+    <div
+      role="group"
+      aria-labelledby="form-block-title"
+      className="mx-auto flex w-full max-w-md flex-col gap-3"
+    >
       {options.map((option) => (
         <label key={option.id} className={formOptionCardClass}>
           <input

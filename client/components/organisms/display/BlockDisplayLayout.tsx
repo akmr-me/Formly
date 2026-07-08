@@ -33,10 +33,10 @@ export default function BlockDisplayLayout({
   return (
     <div
       className={cn(
-        "rounded-2xl p-16 max-w-4xl w-full h-full grid overflow-y-auto scrollbar-hide m-auto",
+        "rounded-2xl max-w-4xl w-full h-full grid overflow-y-auto scrollbar-hide m-auto",
+        displayLayoutSize === "small" ? "p-4" : "p-6 sm:p-10 lg:p-16",
         textAlign === "center" && "text-center",
-        textAlign === "left" && "text-left",
-        displayLayoutSize === "small" && "p-4"
+        textAlign === "left" && "text-left"
       )}
     >
       <div
@@ -63,20 +63,17 @@ export default function BlockDisplayLayout({
         </div>
         <div className={cn(textAlign === "center" && "justify-center flex")}>
           <h1
-            // TODO: removed w-fit
+            id="form-block-title"
             className={cn(
-              "text-4xl font-bold text-black relative w-fit py-6",
-              displayLayoutSize === "small" && "text-xl"
+              "font-bold text-black w-fit py-6",
+              displayLayoutSize === "small"
+                ? "text-xl"
+                : "text-2xl sm:text-3xl lg:text-4xl"
             )}
             onClick={onHeaderClick}
           >
             {title}
-
-            {required && (
-              <span className="absolute -top-1 -right-1 text-red-500 text-lg font-bold">
-                *
-              </span>
-            )}
+            {required && <span className="ml-1 text-red-500">*</span>}
           </h1>
         </div>
 
@@ -84,8 +81,8 @@ export default function BlockDisplayLayout({
           <div className="my-4 max-w-2xl">
             <div
               className={cn(
-                "text-lg text-gray-700 leading-relaxed",
-                displayLayoutSize === "small" && "text-sm"
+                "text-gray-700 leading-relaxed",
+                displayLayoutSize === "small" ? "text-sm" : "text-base sm:text-lg"
               )}
               dangerouslySetInnerHTML={{ __html: validDescription }}
             />

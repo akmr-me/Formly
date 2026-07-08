@@ -26,6 +26,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         <input
           ref={ref}
           type="text"
+          aria-labelledby="form-block-title"
           className={`${formTextFieldClass} ${className}`}
           placeholder={placeholder}
           onChange={onChange}
@@ -68,6 +69,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
         <input
           ref={ref}
           type="number"
+          aria-labelledby="form-block-title"
           className={`${formTextFieldClass} ${className}`}
           placeholder={placeholder}
           onChange={onChange}
@@ -94,6 +96,7 @@ export const LongText = forwardRef<
     <div className="w-full max-w-xl">
       <Textarea
         ref={ref}
+        aria-labelledby="form-block-title"
         placeholder={placeholder}
         onChange={onChange}
         className={`${formTextFieldClass} min-h-32 resize-none rounded-none ${className}`}
@@ -129,6 +132,7 @@ export const URLInput = forwardRef<HTMLInputElement, URLInputProps>(
         <input
           ref={ref}
           type="url"
+          aria-labelledby="form-block-title"
           className={`${formTextFieldClass} ${className}`}
           placeholder={placeholder}
           onChange={onChange}
@@ -169,6 +173,7 @@ export const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
         <input
           ref={ref}
           type="date"
+          aria-labelledby="form-block-title"
           className={`${formTextFieldClass} ${className}`}
           placeholder={placeholder}
           onChange={onChange}
