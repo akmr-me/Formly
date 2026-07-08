@@ -1,4 +1,5 @@
 import { BlockType } from "@/types";
+import { formOptionCardClass, formSelectClass } from "@/lib/formFieldStyles";
 
 type SelectBlockProps = {
   selectedBlockData: BlockType;
@@ -26,7 +27,7 @@ export default function SelectBlock({
         name={name}
         required={required}
         defaultValue={typeof defaultValue === "string" ? defaultValue : ""}
-        className="w-full max-w-md rounded-lg border border-gray-300 bg-white px-4 py-3 text-left text-gray-900 shadow-sm outline-none transition focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10"
+        className={formSelectClass}
       >
         <option value="" disabled>
           Select an option
@@ -45,17 +46,14 @@ export default function SelectBlock({
   return (
     <div className="mx-auto flex w-full max-w-md flex-col gap-3">
       {options.map((option) => (
-        <label
-          key={option.id}
-          className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 text-left text-gray-900 shadow-sm transition hover:border-gray-900"
-        >
+        <label key={option.id} className={formOptionCardClass}>
           <input
             type={inputType}
             name={name}
             value={option.value}
             required={selectedBlockData.type === "single" ? required : false}
             defaultChecked={selectedValues.includes(option.value)}
-            className="h-4 w-4 accent-gray-900"
+            className="h-4 w-4 accent-[var(--form-accent)]"
           />
           <span>{option.value}</span>
         </label>

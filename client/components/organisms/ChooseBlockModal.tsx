@@ -26,12 +26,11 @@ const ChooseBlockModal = ({
   onCreateNewBlock,
 }: ChooseBlockModalProps) => {
   if (!isOpen) return null;
-  console.log({ selectedBlockData });
 
   return (
     <div className="absolute inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 px-4 py-2">
       <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl my-2 h-full">
-        <div className="flex items-center justify-between p-6 border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-2xl font-semibold text-gray-900">
             Choose your block
           </h2>
@@ -65,13 +64,14 @@ const ChooseBlockModal = ({
                 </PreviewLayout>
 
                 {/* Use Block Button */}
-                <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center p-4">
                   <Button
-                    className="bg-gray-800 hover:bg-gray-900 text-white py-3 text-lg font-medium"
+                    size="sm"
+                    className="has-[>svg]:px-6"
                     onClick={onCreateNewBlock}
                   >
                     Use this block
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    <ArrowRight className="w-5 h-5" />
                   </Button>
                 </div>
               </>

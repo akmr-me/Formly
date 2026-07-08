@@ -89,7 +89,6 @@ export default function FormBuilderHeader({
           Embed
         </Button>
         <Button
-          className="bg-black text-white hover:bg-gray-800"
           onClick={onPublish}
           disabled={isPublishing || formStatus === "publish"}
         >

@@ -1,7 +1,7 @@
 import { BlockType } from "@/types";
 import BlockDisplayLayout from "./display/BlockDisplayLayout";
 import StatementDisplayContainer from "../containers/display/StatementDisplayContainer";
-import { DefaultBlockData } from "@/constants";
+import { DefaultBlockData, FormSurfaceColor } from "@/constants";
 import {
   DateInput,
   LongText,
@@ -37,7 +37,7 @@ type BlockDisplayProps = {
 
 export default function BlockDisplay({
   selectedBlockData,
-  backgroundColor = "#b59a94",
+  backgroundColor = FormSurfaceColor,
   triggerShakeTitleInput,
   triggerShakeButtonTextInput,
 }: BlockDisplayProps) {

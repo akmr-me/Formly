@@ -14,7 +14,7 @@ const NotificationBanner = ({
   if (!isVisible) return null;
 
   return (
-    <div className="w-full bg-slate-700 text-white px-4 py-3 absolute top-1">
+    <div className="relative w-full bg-slate-700 text-white px-4 py-3">
       <div className="flex items-center justify-center text-center">
         <p className="text-sm font-medium">{message}</p>
         <button

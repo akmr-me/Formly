@@ -109,10 +109,8 @@ export default function BlockDisplayLayout({
         >
           <Button
             className={cn(
-              "bg-black text-white px-8 py-4 rounded-md hover:bg-gray-800 text-lg font-medium mt-8",
-              displayLayoutSize === "small" && "text-sm",
-              displayLayoutSize === "small" && "px-4 py-2",
-              displayLayoutSize === "small" && "font-semibold"
+              "px-8 py-4 text-lg font-medium mt-8",
+              displayLayoutSize === "small" && "px-4 py-2 text-sm font-semibold"
             )}
             onClick={onButtonClick}
             type="submit"

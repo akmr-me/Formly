@@ -21,7 +21,7 @@ import {
   URLInput,
 } from "../molecules/block/InputBlock";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { FormlyFormLocalStorageKey } from "@/constants";
+import { FormlyFormLocalStorageKey, FormSurfaceColor } from "@/constants";
 import apiClient from "@/lib/apiClient";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -234,7 +234,7 @@ export default function FormSubmission({ isEmbed = false }: { isEmbed?: boolean 
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }
-      : { backgroundColor: "#b59a94" };
+      : { backgroundColor: FormSurfaceColor };
 
   const InputName = selectedBlockData.id;
   const isLastPage = page === data.totalPages;

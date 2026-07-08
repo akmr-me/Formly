@@ -1,4 +1,5 @@
 import { Textarea } from "@/components/ui/textarea";
+import { formTextFieldClass } from "@/lib/formFieldStyles";
 import { DetailedHTMLProps, TextareaHTMLAttributes, forwardRef } from "react";
 
 interface TextInputProps
@@ -25,7 +26,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         <input
           ref={ref}
           type="text"
-          className={`block w-full border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
+          className={`${formTextFieldClass} ${className}`}
           placeholder={placeholder}
           onChange={onChange}
           {...props}
@@ -67,7 +68,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
         <input
           ref={ref}
           type="number"
-          className={`block w-full border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
+          className={`${formTextFieldClass} ${className}`}
           placeholder={placeholder}
           onChange={onChange}
           min={min}
@@ -95,7 +96,7 @@ export const LongText = forwardRef<
         ref={ref}
         placeholder={placeholder}
         onChange={onChange}
-        className={`min-h-32 w-full resize-none rounded-none border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
+        className={`${formTextFieldClass} min-h-32 resize-none rounded-none ${className}`}
         {...props}
         {...(value !== undefined ? { value } : {})}
       />
@@ -128,7 +129,7 @@ export const URLInput = forwardRef<HTMLInputElement, URLInputProps>(
         <input
           ref={ref}
           type="url"
-          className={`block w-full border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
+          className={`${formTextFieldClass} ${className}`}
           placeholder={placeholder}
           onChange={onChange}
           {...props}
@@ -168,7 +169,7 @@ export const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
         <input
           ref={ref}
           type="date"
-          className={`block w-full border-0 border-b-2 border-gray-600 bg-transparent px-0 py-3 text-lg outline-none transition placeholder:text-gray-700 focus:border-gray-900 focus:ring-0 ${className}`}
+          className={`${formTextFieldClass} ${className}`}
           placeholder={placeholder}
           onChange={onChange}
           min={min}

@@ -32,7 +32,7 @@ const Address = ({ config, value, onChange, name }: AddressProps) => {
         required={config.required}
         disabled={!config.visible}
         name={name}
-        className="w-full px-4 py-3 border-0 border-b-2 border-gray-300 bg-transparent focus:border-gray-600 focus:ring-0 rounded-none"
+        className="w-full px-0 py-3 border-0 border-b-2 border-gray-300 bg-transparent text-gray-900 placeholder:text-gray-400 focus:border-[var(--form-accent)] focus:ring-0 rounded-none"
       />
     </div>
   );

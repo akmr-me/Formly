@@ -2,7 +2,11 @@
 import React from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import NotificationBanner from "../molecules/NotificationBannert";
-import { UnpublishedFormMessage } from "@/constants";
+import {
+  FormAccentColor,
+  FormBackgroundColor,
+  UnpublishedFormMessage,
+} from "@/constants";
 import { cn } from "@/lib/utils";
 
 interface FormLayoutProps {
@@ -36,11 +40,13 @@ const FormSubmissionLayout: React.FC<FormLayoutProps> = ({
 
   return (
     <div
-      className={cn(
-        "min-h-screen bg-[#B5979B] flex flex-col",
-        isEmbed && "min-h-[600px]",
-        className
-      )}
+      className={cn("min-h-screen flex flex-col", className)}
+      style={
+        {
+          backgroundColor: FormBackgroundColor,
+          "--form-accent": FormAccentColor,
+        } as React.CSSProperties
+      }
     >
       <NotificationBanner
         defaultVisible={formStatus === "draft"}
