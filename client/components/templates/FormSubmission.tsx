@@ -213,11 +213,12 @@ export default function FormSubmission({ isEmbed = false }: { isEmbed?: boolean 
     return error ? JSON.stringify(error) : null;
   }
 
+  // Show the form whenever a published version of the blocks exists. We rely
+  // solely on the published-blocks query (above) — NOT on form.status — because
+  // a form that's published but has newer unpublished edits has status "draft"
+  // while still having a valid published version to serve. Embeds must keep
+  // showing that published version instead of falsely reporting "not published".
   if (!data?.blocks) return <FormNotPublishedMessage />;
-
-  if (isEmbed && form?.status !== "publish") {
-    return <FormNotPublishedMessage />;
-  }
 
   const selectedBlockData = data.blocks;
 
