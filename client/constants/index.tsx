@@ -497,12 +497,13 @@ export const FormPalettes = {
   emerald: { background: "#10B981", surface: "#ECFDF5", accent: "#059669" }, // emerald / mint white
   midnight: { background: "#111827", surface: "#F9FAFB", accent: "#2563EB" }, // slate near-black / clean white
   mauve: { background: "#B5979B", surface: "#b59a94", accent: "#8B5E68" }, // original dusty mauve
+  neonViolet: { background: "#2D1B69", surface: "#FAFFEC", accent: "#C8FF3D" }, // Violet Ink bg / lime-tinted white surface / Neon Lime accent
 } as const;
 
 export type FormPaletteName = keyof typeof FormPalettes;
 
 // 👇 Change this one line to switch the form's color scheme.
-export const ActiveFormPalette: FormPaletteName = "sunset";
+export const ActiveFormPalette: FormPaletteName = "neonViolet";
 
 export const FormBackgroundColor = FormPalettes[ActiveFormPalette].background;
 export const FormSurfaceColor = FormPalettes[ActiveFormPalette].surface;
