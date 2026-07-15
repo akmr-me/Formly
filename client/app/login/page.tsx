@@ -17,7 +17,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!isLoading && user) {
-      router.replace("/");
+      router.replace("/dashboard");
     }
   }, [isLoading, router, user]);
 
@@ -28,7 +28,7 @@ export default function LoginPage() {
     try {
       await login({ email, password });
       await refreshUser();
-      router.replace("/");
+      router.replace("/dashboard");
     } catch {
       toast.error("Invalid email or password");
     } finally {
