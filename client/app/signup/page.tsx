@@ -17,7 +17,7 @@ export default function SignupPage() {
 
   useEffect(() => {
     if (!isLoading && user) {
-      router.replace("/");
+      router.replace("/dashboard");
     }
   }, [isLoading, router, user]);
 
@@ -28,7 +28,7 @@ export default function SignupPage() {
     try {
       await signup({ email, password });
       await refreshUser();
-      router.replace("/");
+      router.replace("/dashboard");
     } catch {
       toast.error("Unable to create account");
     } finally {
